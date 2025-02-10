@@ -32,12 +32,14 @@ class Solver:
             res += self.grid.cost(el)
             paired.append(el[0])
             paired.append(el[1])
-        return res
-        # Add the values of unpaired cells (excluding black cells)
         for i in range(self.grid.n):
             for j in range(self.grid.m):
                 if (i, j) not in paired and not self.grid.is_forbidden(i, j):
-                    res += self.grid.value(i, j)
+                    res += self.grid.value[i][j]
+        return res
+        
+        # Add the values of unpaired cells (excluding black cells)
+        
 
 
 class SolverEmpty(Solver):
@@ -142,7 +144,6 @@ class SolverBiparti(Solver):
         graph = {}
         even_cells = set()
         odd_cells = set()
-        
         # Ajout des arêtes entre cellules (direction : de pair vers impair)
         for cell1, cell2 in self.grid.all_pairs():
             # Déterminer laquelle est paire (i+j pair) et laquelle est impaire.
@@ -173,7 +174,6 @@ class SolverBiparti(Solver):
         # Stocker les ensembles de cellules pour une extraction ultérieure de l'appariement
         self.even_cells = even_cells
         self.odd_cells = odd_cells
-        print(graph)
         # Calculer le flot maximum (donc la taille de l'appariement maximum)
         max_flow, matching = self.ford_fulkerson(graph)
         print("Max flow:", max_flow)
@@ -218,7 +218,6 @@ class SolverBiparti(Solver):
                 v = path[i + 1]
                 graph[u].remove(v)
                 graph.setdefault(v, []).append(u)
-        print(graph)
         # Extraction de l'appariement :
         # Dans le graphe résiduel, une arête de "v" (cellule impaire) vers "u" (cellule paire)
         # signifie que la cellule paire u est appariée avec la cellule impaire v.
@@ -227,5 +226,6 @@ class SolverBiparti(Solver):
             for u in graph.get(odd, []):
                 if u in self.even_cells:
                     matching.append((u, odd))
-        return max_flow, matching
+        self.pairs=matching
+        return matching
   
