@@ -18,5 +18,3 @@ grid.plot()
 solver = SolverEmpty(grid)
 solver.run()
 print("The final score of SolverEmpty is:", solver.score())
-
-
