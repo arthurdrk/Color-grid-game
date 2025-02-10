@@ -15,11 +15,6 @@ grid = Grid.grid_from_file(file_name, read_values=True)
 print(grid)
 grid.plot()
 
-solver = SolverEmpty(grid)
-solver.run()
-print("The final score of SolverEmpty is:", solver.score())
-print(solver.pairs)
-
 solver = SolverBiparti(grid)
 solver.run()
 print("The final score of SolverBiparti is:", solver.score())

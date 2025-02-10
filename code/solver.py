@@ -222,12 +222,3 @@ class SolverBiparti(Solver):
                     matching.append((u, odd))
         return max_flow, matching
   
-from grid import Grid        
-data_path = "C:/Users/arthr/Desktop/ENSAE 1A/S2/Projet-Prog/Projet-de-programmation-1A/input/"
-
-file_name = data_path + "grid01.in"
-grid = Grid.grid_from_file(file_name)        
-solver = SolverBiparti(grid)
-solver.run()
-print("The final score of SolverBiparti is:", solver.score())
-print(solver.pairs)
