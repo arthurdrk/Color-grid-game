@@ -21,4 +21,4 @@ print("The final score of SolverEmpty is:", solver.score())
 
 solver = SolverBiparti(grid)
 solver.run()
-print("The final score of SolverEmpty is:", solver.score())
+print("The final score of SolverBiparti is:", solver.score())
