@@ -54,7 +54,7 @@ class SolverBiparti(Solver):
         # Ajout des arêtes entre cellules (direction : de pair vers impair)
         for cell1, cell2 in self.grid.all_pairs():
             # Déterminer laquelle est paire (i+j pair) et laquelle est impaire.
-            if cell1.sum() % 2 == 0:
+            if sum(cell1) % 2 == 0:
                 even = cell1
                 odd  = cell2
             else:
