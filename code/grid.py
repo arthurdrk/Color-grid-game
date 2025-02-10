@@ -78,7 +78,8 @@ class Grid():
         for i in range(self.n):
             for j in range(self.m):
                 color_idx = self.color[i][j]
-                plt.text(j, i, str(color_idx), ha='center', va='center', fontsize=14)
+                val=self.value[i][j]
+                plt.text(j, i, str(val), ha='center', va='center', fontsize=14)
         plt.xticks([])
         plt.yticks([])
         plt.show()

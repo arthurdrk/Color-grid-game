@@ -26,11 +26,18 @@ class Solver:
         """
         Computes the score of the list of pairs in self.pairs
         """
+        paired=[]
         res = 0
         for el in self.pairs:
             res += self.grid.cost(el)
+            paired.append(el[0])
+            paired.append(el[1])
         return res
-
+        # Add the values of unpaired cells (excluding black cells)
+        for i in range(self.grid.n):
+            for j in range(self.grid.m):
+                if (i, j) not in paired and not self.grid.is_forbidden(i, j):
+                    res += self.grid.value(i, j)
 
 
 class SolverEmpty(Solver):
@@ -135,7 +142,7 @@ class SolverBiparti(Solver):
         graph = {}
         even_cells = set()
         odd_cells = set()
-
+        
         # Ajout des arêtes entre cellules (direction : de pair vers impair)
         for cell1, cell2 in self.grid.all_pairs():
             # Déterminer laquelle est paire (i+j pair) et laquelle est impaire.
@@ -211,7 +218,7 @@ class SolverBiparti(Solver):
                 v = path[i + 1]
                 graph[u].remove(v)
                 graph.setdefault(v, []).append(u)
-
+        print(graph)
         # Extraction de l'appariement :
         # Dans le graphe résiduel, une arête de "v" (cellule impaire) vers "u" (cellule paire)
         # signifie que la cellule paire u est appariée avec la cellule impaire v.
