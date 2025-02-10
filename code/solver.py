@@ -25,9 +25,14 @@ class Solver:
 
     def score(self):
         """
-        Computes the of the list of pairs in self.pairs
+        Computes the score of the list of pairs in self.pairs
         """
-        return "Method not implemented yet"
+        res = 0
+        for el in self.pairs:
+            res += self.grid.cost(el)
+        return res
+
+
 
 class SolverEmpty(Solver):
     def run(self):
@@ -122,9 +127,5 @@ class SolverBiparti(Solver):
                 if u in self.even_cells:
                     appariements.append((u, odd))
                     break  # chaque cellule impaire est appariée à au plus une cellule paire
-        
-        return max_flow, appariements
-
-    
-        
+        self.pairs=appariements
 
