@@ -93,6 +93,7 @@ class SolverBiparti(Solver):
         self.odd_cells = odd_cells
         # Calculer le flot maximum (donc la taille de l'appariement maximum)
         matching = self.ford_fulkerson(graph)
+        print(len(matching))
         return matching
     
     
@@ -114,7 +115,6 @@ class SolverBiparti(Solver):
         en utilisant une recherche DFS pour trouver des chemins augmentants (algorithme Ford–Fulkerson).
 
         Renvoie:
-            max_flow (int) : la valeur du flot maximum, c'est-à-dire la taille de l'appariement maximum.
             matching (list) : une liste de tuples (cellule_pair, cellule_impair) représentant l'appariement.
         """
         max_flow = 0
@@ -143,4 +143,5 @@ class SolverBiparti(Solver):
                     matching.append((u, odd))
         self.pairs=matching
         return matching
+  
   
