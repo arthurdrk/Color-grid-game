@@ -1,4 +1,6 @@
 from collections import deque
+from grid import Grid
+    
 class Solver:
     """
     A solver class. 
@@ -49,7 +51,22 @@ class SolverEmpty(Solver):
 
 class SolverGreedy(Solver):
     def run(self):
-        pass
+        used = [] #les cases déjà visités
+        res = []
+        pairs = self.grid.all_pairs()
+        for i in range(len(self.grid.n)):
+            for j in range(len(self.grid.m)):
+                case = (i, j)
+            if case not in used:
+                (k, l) = min([el for el in pairs if (el[0] == case and el[1] not in used) or (el[0] not in used and el[1] == case)], key=lambda x: self.grid.cost(x)) #pour chaque case du grid on l'associe à sa voisine légale qui minimise le cout
+                if k == case:
+                    res.append(case, l)
+                    used.append(l)
+                else:
+                    res.append(case, k)
+                    used.append(k)
+        return res
+        
     
 class SolverBiparti(Solver):
     def run(self):
