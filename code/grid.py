@@ -109,44 +109,31 @@ class Grid():
 
 
     def all_pairs(self):
-        """
-        Retourne la liste de toutes les paires de cellules adjacentes (horizontalement ou verticalement)
-        qui peuvent être appariées.
-        Renvoie une liste de tuples du type [((i1, j1), (i2, j2)), ...].
-        """
         res = []
-        # Dictionnaire de compatibilité : pour une cellule de couleur c, allowed[c] est l'ensemble des couleurs avec
-        # lesquelles elle peut s'apparier.
         allowed = {
-        0: {0, 1, 2, 3},  # blanc avec n'importe quelle couleur (non noire)
-        1: {0, 1, 2},     # bleu avec blanc, bleu, rouge
-        2: {0, 1, 2},     # rouge avec blanc, bleu, rouge
-        3: {0, 3}         # vert avec blanc ou vert
+            0: {0, 1, 2, 3},  # blanc avec tout sauf noir
+            1: {0, 1, 2},     # rouge avec blanc, bleu, rouge
+            2: {0, 1, 2},     # bleu avec blanc, bleu, rouge
+            3: {0, 3}         # vert avec blanc, vert
         }
-
-        # Pour éviter les doublons, on ne considère que les voisins à droite et en bas.
         directions = [(0, 1), (1, 0)]
 
         for i in range(self.n):
             for j in range(self.m):
-                # On passe la cellule si elle est interdite (ex : noire)
                 if self.is_forbidden(i, j):
                     continue
                 c1 = self.color[i][j]
-                
+
                 for dx, dy in directions:
                     k, l = i + dx, j + dy
-                    # Vérifier que le voisin est dans la grille
                     if 0 <= k < self.n and 0 <= l < self.m:
-                        # On ne considère que le voisin s'il n'est pas interdit
                         if self.is_forbidden(k, l):
                             continue
                         c2 = self.color[k][l]
-                        # Vérifier la compatibilité des couleurs dans les deux sens.
                         if c2 in allowed[c1] and c1 in allowed[c2]:
                             res.append(((i, j), (k, l)))
-                            
-            return res
+        return res
+
     
     def vois(self, i, j):
         """

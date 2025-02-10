@@ -27,12 +27,12 @@ class Solver:
         """
         Computes the score of the list of pairs in self.pairs
         """
-        paired=[]
+        paired=set()
         res = 0
         for el in self.pairs:
             res += self.grid.cost(el)
-            paired.append(el[0])
-            paired.append(el[1])
+            paired.add(el[0])
+            paired.add(el[1])
         for i in range(self.grid.n):
             for j in range(self.grid.m):
                 if (i, j) not in paired and not self.grid.is_forbidden(i, j):
@@ -93,8 +93,9 @@ class SolverBiparti(Solver):
         self.even_cells = even_cells
         self.odd_cells = odd_cells
         # Calculer le flot maximum (donc la taille de l'appariement maximum)
+        
         matching = self.ford_fulkerson(graph)
-        print(len(matching))
+        self.pairs = matching
         return matching
     
     
@@ -156,8 +157,6 @@ class SolverBiparti(Solver):
             for u in graph.get(odd, []):
                 if u in self.even_cells:
                     matching.append((u, odd))
-        
-        self.pairs = matching
         return matching
 
   
