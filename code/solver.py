@@ -1,3 +1,4 @@
+from collections import deque
 class Solver:
     """
     A solver class. 
@@ -97,51 +98,67 @@ class SolverBiparti(Solver):
         return matching
     
     
-    def dfs(self, graph, u, t, visited):
-        """Recherche récursive d'un chemin de u à t dans le graphe."""
-        if u == t:
-            return [t]
-        for v in graph.get(u, []):
-            if v not in visited:
-                visited.add(v)
-                path = self.dfs(graph, v, t, visited)
-                if path is not None:
-                    return [u] + path
+    def bfs(self, graph, s, t):
+        queue = deque([s])
+        # parents[v] mémorise le sommet précédent sur le chemin s->v
+        parents = {s: None}
+        
+        while queue:
+            u = queue.popleft()
+            
+            # On parcourt tous les voisins de u
+            for v in graph.get(u, []):
+                # Si on ne l’a pas déjà visité
+                if v not in parents:
+                    parents[v] = u
+                    # Si on vient d’atteindre t, on reconstitue le chemin et on le renvoie
+                    if v == t:
+                        return self._reconstruct_path(parents, s, t)
+                    # Sinon, on continue à l’explorer
+                    queue.append(v)
+        # Pas de chemin trouvé
         return None
+
+    def _reconstruct_path(self, parents, s, t):
+        """Reconstitue le chemin s->t à partir du dictionnaire parents."""
+        path = []
+        current = t
+        while current is not None:
+            path.append(current)
+            current = parents[current]
+        path.reverse()  # on l’a reconstruit à l’envers
+        return path
+
 
     def ford_fulkerson(self, graph):
         """
-        Calcule le flot maximum dans le réseau d'appariement biparti
-        en utilisant une recherche DFS pour trouver des chemins augmentants (algorithme Ford–Fulkerson).
-
-        Renvoie:
-            matching (list) : une liste de tuples (cellule_pair, cellule_impair) représentant l'appariement.
+        Calcule le flot maximum (matching maximum) dans le réseau biparti
+        en utilisant un BFS pour trouver les chemins augmentants (Edmond–Karp).
         """
-        max_flow = 0
-        # Recherche répétée d'un chemin augmentant de "s" à "t"
         while True:
-            visited = {"s"}
-            path = self.dfs(graph, "s", "t", visited)
+            path = self.bfs(graph, "s", "t")
             if path is None:
-                break  # plus de chemin augmentant trouvé
-            max_flow += 1
-            # Pour des capacités unitaires, le goulot d'étranglement est toujours 1.
-            # Mise à jour du graphe résiduel :
-            # On retire l'arête utilisée dans le sens direct et on ajoute l'arête inverse.
+                break  # plus de chemin augmentant
+            
+            # On a trouvé un chemin augmentant : on incrémente le flot de 1
+            # et on met à jour le graphe résiduel (ajout de l'arête inverse).
             for i in range(len(path) - 1):
                 u = path[i]
                 v = path[i + 1]
+                # on enlève l’arête u->v du graphe direct
                 graph[u].remove(v)
+                # on ajoute l’arête inverse v->u au graphe résiduel
                 graph.setdefault(v, []).append(u)
-        # Extraction de l'appariement :
-        # Dans le graphe résiduel, une arête de "v" (cellule impaire) vers "u" (cellule paire)
-        # signifie que la cellule paire u est appariée avec la cellule impaire v.
+        
+        # Extraction du matching final en regardant dans le graphe résiduel
         matching = []
         for odd in self.odd_cells:
             for u in graph.get(odd, []):
                 if u in self.even_cells:
                     matching.append((u, odd))
-        self.pairs=matching
+        
+        self.pairs = matching
         return matching
+
   
   
