@@ -32,7 +32,7 @@ class Solver:
         paired=set()
         res = 0
         for el in self.pairs:
-            res += self.grid.cost(el)
+            #res += self.grid.cost(el)
             paired.add(el[0])
             paired.add(el[1])
         for i in range(self.grid.n):
