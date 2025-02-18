@@ -54,8 +54,8 @@ class SolverGreedy(Solver):
         used = [] #les cases déjà visités
         res = []
         pairs = self.grid.all_pairs()
-        for i in range(len(self.grid.n)):
-            for j in range(len(self.grid.m)):
+        for i in range(self.grid.n):
+            for j in range(self.grid.m):
                 case = (i, j)
             if case not in used:
                 (k, l) = min([el for el in pairs if (el[0] == case and el[1] not in used) or (el[0] not in used and el[1] == case)], key=lambda x: self.grid.cost(x)) #pour chaque case du grid on l'associe à sa voisine légale qui minimise le cout

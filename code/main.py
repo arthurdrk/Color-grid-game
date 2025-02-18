@@ -12,6 +12,8 @@ grid = Grid.grid_from_file(file_name, read_values=False)
 solver = SolverBiparti(grid)
 solver.run()
 print("The final score of SolverBiparti is:", solver.score())
-print(solver.pairs)
-print(len(solver.pairs))
-grid.plot() 
+
+
+solver = SolverGreedy(grid)
+solver.run()
+print("The final score of SolverGreedy is:", solver.score())
