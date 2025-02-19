@@ -58,13 +58,17 @@ class SolverGreedy(Solver):
             for j in range(self.grid.m):
                 case = (i, j)
             if case not in used:
-                (k, l) = min([el for el in pairs if (el[0] == case and el[1] not in used) or (el[0] not in used and el[1] == case)], key=lambda x: self.grid.cost(x)) #pour chaque case du grid on l'associe à sa voisine légale qui minimise le cout
-                if k == case:
-                    res.append(case, l)
-                    used.append(l)
-                else:
-                    res.append(case, k)
-                    used.append(k)
+                used.append(case)
+                try : 
+                    (k, l) = min([el for el in pairs if (el[0] == case and el[1] not in used) or (el[0] not in used and el[1] == case)], key=lambda x: self.grid.cost(x)) #pour chaque case du grid on l'associe à sa voisine légale qui minimise le cout
+                    if k == case:
+                        res.append((case, l))
+                        used.append(l)
+                    else:
+                        res.append((case, k))
+                        used.append(k)
+                except ValueError :
+                    pass
         return res
         
     
