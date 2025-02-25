@@ -74,7 +74,6 @@ class Grid():
         """
         plt.figure(figsize=(8, 8))    
         plt.imshow(self.color, cmap=matplotlib.colors.ListedColormap(self.colors_list), interpolation='nearest')
-
         for i in range(self.n):
             for j in range(self.m):
                 color_idx = self.color[i][j]

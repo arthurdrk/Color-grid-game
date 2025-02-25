@@ -124,24 +124,21 @@ class SolverBiparti(Solver):
         queue = deque([s])
         # parents[v] mémorise le sommet précédent sur le chemin s->v
         parents = {s: None}
-        
         while queue:
             u = queue.popleft()
-            
             # On parcourt tous les voisins de u
             for v in graph.get(u, []):
-                # Si on ne l’a pas déjà visité
                 if v not in parents:
                     parents[v] = u
                     # Si on vient d’atteindre t, on reconstitue le chemin et on le renvoie
                     if v == t:
-                        return self._reconstruct_path(parents, s, t)
+                        return self.reconstruct_path(parents, s, t)
                     # Sinon, on continue à l’explorer
                     queue.append(v)
         # Pas de chemin trouvé
         return None
 
-    def _reconstruct_path(self, parents, s, t):
+    def reconstruct_path(self, parents, s, t):
         """Reconstitue le chemin s->t à partir du dictionnaire parents."""
         path = []
         current = t
@@ -161,8 +158,7 @@ class SolverBiparti(Solver):
             path = self.bfs(graph, "s", "t")
             if path is None:
                 break  # plus de chemin augmentant
-            
-            # On a trouvé un chemin augmentant : on incrémente le flot de 1
+            # on a trouvé un chemin augmentant : on incrémente le flot de 1
             # et on met à jour le graphe résiduel (ajout de l'arête inverse).
             for i in range(len(path) - 1):
                 u = path[i]
@@ -171,7 +167,7 @@ class SolverBiparti(Solver):
                 graph[u].remove(v)
                 # on ajoute l’arête inverse v->u au graphe résiduel
                 graph.setdefault(v, []).append(u)
-        
+
         # Extraction du matching final en regardant dans le graphe résiduel
         matching = []
         for odd in self.odd_cells:

@@ -26,6 +26,12 @@ class Test_GridLoading(unittest.TestCase):
         self.assertEqual(grid.m, 3)
         self.assertEqual(grid.color, [[0, 4, 3], [2, 1, 0]])
         self.assertEqual(grid.value, [[5, 8, 4], [11, 1, 3]])
+        
+class Test_is_forbidden(unittest.TestCase):
+    def test_grid1(self):
+        grid = Grid.grid_from_file("input/grid01.in",read_values=True)
+        self.assertEqual(grid.is_forbidden(0, 1), True)
+    
 
 if __name__ == '__main__':
     unittest.main()
