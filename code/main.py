@@ -2,8 +2,8 @@ from grid import Grid
 from solver import *
 
 
-data_path = "C:/Users/arthr/Desktop/ENSAE 1A/S2/Projet-Prog/Projet-de-programmation-1A/input/"
-file_name = data_path + "grid28.in"
+data_path = "C:/Users/arthr/Desktop/ENSAE 1A/S2/Projet-de-programmation-1A/input/"
+file_name = data_path + "grid27.in"
 
 grid = Grid.grid_from_file(file_name, read_values=False)
 
