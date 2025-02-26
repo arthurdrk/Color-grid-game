@@ -3,8 +3,6 @@ sys.path.append("code/")
 
 import unittest 
 from grid import Grid
-import numpy as np
-import matplotlib.pyplot as plt
 
 class Test_is_forbidden(unittest.TestCase):
     def test_grid0(self):
