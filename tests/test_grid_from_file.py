@@ -93,59 +93,82 @@ class Test_String_Repr(unittest.TestCase):
         
         
 class Test_Repr(unittest.TestCase):
-    def test_repr_representation(self):
-        grid = Grid(2, 3)
+    def test_repr(self):
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         self.assertEqual(repr(grid), "<grid.Grid: n=2, m=3>")
+    def test_repr(self):
+        grid = Grid.grid_from_file("input/grid03.in", read_values=False)
+        self.assertEqual(repr(grid), "<grid.Grid: n=4, m=8>")
+    def test_repr(self):
+        grid = Grid.grid_from_file("input/grid11.in", read_values=True)
+        self.assertEqual(repr(grid), "<grid.Grid: n=10, m=20>")
         
 class Test_Cost(unittest.TestCase):
     def test_equal_values(self):
-        grid = Grid(2, 2, [[0, 0], [0, 0]], [[5, 5], [5, 5]])
-        pair = ((0, 0), (0, 1))
-        self.assertEqual(grid.cost(pair), 0)
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        pair = ((0, 2), (0, 1)) 
+        self.assertEqual(self.grid.cost(pair), 0)  
         
     def test_different_values(self):
-        grid = Grid(2, 2, [[0, 0], [0, 0]], [[5, 8], [3, 6]])
-        pair = ((0, 0), (1, 0))
-        self.assertEqual(grid.cost(pair), 2)
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        pair = ((0, 0), (1, 0))  
+        self.assertEqual(grid.cost(pair), 4)  
         
-    def test_negative_difference(self):
-        grid = Grid(2, 2, [[0, 0], [0, 0]], [[3, 2], [7, 1]])
-        pair = ((0, 0), (1, 0))
-        self.assertEqual(grid.cost(pair), 4)
+    def test_with_forbidden_cell(self):
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        # Test with a black cell (although this shouldn't happen
+        # in practice since black cells are excluded from pairs)
+        pair = ((0, 1), (3, 0))
+        self.assertEqual(grid.cost(pair), 4) 
 
-class Test_All_Pairs(unittest.TestCase):
+class TestAllPairs(unittest.TestCase):
     def test_simple_grid(self):
-        grid = Grid(2, 2, [[0, 0], [0, 0]], [[1, 2], [3, 4]])
-        expected_pairs = [((0, 0), (0, 1)), ((0, 0), (1, 0)), ((0, 1), (1, 1)), ((1, 0), (1, 1))]
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
+        expected_pairs = [((0, 0), (0, 1)), ((0, 1), (0, 2)), ((1, 0), (1, 1)), ((1, 1), (1, 2))]
         self.assertEqual(sorted(grid.all_pairs()), sorted(expected_pairs))
-        
-    def test_with_forbidden_cells(self):
-        grid = Grid(2, 2, [[0, 4], [0, 0]], [[1, 2], [3, 4]])
-        expected_pairs = [((0, 0), (1, 0)), ((1, 0), (1, 1))]
-        self.assertEqual(sorted(grid.all_pairs()), sorted(expected_pairs))
-        
-    def test_with_color_restrictions(self):
-        grid = Grid(2, 2, [[1, 2], [3, 0]], [[1, 2], [3, 4]])
-        # Rouge(1) peut aller avec blanc(0), rouge(1), bleu(2)
-        # Bleu(2) peut aller avec blanc(0), rouge(1), bleu(2)
-        # Vert(3) peut aller avec blanc(0), vert(3)
-        expected_pairs = [((0, 0), (0, 1)), ((2, 0), (3, 0))]
-        actual_pairs = grid.all_pairs()
-        self.assertEqual(sorted(actual_pairs), sorted(expected_pairs))
 
-class Test_Vois(unittest.TestCase):
-    def test_center_cell(self):
-        grid = Grid(3, 3)
-        expected_neighbors = [(0, 1), (2, 1), (1, 0), (1, 2)]
-        self.assertEqual(sorted(grid.vois(1, 1)), sorted(expected_neighbors))
-        
-    def test_corner_cell(self):
-        grid = Grid(3, 3)
+    def test_with_forbidden_cells(self):
+        grid = Grid.grid_from_file("input/grid01.in", read_values=True)
+        expected_pairs = [((0, 0), (0, 1)), ((0, 1), (0, 2)), ((1, 0), (1, 1)), ((1, 1), (1, 2))]
+        self.assertEqual(sorted(grid.all_pairs()), sorted(expected_pairs))
+
+    def test_with_forbidden_cells2(self):
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        expected_pairs = [
+            ((0, 0), (0, 1)), ((0, 1), (0, 2)), ((0, 2), (0, 3)), ((0, 3), (0, 4)),
+            ((0, 4), (0, 5)), ((0, 5), (0, 6)), ((0, 6), (0, 7)), ((1, 0), (1, 1)),
+            ((1, 1), (1, 2)), ((1, 2), (1, 3)), ((1, 3), (1, 4)), ((1, 4), (1, 5)),
+            ((1, 5), (1, 6)), ((1, 6), (1, 7)), ((2, 0), (2, 1)), ((2, 1), (2, 2)),
+            ((2, 2), (2, 3)), ((2, 3), (2, 4)), ((2, 4), (2, 5)), ((2, 5), (2, 6)),
+            ((2, 6), (2, 7)), ((3, 0), (3, 1)), ((3, 1), (3, 2)), ((3, 2), (3, 3)),
+            ((3, 3), (3, 4)), ((3, 4), (3, 5)), ((3, 5), (3, 6)), ((3, 6), (3, 7))
+        ]
+        self.assertEqual(sorted(grid.all_pairs()), sorted(expected_pairs))
+
+
+class TestVois(unittest.TestCase):
+    def test_grid00_center_cell(self):
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
+        expected_neighbors = [(0, 1), (1, 0), (1, 2)]
+        self.assertEqual(sorted(grid.vois(0, 1)), sorted(expected_neighbors))
+
+    def test_grid00_corner_cell(self):
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         expected_neighbors = [(0, 1), (1, 0)]
         self.assertEqual(sorted(grid.vois(0, 0)), sorted(expected_neighbors))
-        
-    def test_edge_cell(self):
-        grid = Grid(3, 3)
+
+    def test_grid05_center_cell(self):
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        expected_neighbors = [(2, 3), (2, 5), (3, 4), (4, 4)]
+        self.assertEqual(sorted(grid.vois(3, 4)), sorted(expected_neighbors))
+
+    def test_grid05_corner_cell(self):
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        expected_neighbors = [(0, 1), (1, 0)]
+        self.assertEqual(sorted(grid.vois(0, 0)), sorted(expected_neighbors))
+
+    def test_grid05_edge_cell(self):
+        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
         expected_neighbors = [(0, 1), (2, 1), (1, 0)]
         self.assertEqual(sorted(grid.vois(1, 0)), sorted(expected_neighbors))
 
