@@ -18,7 +18,7 @@ class TestSolverScore(unittest.TestCase):
         self.assertEqual(solver.score(), 12)  # Correct score calculation
 
     def test_score_without_values(self):
-        grid = Grid.grid_from_file("input/grid01.in", read_values=False)
+        grid = Grid.grid_from_file("input/grid02.in", read_values=True)
         solver = Solver(grid)
         solver.pairs = [((0, 0), (1, 0)), ((1, 1), (1, 2))]
         self.assertEqual(solver.score(), 1)  # Correct score calculation
