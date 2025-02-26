@@ -21,6 +21,9 @@ class Solver:
         -----------
         grid : Grid
             The grid to be solved.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
         """
         self.grid = grid
         self.pairs = []
@@ -36,6 +39,9 @@ class Solver:
         --------
         int
             The computed score.
+
+        Time Complexity: O(n * m) 
+        Space Complexity: O(p) where p is the number of pairs
         """
         paired = set()  # Set of paired cells
         res = 0 # The score
@@ -54,7 +60,6 @@ class Solver:
 
         return res
 
-
 class SolverEmpty(Solver):
     """
     A subclass of Solver that does not implement any solving logic.
@@ -65,7 +70,7 @@ class SolverEmpty(Solver):
         Placeholder method for running the solver. Does nothing.
         """
         pass
-    
+
 class SolverGreedy(Solver):
     """
     A subclass of Solver that implements a greedy algorithm to find pairs.
@@ -79,14 +84,15 @@ class SolverGreedy(Solver):
         --------
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         used = set() # Cells that have already been visited
         res = []
         pairs = self.grid.all_pairs()
 
         # Create a dictionary to quickly access pairs by cell
-        from collections import defaultdict
-
         pair_dict = defaultdict(list)
         for pair in pairs:
             pair_dict[pair[0]].append(pair)
@@ -111,10 +117,8 @@ class SolverGreedy(Solver):
                                 used.add(best_pair[0])
                         except ValueError:
                             pass
-        self.pairs=res                    
+        self.pairs=res
         return res
-    
-
 
 class SolverFordFulkerson(Solver):
     """
@@ -129,6 +133,9 @@ class SolverFordFulkerson(Solver):
         --------
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
+
+        Time Complexity: O(E * V) where E is the number of edges and V is the number of vertices
+        Space Complexity: O(E + V)
         """
         graph = defaultdict(list)
         even_cells = set()
@@ -174,6 +181,9 @@ class SolverFordFulkerson(Solver):
         --------
         list
             The path from 's' to 't' if found, otherwise None.
+
+        Time Complexity: O(V + E)
+        Space Complexity: O(V)
         """
         queue = deque([s])
         parents = {s: None}
@@ -206,6 +216,9 @@ class SolverFordFulkerson(Solver):
         --------
         list
             The reconstructed path from 's' to 't'.
+
+        Time Complexity: O(V)
+        Space Complexity: O(V)
         """
         path = []
         current = t
@@ -227,6 +240,9 @@ class SolverFordFulkerson(Solver):
         --------
         list[tuple[tuple[int, int], tuple[int, int]]]
             The maximum matching as a list of pairs of cells.
+
+        Time Complexity: O(E * V)
+        Space Complexity: O(E + V)
         """
         while True:
             path = self.bfs(graph, "s", "t")

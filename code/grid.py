@@ -1,6 +1,3 @@
-"""
-This is the grid module. It contains the Grid class and its associated methods.
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
@@ -39,6 +36,9 @@ class Grid:
             The grid cells colors. Default is empty, which initializes each cell with color 0 (white).
         value : list[list[int]], optional
             The grid cells values. Default is empty, which initializes each cell with value 1.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         self.n = n
         self.m = m
@@ -58,6 +58,9 @@ class Grid:
         --------
         str
             A string describing the grid's colors and values.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         output = f"The grid is {self.n} x {self.m}. It has the following colors:\n"
         for i in range(self.n):
@@ -75,12 +78,18 @@ class Grid:
         --------
         str
             A string representation of the grid with the number of rows and columns.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
         """
         return f"<grid.Grid: n={self.n}, m={self.m}>"
 
     def plot(self) -> None:
         """
         Plots a visual representation of the grid using matplotlib.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         plt.figure(figsize=(8, 8))
         plt.imshow(self.color, cmap=matplotlib.colors.ListedColormap(self.colors_list), interpolation='nearest')
@@ -108,6 +117,9 @@ class Grid:
         --------
         bool
             True if the cell (i, j) is black, False otherwise.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
         """
         return self.color[i][j] == 4
 
@@ -124,6 +136,9 @@ class Grid:
         --------
         int
             The cost of the pair, defined as the absolute value of the difference between their values.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
         """
         return abs(self.value[pair[0][0]][pair[0][1]] - self.value[pair[1][0]][pair[1][1]])
 
@@ -135,6 +150,9 @@ class Grid:
         --------
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of neighboring cells that are allowed to be paired.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         res = []
         allowed = {
@@ -175,9 +193,12 @@ class Grid:
         --------
         list[tuple[int, int]]
             A list of neighboring cell coordinates.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
         """
         res = []
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)] 
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dx, dy in directions:
             k, l = i + dx, j + dy
             if 0 <= k < self.n and 0 <= l < self.m:  # Check grid boundaries
@@ -203,6 +224,9 @@ class Grid:
         --------
         Grid
             The initialized Grid object.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         with open(file_name, "r") as file:
             n, m = map(int, file.readline().split())
