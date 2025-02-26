@@ -11,9 +11,19 @@ class Test_Cost(unittest.TestCase):
         self.assertEqual(grid.cost(pair), 0)  
         
     def test_different_values(self):
-        grid = Grid.grid_from_file("input/grid05.in", read_values=True)
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
+        pair = ((0, 0), (0, 1))  
+        self.assertEqual(grid.cost(pair), 3)
+    
+    def test_equal_values2(self):
+        grid = Grid.grid_from_file("input/grid02.in", read_values=True)
         pair = ((0, 0), (1, 0))  
-        self.assertEqual(grid.cost(pair), 4)  
+        self.assertEqual(grid.cost(pair), 0)   
+    
+    def test_different_values2(self):
+        grid = Grid.grid_from_file("input/grid01.in", read_values=True)
+        pair = ((0, 0), (1, 0))  
+        self.assertEqual(grid.cost(pair), 6)   
         
     def test_with_forbidden_cell(self):
         grid = Grid.grid_from_file("input/grid05.in", read_values=True)

@@ -40,7 +40,7 @@ class Solver:
         int
             The computed score.
 
-        Time Complexity: O(n * m) 
+        Time Complexity: O(n * m)
         Space Complexity: O(p) where p is the number of pairs
         """
         paired = set()  # Set of paired cells
@@ -70,6 +70,50 @@ class SolverEmpty(Solver):
         Placeholder method for running the solver. Does nothing.
         """
         pass
+
+"""
+Question 4, SolverGreedy:
+
+Complexity of SolverGreedy:
+   - Time Complexity: O(n * m)
+     The `run` method iterates over each cell in the grid, checking its neighbors to find the best pair.
+     The dominant term is iterating over all cells, which is O(n * m).
+   - Space Complexity: O(n * m)
+     The space complexity is O(n * m) due to storing the pairs and the results.
+
+Optimality:
+   - The greedy algorithm pairs cells based on minimizing the immediate cost without considering the global optimum.
+   - This approach can lead to suboptimal solutions, especially in grids where local decisions affect the overall outcome significantly.
+   - Consider the following 3x3 grid:
+
+     Colors:
+     [
+       [0, 1, 0],  # Row 1: White, Red, White
+       [1, 2, 1],  # Row 2: Red, Blue, Red
+       [0, 1, 0]   # Row 3: White, Red, White
+     ]
+
+     Values:
+     [
+       [1, 2, 1],  # Row 1
+       [2, 3, 2],  # Row 2
+       [1, 2, 1]   # Row 3
+     ]
+     - The greedy algorithm might pair (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
+     - Optimal Solution: Pair (0, 0) with (1, 0), (0, 1) with (0, 2), (1, 1) with (1, 2), and (2, 0) with (2, 1), achieving a lower total cost.
+
+Possible solution (brute force) and complexity:
+   - A possible solution (brute force) would be to consider all possible pairings and selecting the one with the minimum score.
+     - Time Complexity: O(2^(n * m))
+       -> In the worst case, each cell could potentially be paired with any of its neighbors, leading to an exponential number of configurations.
+     - Space Complexity: O(2^(n * m))
+       Due to the need to store all possible configurations of pairs.
+
+Other possible solutions:
+   - Bipartite Matching (e.g., Ford-Fulkerson):
+     This approach can find an optimal matching in polynomial time, specifically O(E * V), where E is the number of edges and V is the number of vertices in the bipartite graph representation of the grid.
+     It provides a more global perspective compared to the greedy algorithm and can handle complex configurations better.
+"""
 
 class SolverGreedy(Solver):
     """
@@ -119,6 +163,7 @@ class SolverGreedy(Solver):
                             pass
         self.pairs=res
         return res
+
 
 class SolverFordFulkerson(Solver):
     """
