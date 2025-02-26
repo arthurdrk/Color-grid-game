@@ -116,7 +116,7 @@ class SolverGreedy(Solver):
     
 
 
-class SolverBiparti(Solver):
+class SolverFordFulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.
     """

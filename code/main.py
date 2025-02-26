@@ -7,9 +7,9 @@ file_name = data_path + "grid27.in"
 
 grid = Grid.grid_from_file(file_name, read_values=False)
 
-solver = SolverBiparti(grid)
+solver = SolverFordFulkerson(grid)
 solver.run()
-print("The final score of SolverBiparti is:", solver.score())
+print("The final score of SolverFordFulkerson is:", solver.score())
 
 
 solver = SolverGreedy(grid)
