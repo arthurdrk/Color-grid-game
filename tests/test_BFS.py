@@ -2,12 +2,11 @@ import sys
 sys.path.append("code/")
 
 import unittest
-from collections import defaultdict, deque
 from solver import SolverFordFulkerson
 
 class TestBFS(unittest.TestCase):
-
-    def setUp(self):
+    
+    def setup(self):
         self.solver = SolverFordFulkerson(None)
 
     def test_bfs_path_found(self):

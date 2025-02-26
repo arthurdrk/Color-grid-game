@@ -180,7 +180,7 @@ class SolverFordFulkerson(Solver):
 
         while queue:
             u = queue.popleft()
-            for v in graph[u]:
+            for v in graph.get(u, []):
                 if v not in parents:
                     parents[v] = u
                     if v == t:
