@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, defaultdict
 from grid import Grid
 
 class Solver:
@@ -29,26 +29,31 @@ class Solver:
         """
         Computes the score of the list of pairs in self.pairs.
 
-        The score is calculated as the sum of the values of unpaired cells,
-        excluding black cells.
+        The score is calculated as the sum of the values of unpaired cells
+        excluding black cells, plus the sum of the cost of each pair of cells.
 
         Returns:
         --------
         int
             The computed score.
         """
-        paired = set()
-        res = 0
+        paired = set()  # Set of paired cells
+        res = 0 # The score
+
+        # Add all paired cells to the set and calculate the cost of each pair
         for pair in self.pairs:
             paired.add(pair[0])
             paired.add(pair[1])
+            res += self.grid.cost(pair)
 
+        # Calculate the sum of values for unpaired cells that are not black
         for i in range(self.grid.n):
             for j in range(self.grid.m):
                 if (i, j) not in paired and not self.grid.is_forbidden(i, j):
                     res += self.grid.value[i][j]
 
         return res
+
 
 class SolverEmpty(Solver):
     """
@@ -60,7 +65,7 @@ class SolverEmpty(Solver):
         Placeholder method for running the solver. Does nothing.
         """
         pass
-
+    
 class SolverGreedy(Solver):
     """
     A subclass of Solver that implements a greedy algorithm to find pairs.
@@ -75,31 +80,41 @@ class SolverGreedy(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
         """
-        used = []  # Cells that have already been visited
+        used = set() # Cells that have already been visited
         res = []
         pairs = self.grid.all_pairs()
+
+        # Create a dictionary to quickly access pairs by cell
+        from collections import defaultdict
+
+        pair_dict = defaultdict(list)
+        for pair in pairs:
+            pair_dict[pair[0]].append(pair)
+            pair_dict[pair[1]].append(pair)
 
         for i in range(self.grid.n):
             for j in range(self.grid.m):
                 case = (i, j)
                 if case not in used:
-                    used.append(case)
-                    try:
+                    used.add(case)
+                    if case in pair_dict:
                         # Find the neighboring cell that minimizes the cost
-                        k, l = min(
-                            [el for el in pairs if (el[0] == case and el[1] not in used) or (el[0] not in used and el[1] == case)],
-                            key=lambda x: self.grid.cost(x)
-                        )
-                        if k == case:
-                            res.append((case, l))
-                            used.append(l)
-                        else:
-                            res.append((case, k))
-                            used.append(k)
-                    except ValueError:
-                        pass
-
+                        try:
+                            best_pair = min(
+                                (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
+                                key=lambda x: self.grid.cost(x))
+                            if best_pair[0] == case:
+                                res.append((case, best_pair[1]))
+                                used.add(best_pair[1])
+                            else:
+                                res.append((case, best_pair[0]))
+                                used.add(best_pair[0])
+                        except ValueError:
+                            pass
+        self.pairs=res                    
         return res
+    
+
 
 class SolverBiparti(Solver):
     """
@@ -115,40 +130,32 @@ class SolverBiparti(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
         """
-        graph = {}
+        graph = defaultdict(list)
         even_cells = set()
         odd_cells = set()
 
         # Add edges between cells (direction: from even to odd)
         for cell1, cell2 in self.grid.all_pairs():
-            if sum(cell1) % 2 == 0:
-                even = cell1
-                odd = cell2
-            else:
-                even = cell2
-                odd = cell1
+            even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.add(even)
             odd_cells.add(odd)
-            graph.setdefault(even, []).append(odd)
+            graph[even].append(odd)
 
         # Add edges from source "s" to even cells
         for even in even_cells:
-            graph.setdefault("s", []).append(even)
-            graph.setdefault(even, [])
+            graph["s"].append(even)
 
         # Add edges from odd cells to sink "t"
         for odd in odd_cells:
-            graph.setdefault(odd, []).append("t")
-        graph.setdefault("t", [])
+            graph[odd].append("t")
 
-        # Store sets of cells for later extraction of the matching
+        # Sets of cells for later extraction of the matching
         self.even_cells = even_cells
         self.odd_cells = odd_cells
 
-        # Calculate the maximum flow (thus the size of the maximum matching)
-        matching = self.ford_fulkerson(graph)
-        self.pairs = matching
-        return matching
+        # Get optimal pairs
+        self.pairs=self.ford_fulkerson(graph)
+        return self.pairs
 
     def bfs(self, graph: dict, s: str, t: str) -> list:
         """
@@ -173,7 +180,7 @@ class SolverBiparti(Solver):
 
         while queue:
             u = queue.popleft()
-            for v in graph.get(u, []):
+            for v in graph[u]:
                 if v not in parents:
                     parents[v] = u
                     if v == t:
@@ -205,8 +212,7 @@ class SolverBiparti(Solver):
         while current is not None:
             path.append(current)
             current = parents[current]
-        path.reverse()
-        return path
+        return path[::-1]
 
     def ford_fulkerson(self, graph: dict) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
@@ -226,15 +232,8 @@ class SolverBiparti(Solver):
             path = self.bfs(graph, "s", "t")
             if path is None:
                 break
-            for i in range(len(path) - 1):
-                u = path[i]
-                v = path[i + 1]
+            for u, v in zip(path, path[1:]):
                 graph[u].remove(v)
-                graph.setdefault(v, []).append(u)
+                graph[v].append(u)
 
-        matching = []
-        for odd in self.odd_cells:
-            for u in graph.get(odd, []):
-                if u in self.even_cells:
-                    matching.append((u, odd))
-        return matching
+        return [(u, odd) for odd in self.odd_cells for u in graph[odd] if u in self.even_cells]

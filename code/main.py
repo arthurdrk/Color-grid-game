@@ -8,7 +8,6 @@ file_name = data_path + "grid27.in"
 grid = Grid.grid_from_file(file_name, read_values=False)
 
 
-
 solver = SolverBiparti(grid)
 solver.run()
 print("The final score of SolverBiparti is:", solver.score())

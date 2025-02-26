@@ -42,10 +42,10 @@ class Grid:
         """
         self.n = n
         self.m = m
-        if color is None:
+        if color is None or len(color) == 0:
             color = [[0 for _ in range(m)] for _ in range(n)]
         self.color = color
-        if value is None:
+        if value is None or len(value) == 0:
             value = [[1 for _ in range(m)] for _ in range(n)]
         self.value = value
         self.colors_list = ['w', 'r', 'b', 'g', 'k']
@@ -152,7 +152,7 @@ class Grid:
                 c1 = self.color[i][j]
                 for dx, dy in directions:
                     k, l = i + dx, j + dy
-                    if 0 <= k < self.n and 0 <= l < self.m:
+                    if 0 <= k < self.n and 0 <= l < self.m: # Check grid boundaries
                         if self.is_forbidden(k, l):
                             continue
                         c2 = self.color[k][l]
@@ -177,7 +177,7 @@ class Grid:
             A list of neighboring cell coordinates.
         """
         res = []
-        directions = [(-1, 0), (+1, 0), (0, -1), (0, +1)]  # Up, down, left, right
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)] 
         for dx, dy in directions:
             k, l = i + dx, j + dy
             if 0 <= k < self.n and 0 <= l < self.m:  # Check grid boundaries
@@ -195,7 +195,7 @@ class Grid:
             Name of the file to load. The file must be formatted as follows:
             - The first line contains "n m".
             - The next n lines contain m integers representing the colors of the corresponding cells.
-            - The next n lines (optional) contain m integers representing the values of the corresponding cells.
+            - The next n lines contain m integers representing the values of the corresponding cells.
         read_values : bool, optional
             Indicates whether to read values after reading the colors. Requires the file to have 2n+1 lines.
 
