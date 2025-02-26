@@ -136,15 +136,16 @@ class Grid():
     
     def vois(self, i, j):
         """
-        retourne la liste des voisins de la case (i, j)
+        Retourne la liste des voisins de la case (i, j).
         """
         res = []
-        var = [(-1, 0), (+1, 0), (0, -1), (0, +1)]
+        var = [(-1, 0), (+1, 0), (0, -1), (0, +1)]  # Haut, bas, gauche, droite
         for ele in var:
-            k, l = i+ele[0], j+ele[1]
-            if k >= 0 and k <= self.n-1 and l >= 0 and l <= self.m-1:
-                res.append((k,  l))
+            k, l = i + ele[0], j + ele[1]
+            if 0 <= k < self.n and 0 <= l < self.m:  # Vérifie les limites de la grille
+                res.append((k, l))
         return res
+
 
 
     @classmethod
