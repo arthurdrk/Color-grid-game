@@ -13,9 +13,9 @@ CELL_SIZE = WINDOW_SIZE // 3
 # Couleurs
 COLORS = {
     0: (255, 255, 255),  # Blanc
-    1: (255, 0, 0),      # Rouge
-    2: (0, 0, 255),      # Bleu
-    3: (0, 255, 0),      # Vert
+    1: (200, 0, 0),      # Rouge
+    2: (0, 0, 200),      # Bleu
+    3: (0, 200, 0),      # Vert
     4: (0, 0, 0)         # Noir
 }
 
