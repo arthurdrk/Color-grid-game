@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 from grid import Grid
-from solver import Solver, SolverGreedy
+from solver import Solver, SolverGeneral
 
 # Initialisation de Pygame
 pygame.init()
@@ -228,9 +228,9 @@ def main():
     # Charger la grille sélectionnée
     grid = Grid.grid_from_file(os.path.join(data_path, selected_grid), read_values=True)
     solver = Solver(grid)
-    solver_greedy = SolverGreedy(grid)
-    solver_greedy.run()
-    greedy_score = solver_greedy.score()
+    solver_general = SolverGeneral(grid)
+    solver_general.run()
+    general_score = solver_general.score()
 
     # Calculer la taille de la fenêtre en fonction de la grille
     cell_size = 60
@@ -287,7 +287,7 @@ def main():
         if not any(pair_is_valid(pair, solver.pairs, grid) for pair in grid.all_pairs()):
             if not game_over:
                 game_over = True
-                if solver.score() > greedy_score:
+                if solver.score() > general_score:
                     draw_end_screen(screen, "You lost!", (200, 0, 0), window_size)
                 else:
                     draw_end_screen(screen, "You won!", (0, 150, 0), window_size)
