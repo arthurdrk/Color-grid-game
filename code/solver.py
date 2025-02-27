@@ -74,7 +74,7 @@ class SolverEmpty(Solver):
 """
 Question 4, SolverGreedy:
 
-Complexity of SolverGreedy:
+1. Complexity of SolverGreedy:
    - Time Complexity: O(n * m)
      The `run` method iterates over each cell in the grid, checking its neighbors to find the best pair.
      The dominant term is iterating over all cells, which is O(n * m).
