@@ -299,8 +299,6 @@ class SolverFordFulkerson(Solver):
 
         return [(u, odd) for odd in self.odd_cells for u in graph[odd] if u in self.even_cells]
 
-from collections import deque
-
 class Edge:
     def __init__(self, to, rev, capacity, cost):
         self.to = to

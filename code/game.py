@@ -46,7 +46,6 @@ def draw_title(screen, window_size):
         screen.blit(text, (current_x, 20))
         current_x += text.get_width()  # Mettre à jour la position x pour la lettre suivante
 
-
 # Fonction pour dessiner les options de grille avec défilement
 def draw_grid_options(screen, window_size, scroll, scroll_bar_rect, scroll_bar_height):
     font = pygame.font.Font(None, 36)
@@ -78,7 +77,6 @@ def draw_grid_options(screen, window_size, scroll, scroll_bar_rect, scroll_bar_h
     pygame.draw.rect(screen, (150, 150, 150), scroll_bar_rect.inflate(0, scroll_bar_height - scroll_bar_rect.height))
 
 # Fonction pour dessiner la grille
-# Fonction pour dessiner la grille
 def draw_grid(screen, grid, solver, cell_size):
     for i in range(grid.n):
         for j in range(grid.m):
@@ -94,7 +92,6 @@ def draw_grid(screen, grid, solver, cell_size):
         start = (pair[0][1] * cell_size + cell_size // 2, pair[0][0] * cell_size + cell_size // 2)
         end = (pair[1][1] * cell_size + cell_size // 2, pair[1][0] * cell_size + cell_size // 2)
         pygame.draw.line(screen, COLORS[5], start, end, 4)  # Utiliser COLORS[5] pour jaune foncé et épaisseur 4
-
 
 # Fonction pour afficher le score
 def draw_score(screen, solver, window_size, cell_size):
@@ -117,8 +114,6 @@ def draw_end_screen(screen, message, color, window_size):
     pygame.display.flip()
     pygame.time.wait(2000)  # Réduire le délai à 2 secondes
 
-
-
 # Fonction pour afficher un message d'erreur
 def draw_error_message(screen, message, window_size):
     font = pygame.font.Font(None, 48)  # Même taille que le score
@@ -135,10 +130,22 @@ def draw_restart_button(screen, window_size):
     text = font.render("Restart", True, (255, 255, 255))
 
     # Calculer la position centrée pour le texte
-    button_rect = pygame.Rect(window_size[0] - 220, window_size[1] - 70, 100, 40)
+    button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
     text_rect = text.get_rect(center=button_rect.center)
 
     pygame.draw.rect(screen, (50, 50, 50), button_rect)  # Gris foncé
+    screen.blit(text, text_rect.topleft)
+
+# Fonction pour dessiner le bouton Solution
+def draw_solution_button(screen, window_size):
+    font = pygame.font.Font(None, 36)
+    text = font.render("Solution", True, (255, 255, 255))
+
+    # Calculer la position centrée pour le texte
+    button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)  # Augmenter la largeur
+    text_rect = text.get_rect(center=button_rect.center)
+
+    pygame.draw.rect(screen, (0, 200, 0), button_rect)  # Vert
     screen.blit(text, text_rect.topleft)
 
 # Fonction pour dessiner le bouton Menu
@@ -239,6 +246,7 @@ def main():
 
     selected_cells = []
     game_over = False
+    show_solution = False
 
     while True:
         for event in pygame.event.get():
@@ -248,49 +256,55 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 if y >= grid.n * cell_size:  # Ignorer les clics en dessous de la grille
-                    if window_size[0] - 220 <= x <= window_size[0] - 120 and window_size[1] - 70 <= y <= window_size[1] - 30:
+                    if window_size[0] - 330 <= x <= window_size[0] - 230 and window_size[1] - 70 <= y <= window_size[1] - 30:
                         # Réinitialiser les paires appariées
                         solver.pairs = []
                         selected_cells = []
                         game_over = False
+                        show_solution = False
+                        continue
+                    elif window_size[0] - 270 <= x <= window_size[0] - 120 and window_size[1] - 70 <= y <= window_size[1] - 30:
+                        # Afficher la solution optimale
+                        solver.pairs = solver_general.pairs
+                        show_solution = True
                         continue
                     elif window_size[0] - 110 <= x <= window_size[0] - 10 and window_size[1] - 70 <= y <= window_size[1] - 30:
                         # Retourner au menu
                         main()
                         return
-                i, j = y // cell_size, x // cell_size
-                if grid.is_forbidden(i, j):
-                    draw_error_message(screen, "You cannot pair these two cells", window_size)
-                    selected_cells = []  # Réinitialiser la sélection
-                elif (i, j) not in [cell for pair in solver.pairs for cell in pair]:
-                    selected_cells.append((i, j))
-                    if len(selected_cells) == 2:
-                        # Vérifier si la paire est valide
-                        if selected_cells[1] in grid.vois(selected_cells[0][0], selected_cells[0][1]):
-                            color1, color2 = grid.color[selected_cells[0][0]][selected_cells[0][1]], grid.color[selected_cells[1][0]][selected_cells[1][1]]
-                            if can_pair(color1, color2):
-                                solver.pairs.append((selected_cells[0], selected_cells[1]))
+                if not show_solution:
+                    i, j = y // cell_size, x // cell_size
+                    if grid.is_forbidden(i, j):
+                        draw_error_message(screen, "You cannot pair these two cells", window_size)
+                        selected_cells = []  # Réinitialiser la sélection
+                    elif (i, j) not in [cell for pair in solver.pairs for cell in pair]:
+                        selected_cells.append((i, j))
+                        if len(selected_cells) == 2:
+                            # Vérifier si la paire est valide
+                            if selected_cells[1] in grid.vois(selected_cells[0][0], selected_cells[0][1]):
+                                color1, color2 = grid.color[selected_cells[0][0]][selected_cells[0][1]], grid.color[selected_cells[1][0]][selected_cells[1][1]]
+                                if can_pair(color1, color2):
+                                    solver.pairs.append((selected_cells[0], selected_cells[1]))
+                                else:
+                                    draw_error_message(screen, "You cannot pair these two cells", window_size)
                             else:
                                 draw_error_message(screen, "You cannot pair these two cells", window_size)
-                        else:
-                            draw_error_message(screen, "You cannot pair these two cells", window_size)
-                        selected_cells = []
+                            selected_cells = []
 
         screen.fill((200, 200, 200))
         draw_grid(screen, grid, solver, cell_size)
         draw_score(screen, solver, window_size, cell_size)
         draw_restart_button(screen, window_size)
+        draw_solution_button(screen, window_size)
         draw_menu_button(screen, window_size)
         pygame.display.flip()
 
         # Vérifier s'il reste des paires valides à sélectionner
-        if not any(pair_is_valid(pair, solver.pairs, grid) for pair in grid.all_pairs()):
+        if not show_solution and not any(pair_is_valid(pair, solver.pairs, grid) for pair in grid.all_pairs()):
             if not game_over:
                 game_over = True
                 if solver.score() > general_score:
                     draw_end_screen(screen, "You lost!", (200, 0, 0), window_size)
-                else:
-                    draw_end_screen(screen, "You won!", (0, 150, 0), window_size)
                 # Réinitialiser le jeu après 2 secondes
                 solver.pairs = []
                 selected_cells = []
