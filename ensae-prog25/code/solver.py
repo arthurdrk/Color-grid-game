@@ -299,6 +299,12 @@ class SolverFordFulkerson(Solver):
 
         return [(u, odd) for odd in self.odd_cells for u in graph[odd] if u in self.even_cells]
 
+
+################################################################################
+#                               WORK IN PROGRESS                              #
+################################################################################
+
+
 class Edge:
     def __init__(self, to, rev, capacity, cost):
         self.to = to

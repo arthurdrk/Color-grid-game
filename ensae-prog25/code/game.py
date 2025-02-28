@@ -4,6 +4,12 @@ import os
 from grid import Grid
 from solver import Solver, SolverGeneral
 
+
+################################################################################
+#                               WORK IN PROGRESS                              #
+################################################################################
+
+
 pygame.init()
 
 class UIManager:
