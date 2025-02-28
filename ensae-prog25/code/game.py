@@ -140,9 +140,10 @@ class UIManager:
         self.screen.blit(text, text_rect.topleft)
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
-        font_title = pygame.font.Font(None, 48)
+        font = pygame.font.Font(None, 72)
+        font_title = pygame.font.Font(None, 72)  # Match the size of "ColorGrid"
         font_content = pygame.font.Font(None, 24)
-        rules = rules = [
+        rules = [
             "Consider a grid of size n × m where n ≥ 1 and m ≥ 2 are integers representing the number",
             "of rows and columns respectively. Cells have coordinates (i,j) where:",
             "i in {0,...,n−1} (row index), j in {0,...,m−1} (column index).",
@@ -168,19 +169,46 @@ class UIManager:
 
         self.screen.fill((255, 255, 255))
 
-        # Draw title background and text
-        title_rect = pygame.Rect(20, 20, window_size[0] - 40, 50)
+        # Draw title background
+        title_rect = pygame.Rect(0, 20, window_size[0], 72)
         pygame.draw.rect(self.screen, (255, 255, 255), title_rect)
-        title_surface = font_title.render("Game Rules", True, (0, 0, 0))
-        self.screen.blit(title_surface, (20, 20))
+
+        # Define colors for each letter in "Game Rules"
+        title_colors = [
+            (0, 0, 0),  # G
+            (200, 0, 0),  # a
+            (0, 0, 200),  # m
+            (0, 200, 0),  # e
+            (0, 0, 0),  # space
+            (200, 0, 0),  # R
+            (0, 0, 200),  # u
+            (0, 200, 0),  # l
+            (200, 0, 0),  # e
+            (0, 0, 200)   # s
+        ]
+
+        # Render each character of the title with its specified color
+        title = "Game Rules"
+        total_width = sum(font.size(char)[0] for char in title)
+        title_surface = pygame.Surface(title_rect.size, pygame.SRCALPHA)
+        x_offset = (window_size[0] - total_width) // 2
+        for i, char in enumerate(title):
+            color = title_colors[i]
+            char_surface = font_title.render(char, True, color)
+            title_surface.blit(char_surface, (x_offset, 0))
+            x_offset += char_surface.get_width()
+
+        # Center the title
+        title_x = (window_size[0] - title_surface.get_width()) // 2
+        self.screen.blit(title_surface, (title_x, 20))
 
         # Set clipping area for content (below title and above buttons)
-        content_clip_top = 70
+        content_clip_top = 92  # Adjusted for the new title size
         content_clip_bottom = window_size[1] - 70  # Adjust based on button height
         content_clip_rect = pygame.Rect(0, content_clip_top, window_size[0], content_clip_bottom - content_clip_top)
         self.screen.set_clip(content_clip_rect)
-        y_offset = 70
-        
+        y_offset = 92
+
         for line in rules:
             formatted_line = ''.join(line)
             if line.startswith("Objective:"):
@@ -202,6 +230,7 @@ class UIManager:
         self.draw_menu_button(window_size, False)
 
         pygame.display.flip()
+
 
 
 class GridManager:
