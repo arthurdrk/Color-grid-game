@@ -6,7 +6,7 @@ ColorGrid is a programming project developed as part of the first-year curriculu
 
 ## Problem Description
 
-Consider an $\( n \times m \)$ grid, where $\( n \geq 1 \)$ and $\( m \geq 2 \)$ are integers representing the number of rows and columns, respectively. Each cell in the grid has coordinates $\((i, j)\)$ where $\( i \in \{0, \ldots, n-1\} \)$ is the row index and $\( j \in \{0, \ldots, m-1\} \)$ is the column index. Each cell has two attributes:
+Consider an $'\( n \times m \)'$ grid, where $\( n \geq 1 \)$ and $\( m \geq 2 \)$ are integers representing the number of rows and columns, respectively. Each cell in the grid has coordinates $\((i, j)\)$ where $\( i \in \{0, \ldots, n-1\} \)$ is the row index and $\( j \in \{0, \ldots, m-1\} \)$ is the column index. Each cell has two attributes:
 
 - **Color $\( c(i, j) \)$**: An integer in $\(\{0, 1, 2, 3, 4\}\)$ corresponding to a color:
   - 0: White (`'w'`)
