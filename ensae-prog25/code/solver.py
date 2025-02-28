@@ -371,38 +371,31 @@ class SolverGeneral(Solver):
             A tuple containing two lists. The first list contains the row indices
             and the second list contains the column indices of the optimal assignment.
 
-        Raises:
-        -------
-        ValueError
-            If the cost matrix is not square.
-
         Time Complexity: O(n^3)
         Space Complexity: O(n^2)
         """
         cost_matrix = np.array(cost_matrix)
         n, m = cost_matrix.shape
-        if n != m:
-            raise ValueError("Cost matrix must be square.")
-
-        # Step 1: Subtract the row minimums from each row.
+        
+        # Subtract the row minimums from each row.
         row_mins = np.min(cost_matrix, axis=1)
         cost_matrix = cost_matrix - row_mins[:, np.newaxis]
 
-        # Step 2: Subtract the column minimums from each column.
+        # Subtract the column minimums from each column.
         col_mins = np.min(cost_matrix, axis=0)
         cost_matrix = cost_matrix - col_mins
 
-        # Step 3: Cover all zeros in the resulting matrix using a minimum number of lines.
+        # Cover all zeros in the resulting matrix using a minimum number of lines.
         row_covered = np.zeros(n, dtype=bool)
         col_covered = np.zeros(n, dtype=bool)
         zero_locations = np.argwhere(cost_matrix == 0)
 
         while True:
-            # Step 4: Check if optimal assignment is possible.
+            # Check if optimal assignment is possible.
             if np.all(row_covered) or np.all(col_covered):
                 break
 
-            # Step 5: Find a zero not covered by a line.
+            # Find a zero not covered by a line.
             zero_row, zero_col = zero_locations[0]
             if not row_covered[zero_row] and not col_covered[zero_col]:
                 row_covered[zero_row] = True
@@ -410,19 +403,19 @@ class SolverGeneral(Solver):
                 zero_locations = zero_locations[1:]
                 continue
 
-            # Step 6: Find the smallest uncovered value.
+            # Find the smallest uncovered value.
             uncovered_values = cost_matrix.copy()
             uncovered_values[row_covered, :] = np.inf
             uncovered_values[:, col_covered] = np.inf
             min_uncovered_value = np.min(uncovered_values)
 
-            # Step 7: Subtract the minimum uncovered value from all uncovered elements and
+            # Subtract the minimum uncovered value from all uncovered elements and
             # add it to all elements covered by two lines.
             cost_matrix[~row_covered, :] -= min_uncovered_value
             cost_matrix[:, ~col_covered] -= min_uncovered_value
             cost_matrix[row_covered, col_covered] += min_uncovered_value
 
-        # Step 8: Sequence of index assignments.
+        # Sequence of index assignments.
         row_indices = []
         col_indices = []
         for row in range(n):
