@@ -304,36 +304,44 @@ class SolverFordFulkerson(Solver):
 ################################################################################
 
 class SolverGeneral(Solver):
-    """
-    A subclass of Solver that implements the hungarian algorithm to solve the maximum weight
-    matching matching problem, to find pairs.
-    """
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        
+        """
+        Runs the general solver to find pairs of cells using the Hungarian algorithm.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells representing the optimal matching.
+
+        Time Complexity: O(n^3)
+        Space Complexity: O(n^2)
+        """
         pairs = self.grid.all_pairs()
         even_cells = []
         odd_cells = []
-        for cell1, cell2 in self.grid.all_pairs():
+
+        # Separate cells into even and odd categories
+        for cell1, cell2 in pairs:
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.append(even)
             odd_cells.append(odd)
-            
+
         large_value = 1000000000
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
         odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
 
-        # Fill with negative weights (for maximization)
-        for (u, v) in pairs:
+        # Fill the cost matrix with negative weights for maximization
+        for u, v in pairs:
             if u in even_to_idx and v in odd_to_idx:
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
                 cost_matrix[even_to_idx[u], odd_to_idx[v]] = val
             elif v in even_to_idx and u in odd_to_idx:
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
-                
-        # Apply Hungarian algorithm
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+        # Apply the Hungarian algorithm
+        row_ind, col_ind = self.hungarian_algorithm(cost_matrix)
 
         # Reconstruct pairs, only including valid ones (cost less than large_value)
         matched_pairs = []
@@ -346,7 +354,8 @@ class SolverGeneral(Solver):
 
         self.pairs = matched_pairs
         return matched_pairs
-    
+
+    @staticmethod
     def hungarian_algorithm(cost_matrix: np.ndarray) -> tuple[list[int], list[int]]:
         """
         Solve the linear sum assignment problem using the Hungarian algorithm.
