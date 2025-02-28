@@ -142,58 +142,67 @@ class UIManager:
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
         font_title = pygame.font.Font(None, 48)
         font_content = pygame.font.Font(None, 24)
-        rules = [
-            "Game Rules:",
+        rules = rules = [
             "Consider a grid of size n × m where n ≥ 1 and m ≥ 2 are integers representing the number",
             "of rows and columns respectively. Cells have coordinates (i,j) where:",
-            "i ∈ {0,...,n−1} (row index), j ∈ {0,...,m−1} (column index)",
+            "i in {0,...,n−1} (row index), j in {0,...,m−1} (column index).",
+            "",
             "Each cell has 2 attributes:",
-            "— Color c(i,j) ∈ {0(white),1(red),2(blue),3(green),4(black)}",
-            "— Value v(i,j) ∈ ℕ* (positive integer)",
+            "   — Color c(i,j) in {0(white),1(red),2(blue),3(green),4(black)}",
+            "   — Value v(i,j) in N* (positive integer)",
+            "",
             "Pairing rules:",
-            "1. Adjacent cells only (horizontal/vertical)",
-            "2. Color constraints:",
-            "   - Black (4) cannot be paired",
-            "   - White (0) pairs with any except black",
-            "   - Blue (2)/Red (1) pair with white/blue/red",
-            "   - Green (3) pairs only with white/green",
-            "3. Each cell can only be in one pair",
+            "   1. Adjacent cells only (horizontal/vertical)",
+            "   2. Color constraints:",
+            "       - Black (4) cannot be paired",
+            "       - White (0) pairs with any except black",
+            "       - Blue (2)/Red (1) pair with white/blue/red",
+            "       - Green (3) pairs only with white/green",
+            "   3. Each cell can only be in one pair",
+            "",
             "Score calculation:",
-            "Score = ∑|v₁ − v₂| for all pairs + ∑v for unpaired cells",
+            "   Score = ∑|v(i1,j1) − v(i2,j2)| for all pairs + ∑v for unpaired cells",
+            "",
             "Objective: Find pairing with minimal score"
         ]
 
         self.screen.fill((255, 255, 255))
+
+        # Draw title background and text
+        title_rect = pygame.Rect(20, 20, window_size[0] - 40, 50)
+        pygame.draw.rect(self.screen, (255, 255, 255), title_rect)
         title_surface = font_title.render("Game Rules", True, (0, 0, 0))
         self.screen.blit(title_surface, (20, 20))
 
+        # Set clipping area for content (below title and above buttons)
+        content_clip_top = 70
+        content_clip_bottom = window_size[1] - 70  # Adjust based on button height
+        content_clip_rect = pygame.Rect(0, content_clip_top, window_size[0], content_clip_bottom - content_clip_top)
+        self.screen.set_clip(content_clip_rect)
         y_offset = 70
-        symbol_map = {
-            '×': '×',
-            '≥': '≥',
-            '−': '-',
-            '∈': '∈',
-            '∑': 'Σ',
-            'ℕ': 'N'
-        }
-
-        for line in rules[1:]:
-            # Remplacement des symboles spéciaux
-            formatted_line = ''.join([symbol_map.get(c, c) for c in line])
-            text_surface = font_content.render(formatted_line, True, (0, 0, 0))
-            
-            if y_offset - scroll < window_size[1] - 50:
-                self.screen.blit(text_surface, (20, y_offset - scroll))
-            
+        
+        for line in rules:
+            formatted_line = ''.join(line)
+            if line.startswith("Objective:"):
+                text_color = (200, 0, 0)
+            else:
+                text_color = (0, 0, 0)
+            text_surface = font_content.render(formatted_line, True, text_color)
+            current_y = y_offset - scroll
+            self.screen.blit(text_surface, (20, current_y))
             y_offset += 30
 
-        # Dessin de la scrollbar
+        # Reset clipping
+        self.screen.set_clip(None)
+
+        # Draw scrollbar
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect)
-        
-        # Bouton Menu
+
+        # Draw menu button
         self.draw_menu_button(window_size, False)
-        
+
         pygame.display.flip()
+
 
 class GridManager:
     def __init__(self, data_path):
