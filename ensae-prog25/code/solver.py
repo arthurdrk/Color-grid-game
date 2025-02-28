@@ -431,3 +431,64 @@ class SolverGeneral(Solver):
 
         self.pairs = matched_pairs
         return matched_pairs
+
+from collections import deque
+
+from scipy.optimize import linear_sum_assignment
+import numpy as np
+
+class SolverGeneral2(Solver):
+    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        pairs = self.grid.all_pairs()
+        if not pairs:
+            self.pairs = []
+            return []
+
+        # Bipartite separation
+        even_cells = []
+        odd_cells = []
+        for i in range(self.grid.n):
+            for j in range(self.grid.m):
+                if self.grid.is_forbidden(i, j):
+                    continue
+                if (i + j) % 2 == 0:
+                    even_cells.append((i, j))
+                else:
+                    odd_cells.append((i, j))
+
+        # Create cost matrix with large finite values instead of infinity
+        # Use a large value instead of np.inf
+        large_value = 1000000  # A sufficiently large value
+        cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
+        even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
+        odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
+
+        # Fill with negative weights (for maximization)
+        for (u, v) in pairs:
+            if u in even_to_idx and v in odd_to_idx:
+                val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+                cost_matrix[even_to_idx[u], odd_to_idx[v]] = val
+            elif v in even_to_idx and u in odd_to_idx:
+                val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+                cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
+
+        # Handle the case where no assignment is possible
+        if len(even_cells) == 0 or len(odd_cells) == 0:
+            self.pairs = []
+            return []
+
+        # Apply Hungarian algorithm
+        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+        # Reconstruct pairs, only including valid ones (cost less than large_value)
+        matched_pairs = []
+        for i, j in zip(row_ind, col_ind):
+            if cost_matrix[i, j] < large_value:  # Only include valid pairs
+                even = even_cells[i]
+                odd = odd_cells[j]
+                if (even, odd) in pairs or (odd, even) in pairs:
+                    matched_pairs.append((even, odd))
+
+        self.pairs = matched_pairs
+        return matched_pairs
+
