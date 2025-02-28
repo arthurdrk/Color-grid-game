@@ -5,7 +5,7 @@
 ColorGrid is a programming project developed as part of the first-year curriculum at ENSAE Paris. The game involves a grid-based matching problem with specific rules and constraints.
 
 ## Problem Description
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/f76a9c91-9701-47e4-8ac3-f7b0bab1e9b4" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/f76a9c91-9701-47e4-8ac3-f7b0bab1e9b4" />
 
 Consider an `n × m` grid, where `n ≥ 1` and `m ≥ 2` are integers representing the number of rows and columns, respectively. Each cell in the grid has coordinates `(i, j)` where `i ∈ {0, ..., n-1}` is the row index and `j ∈ {0, ..., m-1}` is the column index. Each cell has two attributes:
 
