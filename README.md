@@ -37,24 +37,28 @@ Each cell can only be part of one pair. The objective is to minimize the score c
 ```
 Jeu-appariement-sur-une-grille/
 │
-├── code/
-│   ├── main.py              # Main script to run the solvers of all grids
-│   ├── grid.py              # Grid class and related functions
-│   ├── solver.py           # Solvers classes : SolverGreedy, SolverFordFulkerson and SolverGeneral
-│   └── game.py             # Run this script to play the game
+├── README.md    # Project documentation
 │
-├── tests/
-│   ├── test_grid_from_file.py         # Unit tests for grid functionality
-│   ├── test_ford_fulkerson.py      # Unit tests for solver functionality
-    └── ...           # Additional unit tests
+├──requirements.txt    # Required Python packages
 │
-├── input/
-│   ├── grid00.in     # Example grid data
-│   ├── grid01.in     
-│   └── ...           # Additional grids
-│
-├── README.md                # Project documentation
-└── requirements.txt         # Required Python packages
+└── ensae-prog25/
+    │
+    ├── code/
+    │   ├── main.py    # Main script to run the solvers of all grids
+    │   ├── grid.py    # Grid class and related functions
+    │   ├── solver.py    # Solvers classes : SolverGreedy, SolverFordFulkerson and SolverGeneral
+    │   └── game.py    # Run this script to play the game
+    │
+    ├── tests/
+    │   ├── test_grid_from_file.py    # Unit tests for grid functionality
+    │   ├── test_ford_fulkerson.py    # Unit tests for solver functionality
+    │   └── ...    # Additional unit tests
+    │
+    └── input/
+        ├── grid00.in    # Example grid data
+        ├── grid01.in     
+        └── ...     # Additional grids
+
 ```
 
 ## How to play
