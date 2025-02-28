@@ -357,73 +357,56 @@ class SolverGeneral(Solver):
 
     @staticmethod
     def hungarian_algorithm(cost_matrix: np.ndarray) -> tuple[list[int], list[int]]:
-        """
-        Solve the linear sum assignment problem using the Hungarian algorithm.
+        cost_matrix = np.array(cost_matrix, dtype=float)
+        n = cost_matrix.shape[0]
 
-        Parameters:
-        -----------
-        cost_matrix : np.ndarray
-            The cost matrix of the assignment problem. Must be a square matrix.
-
-        Returns:
-        --------
-        tuple[list[int], list[int]]
-            A tuple containing two lists. The first list contains the row indices
-            and the second list contains the column indices of the optimal assignment.
-
-        Time Complexity: O(n^3)
-        Space Complexity: O(n^2)
-        """
-        cost_matrix = np.array(cost_matrix)
-        n, m = cost_matrix.shape
-        
-        # Subtract the row minimums from each row.
+        # Subtract row minima
         row_mins = np.min(cost_matrix, axis=1)
-        cost_matrix = cost_matrix - row_mins[:, np.newaxis]
+        cost_matrix -= row_mins[:, np.newaxis]
 
-        # Subtract the column minimums from each column.
+        # Subtract column minima
         col_mins = np.min(cost_matrix, axis=0)
-        cost_matrix = cost_matrix - col_mins
-
-        # Cover all zeros in the resulting matrix using a minimum number of lines.
-        row_covered = np.zeros(n, dtype=bool)
-        col_covered = np.zeros(n, dtype=bool)
-        zero_locations = np.argwhere(cost_matrix == 0)
+        cost_matrix -= col_mins
 
         while True:
-            # Check if optimal assignment is possible.
-            if np.all(row_covered) or np.all(col_covered):
+            # Cover all zeros with minimum number of lines
+            zero_locations = cost_matrix == 0
+            marked_rows = np.zeros(n, dtype=bool)
+            marked_cols = np.zeros(n, dtype=bool)
+            
+            # Mark rows and columns based on a greedy approach (temporary fix)
+            # Note: This is a simplified approach; a proper implementation would use Konig's theorem
+            for row in range(n):
+                for col in range(n):
+                    if zero_locations[row, col] and not marked_rows[row] and not marked_cols[col]:
+                        marked_rows[row] = True
+                        marked_cols[col] = True
+            
+            # Check if all zeros are covered
+            covered = np.logical_or(marked_rows[:, np.newaxis], marked_cols)
+            if np.all(zero_locations <= covered):
                 break
 
-            # Find a zero not covered by a line.
-            zero_row, zero_col = zero_locations[0]
-            if not row_covered[zero_row] and not col_covered[zero_col]:
-                row_covered[zero_row] = True
-                col_covered[zero_col] = True
-                zero_locations = zero_locations[1:]
+            # Find minimum uncovered value
+            uncovered = ~covered
+            min_uncovered = np.min(cost_matrix[uncovered])
+            if min_uncovered == 0:
                 continue
 
-            # Find the smallest uncovered value.
-            uncovered_values = cost_matrix.copy()
-            uncovered_values[row_covered, :] = np.inf
-            uncovered_values[:, col_covered] = np.inf
-            min_uncovered_value = np.min(uncovered_values)
+            # Adjust the matrix
+            cost_matrix[uncovered] -= min_uncovered
+            cost_matrix[np.ix_(marked_rows, marked_cols)] += min_uncovered
 
-            # Subtract the minimum uncovered value from all uncovered elements and
-            # add it to all elements covered by two lines.
-            cost_matrix[~row_covered, :] -= min_uncovered_value
-            cost_matrix[:, ~col_covered] -= min_uncovered_value
-            cost_matrix[row_covered, col_covered] += min_uncovered_value
-
-        # Sequence of index assignments.
+        # Assign each row to a column greedily
+        col_covered = np.zeros(n, dtype=bool)
         row_indices = []
         col_indices = []
         for row in range(n):
-            for col in range(n):
-                if cost_matrix[row, col] == 0 and not col_covered[col]:
-                    row_indices.append(row)
-                    col_indices.append(col)
-                    col_covered[col] = True
-                    break
+            cols = np.where((cost_matrix[row] == 0) & ~col_covered)[0]
+            if len(cols) > 0:
+                col = cols[0]
+                row_indices.append(row)
+                col_indices.append(col)
+                col_covered[col] = True
 
         return row_indices, col_indices

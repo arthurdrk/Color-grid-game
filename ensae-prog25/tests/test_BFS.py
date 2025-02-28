@@ -5,8 +5,8 @@ import unittest
 from solver import SolverFordFulkerson
 
 class TestBFS(unittest.TestCase):
-    
-    def setup(self):
+
+    def setUp(self):
         self.solver = SolverFordFulkerson(None)
 
     def test_bfs_path_found(self):

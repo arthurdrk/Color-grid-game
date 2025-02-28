@@ -6,7 +6,7 @@ from solver import SolverFordFulkerson
 
 class TestFordFulkerson(unittest.TestCase):
 
-    def setup(self):
+    def setUp(self):
         self.solver = SolverFordFulkerson(None)
 
     def test_ford_fulkerson_max_flow(self):
