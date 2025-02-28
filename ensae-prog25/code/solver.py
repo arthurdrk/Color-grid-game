@@ -305,6 +305,8 @@ class SolverFordFulkerson(Solver):
 #                               WORK IN PROGRESS                               #
 ################################################################################
 
+from scipy.optimize import linear_sum_assignment
+
 class SolverGeneral(Solver):
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
@@ -343,7 +345,7 @@ class SolverGeneral(Solver):
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
 
         # Apply the Hungarian algorithm
-        row_ind, col_ind = SolverGeneral.hungarian_algorithm(cost_matrix)
+        row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
         # Reconstruct pairs, only including valid ones (cost less than large_value)
         matched_pairs = []
@@ -357,58 +359,4 @@ class SolverGeneral(Solver):
         self.pairs = matched_pairs
         return matched_pairs
 
-    @staticmethod
-    def hungarian_algorithm(cost_matrix: np.ndarray) -> tuple[list[int], list[int]]:
-        cost_matrix = np.array(cost_matrix, dtype=float)
-        n = cost_matrix.shape[0]
-
-        # Subtract row minima
-        row_mins = np.min(cost_matrix, axis=1)
-        cost_matrix -= row_mins[:, np.newaxis]
-
-        # Subtract column minima
-        col_mins = np.min(cost_matrix, axis=0)
-        cost_matrix -= col_mins
-
-        while True:
-            # Cover all zeros with minimum number of lines
-            zero_locations = cost_matrix == 0
-            marked_rows = np.zeros(n, dtype=bool)
-            marked_cols = np.zeros(n, dtype=bool)
-            
-            # Mark rows and columns based on a greedy approach (temporary fix)
-            # Note: This is a simplified approach; a proper implementation would use Konig's theorem
-            for row in range(n):
-                for col in range(n):
-                    if zero_locations[row, col] and not marked_rows[row] and not marked_cols[col]:
-                        marked_rows[row] = True
-                        marked_cols[col] = True
-            
-            # Check if all zeros are covered
-            covered = np.logical_or(marked_rows[:, np.newaxis], marked_cols)
-            if np.all(zero_locations <= covered):
-                break
-
-            # Find minimum uncovered value
-            uncovered = ~covered
-            min_uncovered = np.min(cost_matrix[uncovered])
-            if min_uncovered == 0:
-                continue
-
-            # Adjust the matrix
-            cost_matrix[uncovered] -= min_uncovered
-            cost_matrix[np.ix_(marked_rows, marked_cols)] += min_uncovered
-
-        # Assign each row to a column greedily
-        col_covered = np.zeros(n, dtype=bool)
-        row_indices = []
-        col_indices = []
-        for row in range(n):
-            cols = np.where((cost_matrix[row] == 0) & ~col_covered)[0]
-            if len(cols) > 0:
-                col = cols[0]
-                row_indices.append(row)
-                col_indices.append(col)
-                col_covered[col] = True
-
-        return row_indices, col_indices
+   
