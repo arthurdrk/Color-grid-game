@@ -26,7 +26,7 @@ class UIManager:
             self.screen.blit(text, (current_x, 20))
             current_x += text.get_width()
 
-    def draw_grid_options(self, window_size, scroll, scroll_bar_rect, scroll_bar_height, grid_files, pressed_index=-1):
+    def draw_grid_options(self, window_size, scroll, scroll_bar_rect, scroll_bar_height, grid_files, grid_colors, pressed_index=-1):
         font = pygame.font.Font(None, 36)
         y_offset = 100
         max_scroll = max(0, len(grid_files) * 50 - (window_size[1] - 170))
@@ -34,25 +34,36 @@ class UIManager:
 
         pygame.draw.rect(self.screen, (255, 255, 255), (50, 100, window_size[0] - 120, window_size[1] - 170))
 
-        for i, grid in enumerate(grid_files):
+        for i, (filename, _) in enumerate(grid_files):
             if y_offset + 50 - scroll > window_size[1] - 70:
                 break
 
-            btn_color = (150, 150, 150) if i == pressed_index else (200, 200, 200)
-            
-            if grid.startswith("grid") and grid.endswith(".in"):
-                numbers = grid[4:-3]
+            # Determine button color
+            btn_color = self.darken_color(grid_colors[i]) if i == pressed_index else grid_colors[i]
+
+            # Determine text color based on button brightness
+            brightness = (btn_color[0] * 299 + btn_color[1] * 587 + btn_color[2] * 114) // 1000
+            text_color = (0, 0, 0) if brightness > 128 else (255, 255, 255)
+
+            # Format grid name
+            if filename.startswith("grid") and filename.endswith(".in"):
+                numbers = filename[4:-3]
                 formatted_name = f"Grid {numbers}"
             else:
-                formatted_name = grid
+                formatted_name = filename
 
-            text = font.render(formatted_name, True, (0, 0, 0))
+            # Draw button and text
             btn_rect = pygame.Rect(window_size[0]//2 - 100, y_offset - scroll, 200, 40)
             pygame.draw.rect(self.screen, btn_color, btn_rect)
-            self.screen.blit(text, (window_size[0]//2 - text.get_width()//2, y_offset - scroll + 10))
+            text_surface = font.render(formatted_name, True, text_color)
+            text_rect = text_surface.get_rect(center=btn_rect.center)
+            self.screen.blit(text_surface, text_rect)
             y_offset += 50
 
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect.inflate(0, scroll_bar_height - scroll_bar_rect.height))
+
+    def darken_color(self, color, factor=0.7):
+        return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor))
 
     def draw_grid(self, grid, solver, cell_size):
         for i in range(grid.n):
@@ -121,7 +132,66 @@ class UIManager:
 class GridManager:
     def __init__(self, data_path):
         self.data_path = data_path
-        self.grid_files = [f for f in os.listdir(self.data_path) if f.endswith(".in")]
+        self.grid_files = []  # List of tuples (filename, difficulty)
+        self.difficulties = []
+        self.grid_colors = []
+
+        # Load grid files and extract difficulties
+        for f in os.listdir(data_path):
+            if f.endswith(".in"):
+                difficulty = self.extract_difficulty(f)
+                self.grid_files.append((f, difficulty))
+                self.difficulties.append(difficulty)
+
+        # Compute min, max, and range of difficulties
+        if self.difficulties:
+            self.min_d = min(self.difficulties)
+            self.max_d = max(self.difficulties)
+            self.range_d = self.max_d - self.min_d if self.max_d != self.min_d else 1
+        else:
+            self.min_d = 0
+            self.max_d = 1
+            self.range_d = 1
+
+        # Precompute colors for each grid
+        self.grid_colors = [self.get_difficulty_color(d) for d in self.difficulties]
+
+    def extract_difficulty(self, filename):
+        # Extract difficulty from filename (assumes format gridX_Y.in)
+        base = filename[4:-3]  # Remove 'grid' and '.in'
+        parts = base.split('_')
+        try:
+            return int(parts[-1])  # Last part is difficulty
+        except (IndexError, ValueError):
+            return 0  # Default to 0 if parsing fails
+
+    def get_difficulty_color(self, difficulty):
+        # Normalize difficulty to 0-1 range
+        normalized = (difficulty - self.min_d) / self.range_d if self.range_d != 0 else 0.5
+        normalized = max(0.0, min(normalized, 1.0))
+
+        # Define color stops
+        stops = [
+            (0.0, (255, 255, 255)),  # White
+            (0.2, (0, 200, 0)),      # Green
+            (0.4, (220, 220, 0)),    # Yellow
+            (0.6, (255, 165, 0)),    # Orange
+            (0.8, (200, 0, 0)),      # Red
+            (1.0, (0, 0, 0))         # Black
+        ]
+
+        # Find the segment and interpolate
+        for i in range(len(stops) - 1):
+            start_pos, start_color = stops[i]
+            end_pos, end_color = stops[i+1]
+            if start_pos <= normalized <= end_pos:
+                t = (normalized - start_pos) / (end_pos - start_pos)
+                return (
+                    int(start_color[0] + t * (end_color[0] - start_color[0])),
+                    int(start_color[1] + t * (end_color[1] - start_color[1])),
+                    int(start_color[2] + t * (end_color[2] - start_color[2]))
+                )
+        return stops[-1][1]
 
     def load_grid(self, selected_grid):
         return Grid.grid_from_file(os.path.join(self.data_path, selected_grid), read_values=True)
@@ -198,7 +268,7 @@ class Game:
             scroll_bar_rect = pygame.Rect(580, int(scroll_bar_y), 20, scroll_bar_height)
 
             self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, scroll_bar_height, 
-                                            self.grid_manager.grid_files, self.pressed_grid_index)
+                                            self.grid_manager.grid_files, self.grid_manager.grid_colors, self.pressed_grid_index)
             pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, 600, 100))
             self.ui_manager.draw_title(window_size)
             pygame.display.flip()
@@ -225,10 +295,10 @@ class Game:
                         if 0 <= released_index < len(self.grid_manager.grid_files) and released_index == self.pressed_grid_index:
                             self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, 
                                                             scroll_bar_height, self.grid_manager.grid_files, 
-                                                            self.pressed_grid_index)
+                                                            self.grid_manager.grid_colors, self.pressed_grid_index)
                             pygame.display.flip()
                             pygame.time.delay(100)
-                            self.selected_grid = self.grid_manager.grid_files[self.pressed_grid_index]
+                            self.selected_grid = self.grid_manager.grid_files[self.pressed_grid_index][0]
                             
                     self.scroll_bar_dragging = False
                     self.pressed_grid_index = -1
