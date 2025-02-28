@@ -461,10 +461,8 @@ class SolverGeneral2(Solver):
                     even_cells.append((i, j))
                 else:
                     odd_cells.append((i, j))
-
-        # Create cost matrix with large finite values instead of infinity
-        # Use a large value instead of np.inf
-        large_value = 1000000  # A sufficiently large value
+                    
+        large_value = 1000000000
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
         odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
