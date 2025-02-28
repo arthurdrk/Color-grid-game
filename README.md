@@ -1,6 +1,8 @@
 # ColorGrid
 
 ## Description
+<img width="184" alt="image" src="https://github.com/user-attachments/assets/c3396c08-edb0-4ca7-a240-1c8322e03cf0" />
+
 
 ColorGrid is a programming project developed as part of the first-year curriculum at ENSAE Paris. The game involves a grid-based matching problem with specific rules and constraints.
 
