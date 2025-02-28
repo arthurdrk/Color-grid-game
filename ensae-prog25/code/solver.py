@@ -330,7 +330,7 @@ class SolverGeneral(Solver):
             even_cells.append(even)
             odd_cells.append(odd)
 
-        large_value = 1000000000
+        large_value = 1e8
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
         odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
