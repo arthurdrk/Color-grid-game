@@ -276,6 +276,29 @@ class Game:
                         else:
                             self.pressed_button = None
                     else:
+                        # Gestion de la sélection des cellules
+                        i, j = y // cell_size, x // cell_size
+                        if grid.is_forbidden(i, j):
+                            self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                            self.selected_cells = []
+                        elif (i, j) in [cell for pair in solver_manager.solver.pairs for cell in pair]:
+                            for pair in solver_manager.solver.pairs:
+                                if (i, j) in pair:
+                                    solver_manager.solver.pairs.remove(pair)
+                                    break
+                        elif (i, j) not in [cell for pair in solver_manager.solver.pairs for cell in pair]:
+                            self.selected_cells.append((i, j))
+                            if len(self.selected_cells) == 2:
+                                if self.selected_cells[1] in grid.vois(self.selected_cells[0][0], self.selected_cells[0][1]):
+                                    color1 = grid.color[self.selected_cells[0][0]][self.selected_cells[0][1]]
+                                    color2 = grid.color[self.selected_cells[1][0]][self.selected_cells[1][1]]
+                                    if solver_manager.can_pair(color1, color2):
+                                        solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
+                                    else:
+                                        self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                                else:
+                                    self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                                self.selected_cells = []
                         self.pressed_button = None
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = event.pos
