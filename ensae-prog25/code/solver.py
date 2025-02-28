@@ -410,7 +410,7 @@ class SolverGeneral(Solver):
                 allowed_pairs.add((even, odd))
 
         for even, odd in allowed_pairs:
-            weight = 2 * min(self.grid.value[even[0]][even[1]], self.grid.value[odd[0]][odd[1]])
+            weight = min(self.grid.value[even[0]][even[1]], self.grid.value[odd[0]][odd[1]])
             mcf.add_edge(nodes[even], nodes[odd], 1, -weight)
 
         for cell in odd_cells:
@@ -423,7 +423,7 @@ class SolverGeneral(Solver):
         for cell in even_cells:
             cell_id = nodes[cell]
             for edge in mcf.graph[cell_id]:
-                if edge.capacity == 0 and edge.to != nodes['s'] and edge.to in nodes.values():
+                if edge.capacity == 0 and edge.to != nodes['s']:
                     for odd_cell in odd_cells:
                         if nodes[odd_cell] == edge.to:
                             matched_pairs.append((cell, odd_cell))

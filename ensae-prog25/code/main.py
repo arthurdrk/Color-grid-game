@@ -14,7 +14,7 @@ for file_name in grid_files:
     full_file_path = os.path.join(data_path, file_name)
     print("Solving grid:", file_name)
 
-    grid = Grid.grid_from_file(full_file_path, read_values=False)
+    grid = Grid.grid_from_file(full_file_path, read_values=True)
 
     solver_ff = SolverFordFulkerson(grid)
     solver_ff.run()
@@ -27,6 +27,7 @@ for file_name in grid_files:
     solver_general = SolverGeneral(grid)
     solver_general.run()
     general_score = solver_general.score()
+    
     print(f"  SolverGeneral score: {general_score}")
     print(f"  SolverFordFulkerson score: {ff_score}")
     print(f"  SolverGreedy score: {greedy_score}\n")
