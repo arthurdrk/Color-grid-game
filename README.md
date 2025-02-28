@@ -35,7 +35,7 @@ Each cell can only be part of one pair. The objective is to minimize the score c
 ## Directory Structure
 
 ```
-ColorGrid/
+Jeu-appariement-sur-une-grille/
 │
 ├── code/
 │   ├── main.py              # Main script to run the solvers of all grids
