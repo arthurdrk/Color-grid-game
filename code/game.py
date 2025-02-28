@@ -92,7 +92,7 @@ class UIManager:
         x_position = (window_size[0] - text.get_width()) // 2
         self.screen.blit(text, (x_position, y_position))
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(1000)
 
     def draw_error_message(self, message, window_size):
         font = pygame.font.Font(None, 48)
@@ -100,7 +100,7 @@ class UIManager:
         y_position = window_size[1] - 110
         self.screen.blit(text, (5, y_position))
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(1000)
 
     def draw_restart_button(self, window_size, pressed):
         font = pygame.font.Font(None, 36)
