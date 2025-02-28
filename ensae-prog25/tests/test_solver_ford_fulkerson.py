@@ -6,6 +6,7 @@ from grid import Grid
 from solver import SolverFordFulkerson
 
 class TestSolverFordFulkersonRun(unittest.TestCase):
+    
     def test_fordfulkerson_run_grid00(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=False)
         solver = SolverFordFulkerson(grid)

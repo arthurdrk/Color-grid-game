@@ -4,7 +4,7 @@ import numpy as np
 
 class Solver:
     """
-    A solver class for finding pairs in a grid.
+    A solver class for finding optimal pairs in a grid.
 
     Attributes:
     -----------
@@ -99,7 +99,7 @@ Optimality:
     [11, 1, 3]  # Row 4
     ]
 
-    The greedy algorithm might pair (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
+    The greedy algorithm pairs (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
     Optimal Solution: Pair (0, 0) with (1, 0), (0, 1) with (0, 2) and (1, 1) with (1, 2), achieving a lower score (score = 12 instead of 14 with the greedy algorithm).
 
 Possible solution (brute force) and complexity:
@@ -168,7 +168,7 @@ class SolverFordFulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.
     """
-
+    
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Runs the bipartite matching algorithm to find pairs of cells.
@@ -305,7 +305,7 @@ class SolverFordFulkerson(Solver):
 #                               WORK IN PROGRESS                               #
 ################################################################################
 
-from scipy.optimize import linear_sum_assignment
+from scipy.optimize import linear_sum_assignment #(Hungarian algorithm, it will be implemented later)
 
 class SolverGeneral(Solver):
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
@@ -324,7 +324,7 @@ class SolverGeneral(Solver):
         even_cells = []
         odd_cells = []
 
-        # Separate cells into even and odd categories
+        # Even and odd categories
         for cell1, cell2 in pairs:
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.append(even)
@@ -344,7 +344,7 @@ class SolverGeneral(Solver):
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
 
-        # Apply the Hungarian algorithm
+        # Hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
         # Reconstruct pairs, only including valid ones (cost less than large_value)

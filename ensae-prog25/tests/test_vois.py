@@ -5,6 +5,7 @@ import unittest
 from grid import Grid
 
 class TestVois(unittest.TestCase):
+    
     def test_grid00_center_cell(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         expected_neighbors = [(0, 0), (0, 2), (1, 1)]

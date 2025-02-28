@@ -3,9 +3,9 @@ sys.path.append("code/")
 
 import unittest
 from grid import Grid
-grid = Grid.grid_from_file("input/grid05.in", read_values=True)
-print(sorted(grid.all_pairs()))
+
 class TestAllPairs(unittest.TestCase):
+    
     def test_simple_grid(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         expected_pairs = [((0, 0), (0, 1)), ((0, 0), (1, 0)), ((0, 1), (0, 2)), ((0, 1), (1, 1)),

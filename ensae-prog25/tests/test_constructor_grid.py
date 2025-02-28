@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Test_Constructor(unittest.TestCase):
+    
     def test_constructor_with_parameters(self):
         color = [[0, 1], [2, 3]]
         value = [[5, 6], [7, 8]]

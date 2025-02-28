@@ -6,6 +6,7 @@ from grid import Grid
 from solver import SolverGreedy
 
 class TestSolverGreedyRun(unittest.TestCase):
+    
     def test_greedy_run_grid00(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         solver = SolverGreedy(grid)

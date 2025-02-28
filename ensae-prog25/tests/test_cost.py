@@ -5,6 +5,7 @@ import unittest
 from grid import Grid
 
 class Test_Cost(unittest.TestCase):
+    
     def test_equal_values(self):
         grid = Grid.grid_from_file("input/grid05.in", read_values=True)
         pair = ((0, 2), (0, 1)) 

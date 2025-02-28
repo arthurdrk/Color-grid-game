@@ -6,6 +6,7 @@ from grid import Grid
 from solver import Solver
 
 class TestSolverScore(unittest.TestCase):
+    
     def test_score_empty_pairs(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         solver = Solver(grid)

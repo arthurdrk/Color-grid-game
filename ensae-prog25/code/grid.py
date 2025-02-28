@@ -32,9 +32,9 @@ class Grid:
             Number of rows in the grid.
         m : int
             Number of columns in the grid.
-        color : list[list[int]], optional
+        color : list[list[int]]
             The grid cells colors. Default is empty, which initializes each cell with color 0 (white).
-        value : list[list[int]], optional
+        value : list[list[int]]
             The grid cells values. Default is empty, which initializes each cell with value 1.
 
         Time Complexity: O(n * m)

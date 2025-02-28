@@ -5,7 +5,7 @@ import os
 # Directory containing the grid files
 data_path = "./input/"
 
-# List all files in the directory
+# List all files 
 grid_files = [f for f in os.listdir(data_path) if f.endswith(".in")]
 
 print("Solving all grids \n")
