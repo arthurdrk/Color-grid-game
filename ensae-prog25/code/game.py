@@ -4,12 +4,6 @@ import os
 from grid import Grid
 from solver import Solver, SolverGeneral
 
-
-################################################################################
-#                               WORK IN PROGRESS                              #
-################################################################################
-
-
 pygame.init()
 
 class UIManager:
@@ -135,6 +129,68 @@ class UIManager:
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
 
+    def draw_rules_button(self, window_size, pressed):
+        font = pygame.font.Font(None, 36)
+        text = font.render("Rules", True, (255, 255, 255))
+        button_rect = pygame.Rect(window_size[0] - 200, window_size[1] - 70, 100, 40)
+        text_rect = text.get_rect(center=button_rect.center)
+        color = (30, 30, 30) if pressed else (50, 50, 50)
+        pygame.draw.rect(self.screen, color, button_rect)
+        self.screen.blit(text, text_rect.topleft)
+
+    def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
+        font_title = pygame.font.Font(None, 48)
+        font_content = pygame.font.Font(None, 24)
+        rules = [
+            "Game Rules:",
+            "Consider a grid of size n × m, where n ≥ 1 and m ≥ 2 are integers representing the number",
+            "of rows and columns of the grid, respectively. The grid contains cells with coordinates",
+            "(i, j) where i ∈ {0, ..., n − 1} is the row index and j ∈ {0, ..., m − 1} is the column index.",
+            "Each cell has 2 attributes:",
+            "— A color c(i, j) (or color in the code). The color is an integer in {0, 1, 2, 3, 4} and each",
+            "integer corresponds to a color according to the mapping given in the attribute colors_list:",
+            "0: white (or 'w' in Python)",
+            "1: red (or 'r' in Python)",
+            "2: blue (or 'b' in Python)",
+            "3: green (or 'g' in Python)",
+            "4: black (or 'k' in Python)",
+            "— A value v(i, j) (or value in the code). The value is a positive integer.",
+            "The problem is as follows: pairs of cells are taken with the following constraints:",
+            "— A pair of cells can only be taken if the two cells are adjacent, i.e., either one above",
+            "the other or one next to the other. Formally, you can take the pair of cells",
+            "(i1, j1) and (i2, j2) if and only if i1 = i2 and |j1 − j2| = 1; or j1 = j2 and |i1 − i2| = 1.",
+            "The grid is not circular, so you cannot take a pair between the first and last row, or the",
+            "first and last column.",
+            "— The colors impose the following constraints (in addition to the adjacency constraint above):",
+            "— You can never take a black cell (i.e., a pair containing a black cell).",
+            "— You can pair a white cell with any other color (except black). You can pair a blue cell",
+            "with a blue, red, or white cell. You can pair a red cell with a blue, red, or white cell.",
+            "You can pair a green cell only with another green cell (or white).",
+            "Each cell can only be taken in one pair. The objective is to choose a valid list of pairs",
+            "to minimize the score calculated as follows: sum the absolute difference of the values",
+            "of the cells for each pair ((i1, j1),(i2, j2)), |v(i1, j1)−v(i2, j2)|, and add the sum of the",
+            "values of the cells not taken in a pair, except for black cells."
+        ]
+
+        self.screen.fill((255, 255, 255))
+        title_surface = font_title.render("Game Rules:", True, (0, 0, 0))
+        self.screen.blit(title_surface, (20, 20))
+
+        y_offset = 70
+        for line in rules[1:]:
+            text_surface = font_content.render(line, True, (0, 0, 0))
+            if y_offset + text_surface.get_height() - scroll > window_size[1] - 70:
+                break
+            self.screen.blit(text_surface, (20, y_offset - scroll))
+            y_offset += 30
+
+        pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect.inflate(0, scroll_bar_height - scroll_bar_rect.height))
+
+        # Draw the "Menu" button
+        self.draw_menu_button(window_size, False)
+
+        pygame.display.flip()
+
 class GridManager:
     def __init__(self, data_path):
         self.data_path = data_path
@@ -259,6 +315,9 @@ class Game:
         self.show_solution = False
         self.pressed_button = None
         self.pressed_grid_index = -1
+        self.rules_scroll = 0
+        self.rules_scroll_bar_dragging = False
+        self.rules_mouse_y_offset = 0
 
     def main(self):
         while self.selected_grid is None:
@@ -273,10 +332,11 @@ class Game:
             scroll_bar_y = 100 + (scroll_percentage * (visible_height - scroll_bar_height))
             scroll_bar_rect = pygame.Rect(580, int(scroll_bar_y), 20, scroll_bar_height)
 
-            self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, scroll_bar_height, 
+            self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, scroll_bar_height,
                                             self.grid_manager.grid_files, self.grid_manager.grid_colors, self.pressed_grid_index)
             pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, 600, 100))
             self.ui_manager.draw_title(window_size)
+            self.ui_manager.draw_rules_button(window_size, self.pressed_button == 'rules')
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -292,22 +352,31 @@ class Game:
                         else:
                             visible_y = y + self.scroll - 100
                             self.pressed_grid_index = visible_y // 50
+                            rules_rect = pygame.Rect(window_size[0] - 200, window_size[1] - 70, 100, 40)
+                            if rules_rect.collidepoint(x, y):
+                                self.pressed_button = 'rules'
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_grid_index != -1:
                         x, y = event.pos
                         visible_y = y + self.scroll - 100
                         released_index = visible_y // 50
-                        
+
                         if 0 <= released_index < len(self.grid_manager.grid_files) and released_index == self.pressed_grid_index:
-                            self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, 
-                                                            scroll_bar_height, self.grid_manager.grid_files, 
+                            self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect,
+                                                            scroll_bar_height, self.grid_manager.grid_files,
                                                             self.grid_manager.grid_colors, self.pressed_grid_index)
                             pygame.display.flip()
                             pygame.time.delay(100)
                             self.selected_grid = self.grid_manager.grid_files[self.pressed_grid_index][0]
-                            
+
                     self.scroll_bar_dragging = False
                     self.pressed_grid_index = -1
+
+                    if self.pressed_button == 'rules':
+                        self.screen = pygame.display.set_mode((800, 600))  # Adjust window size for rules
+                        self.show_rules()
+                        self.pressed_button = None
+
                 elif event.type == pygame.MOUSEMOTION:
                     if self.scroll_bar_dragging and max_scroll > 0:
                         mouse_y = event.pos[1] - self.mouse_y_offset
@@ -342,7 +411,7 @@ class Game:
                         restart_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
-                        
+
                         if restart_rect.collidepoint(x, y):
                             self.pressed_button = 'restart'
                         elif solution_rect.collidepoint(x, y):
@@ -386,7 +455,7 @@ class Game:
                             button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         elif self.pressed_button == 'menu':
                             button_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
-                        
+
                         if button_rect and button_rect.collidepoint(x, y):
                             if self.pressed_button == 'restart':
                                 self.ui_manager.draw_restart_button(window_size, True)
@@ -395,10 +464,10 @@ class Game:
                             elif self.pressed_button == 'menu':
                                 self.ui_manager.draw_menu_button(window_size, True)
                             pygame.display.update(button_rect)
-                            
+
                             if self.pressed_button == 'menu':
                                 pygame.time.delay(100)
-                            
+
                             if self.pressed_button == 'restart':
                                 solver_manager.solver.pairs = []
                                 self.selected_cells = []
@@ -409,17 +478,17 @@ class Game:
                                 self.show_solution = True
                             elif self.pressed_button == 'menu':
                                 self.reset_game_state()
-                        
+
                         self.pressed_button = None
 
             self.screen.fill((200, 200, 200))
             self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size)
             self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size)
-            
+
             self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'restart')
             self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
             self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
-            
+
             pygame.display.flip()
 
             if not self.show_solution and not any(solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid) for pair in grid.all_pairs()):
@@ -433,6 +502,52 @@ class Game:
                     self.selected_cells = []
                     self.game_over = False
 
+    def show_rules(self):
+        window_size = (800, 600)
+        visible_height = window_size[1] - 170
+        total_content_height = 22 * 30  # Calculated based on the number of lines in the rules
+        max_scroll = max(0, total_content_height - visible_height)
+
+        scroll_bar_height = max(20, int((visible_height / total_content_height) * visible_height)) if max_scroll > 0 else visible_height
+        scroll_percentage = self.rules_scroll / max_scroll if max_scroll > 0 else 0
+        scroll_bar_y = 100 + (scroll_percentage * (visible_height - scroll_bar_height))
+        scroll_bar_rect = pygame.Rect(780, int(scroll_bar_y), 20, scroll_bar_height)
+
+        while True:
+            self.screen.fill((255, 255, 255))
+            self.ui_manager.draw_rules(window_size, self.rules_scroll, scroll_bar_rect, scroll_bar_height)
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        x, y = event.pos
+                        if scroll_bar_rect.collidepoint(x, y) and max_scroll > 0:
+                            self.rules_scroll_bar_dragging = True
+                            self.rules_mouse_y_offset = y - scroll_bar_rect.y
+                        else:
+                            menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
+                            if menu_rect.collidepoint(x, y):
+                                self.pressed_button = 'menu'
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        if self.pressed_button == 'menu':
+                            self.reset_game_state()
+                        self.rules_scroll_bar_dragging = False
+                        self.pressed_button = None
+                elif event.type == pygame.MOUSEMOTION:
+                    if self.rules_scroll_bar_dragging and max_scroll > 0:
+                        mouse_y = event.pos[1] - self.rules_mouse_y_offset
+                        new_y = max(100, min(mouse_y, 100 + visible_height - scroll_bar_height))
+                        self.rules_scroll = ((new_y - 100) / (visible_height - scroll_bar_height)) * max_scroll
+                        self.rules_scroll = max(0, min(self.rules_scroll, max_scroll))
+                elif event.type == pygame.MOUSEWHEEL:
+                    self.rules_scroll -= event.y * 30
+                    self.rules_scroll = max(0, min(self.rules_scroll, max_scroll))
+
     def reset_game_state(self):
         self.selected_grid = None
         self.scroll = 0
@@ -443,6 +558,9 @@ class Game:
         self.show_solution = False
         self.pressed_button = None
         self.pressed_grid_index = -1
+        self.rules_scroll = 0
+        self.rules_scroll_bar_dragging = False
+        self.rules_mouse_y_offset = 0
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
 

@@ -8,7 +8,7 @@ data_path = "./input/"
 # List all files in the directory
 grid_files = [f for f in os.listdir(data_path) if f.endswith(".in")]
 
-print("Solving all grids (with all values equal to 1)\n")
+print("Solving all grids \n")
 for file_name in grid_files:
     
     full_file_path = os.path.join(data_path, file_name)
