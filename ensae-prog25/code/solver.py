@@ -45,7 +45,7 @@ class Solver:
         Space Complexity: O(p) where p is the number of pairs
         """
         paired = set()  # Set of paired cells
-        res = 0 # The score
+        res = 0  # The score
 
         # Add all paired cells to the set and calculate the cost of each pair
         for pair in self.pairs:
@@ -71,7 +71,7 @@ class SolverEmpty(Solver):
         Placeholder method for running the solver. Does nothing.
         """
         pass
-
+    
 """
 Question 4, SolverGreedy:
 
@@ -132,7 +132,7 @@ class SolverGreedy(Solver):
         Time Complexity: O(n * m)
         Space Complexity: O(n * m)
         """
-        used = set() # Cells that have already been visited
+        used = set()  # Cells that have already been visited
         res = []
         pairs = self.grid.all_pairs()
 
@@ -161,9 +161,8 @@ class SolverGreedy(Solver):
                                 used.add(best_pair[0])
                         except ValueError:
                             pass
-        self.pairs=res
+        self.pairs = res
         return res
-
 
 class SolverFordFulkerson(Solver):
     """
@@ -205,10 +204,11 @@ class SolverFordFulkerson(Solver):
         self.even_cells = even_cells
         self.odd_cells = odd_cells
         # Get optimal pairs
-        self.pairs=self.ford_fulkerson(graph)
+        self.pairs = self.ford_fulkerson(graph, even_cells, odd_cells)
         return self.pairs
 
-    def bfs(self, graph: dict, s: str, t: str) -> list:
+    @staticmethod
+    def bfs(graph: dict, s: str, t: str) -> list[int]:
         """
         Performs a BFS to find a path from source 's' to sink 't' in the graph.
 
@@ -223,7 +223,7 @@ class SolverFordFulkerson(Solver):
 
         Returns:
         --------
-        list
+        list[int]
             The path from 's' to 't' if found, otherwise None.
 
         Time Complexity: O(V + E)
@@ -238,12 +238,13 @@ class SolverFordFulkerson(Solver):
                 if v not in parents:
                     parents[v] = u
                     if v == t:
-                        return self.reconstruct_path(parents, s, t)
+                        return SolverFordFulkerson.reconstruct_path(parents, s, t)
                     queue.append(v)
 
         return None
 
-    def reconstruct_path(self, parents: dict, s: str, t: str) -> list:
+    @staticmethod
+    def reconstruct_path(parents: dict, s: str, t: str) -> list[int]:
         """
         Reconstructs the path from 's' to 't' using the parents dictionary.
 
@@ -258,7 +259,7 @@ class SolverFordFulkerson(Solver):
 
         Returns:
         --------
-        list
+        list[int]
             The reconstructed path from 's' to 't'.
 
         Time Complexity: O(V)
@@ -271,7 +272,8 @@ class SolverFordFulkerson(Solver):
             current = parents[current]
         return path[::-1]
 
-    def ford_fulkerson(self, graph: dict) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+    @classmethod
+    def ford_fulkerson(cls, graph: dict, even_cells: set, odd_cells: set) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.
 
@@ -289,14 +291,14 @@ class SolverFordFulkerson(Solver):
         Space Complexity: O(E + V)
         """
         while True:
-            path = self.bfs(graph, "s", "t")
+            path = cls.bfs(graph, "s", "t")
             if path is None:
                 break
             for u, v in zip(path, path[1:]):
                 graph[u].remove(v)
                 graph[v].append(u)
 
-        return [(u, odd) for odd in self.odd_cells for u in graph[odd] if u in self.even_cells]
+        return [(u, odd) for odd in odd_cells for u in graph[odd] if u in even_cells]
 
 
 ################################################################################
@@ -341,7 +343,7 @@ class SolverGeneral(Solver):
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
 
         # Apply the Hungarian algorithm
-        row_ind, col_ind = self.hungarian_algorithm(cost_matrix)
+        row_ind, col_ind = SolverGeneral.hungarian_algorithm(cost_matrix)
 
         # Reconstruct pairs, only including valid ones (cost less than large_value)
         matched_pairs = []
