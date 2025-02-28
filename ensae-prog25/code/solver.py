@@ -74,7 +74,7 @@ class SolverEmpty(Solver):
 """
 Question 4, SolverGreedy:
 
-1. Complexity of SolverGreedy:
+Complexity of SolverGreedy:
    - Time Complexity: O(n * m)
      The `run` method iterates over each cell in the grid, checking its neighbors to find the best pair.
      The dominant term is iterating over all cells, which is O(n * m).
@@ -82,25 +82,24 @@ Question 4, SolverGreedy:
      The space complexity is O(n * m) due to storing the pairs and the results.
 
 Optimality:
-   - The greedy algorithm pairs cells based on minimizing the immediate cost without considering the global optimum.
-   - This approach can lead to suboptimal solutions, especially in grids where local decisions affect the overall outcome significantly.
-   - Consider the following 3x3 grid:
+    The greedy algorithm pairs cells based on minimizing the immediate cost without considering the global optimum.
+    This approach can lead to suboptimal solutions, especially in grids where local decisions affect the overall outcome significantly.
+    Consider the following 2x3 grid (grid00.in):
 
-     Colors:
-     [
-       [0, 1, 0],  # Row 1: White, Red, White
-       [1, 2, 1],  # Row 2: Red, Blue, Red
-       [0, 1, 0]   # Row 3: White, Red, White
-     ]
+    Colors:
+    [
+    [0, 0, 0],  # Row 1
+    [0, 0, 0]   # Row 2
+    ]
 
-     Values:
-     [
-       [1, 2, 1],  # Row 1
-       [2, 3, 2],  # Row 2
-       [1, 2, 1]   # Row 3
-     ]
-     - The greedy algorithm might pair (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
-     - Optimal Solution: Pair (0, 0) with (1, 0), (0, 1) with (0, 2), (1, 1) with (1, 2), and (2, 0) with (2, 1), achieving a lower total cost.
+    Values:
+    [
+    [5, 8, 4],  # Row 3
+    [11, 1, 3]  # Row 4
+    ]
+
+    The greedy algorithm might pair (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
+    Optimal Solution: Pair (0, 0) with (1, 0), (0, 1) with (0, 2) and (1, 1) with (1, 2), achieving a lower score (score = 12 instead of 14 with the greedy algorithm).
 
 Possible solution (brute force) and complexity:
    - A possible solution (brute force) would be to consider all possible pairings and selecting the one with the minimum score.
@@ -110,9 +109,9 @@ Possible solution (brute force) and complexity:
        Due to the need to store all possible configurations of pairs.
 
 Other possible solutions:
-   - Bipartite Matching (e.g., Ford-Fulkerson):
+   - Bipartite Matching (e.g., Ford-Fulkerson) in the case of a grid with a unique value:
      This approach can find an optimal matching in polynomial time, specifically O(E * V), where E is the number of edges and V is the number of vertices in the bipartite graph representation of the grid.
-     It provides a more global perspective compared to the greedy algorithm and can handle complex configurations better.
+   - Consider it as a maximum weight matching problem, can be solved using the Hungarian algorithm in O(n^3) time complexity.
 """
 
 class SolverGreedy(Solver):
@@ -304,21 +303,20 @@ class SolverFordFulkerson(Solver):
 ################################################################################
 
 
-from scipy.optimize import linear_sum_assignment
+from scipy.optimize import linear_sum_assignment #(it is a test, it will be implemented later)
 import numpy as np
 
 class SolverGeneral(Solver):
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         
         pairs = self.grid.all_pairs()
-        # Bipartite separation
         even_cells = []
         odd_cells = []
         for cell1, cell2 in self.grid.all_pairs():
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.append(even)
             odd_cells.append(odd)
-                    
+            
         large_value = 1000000000
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
