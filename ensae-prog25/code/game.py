@@ -61,11 +61,13 @@ class UIManager:
         """Darkens a color by a given factor."""
         return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor))
 
-    def draw_grid(self, grid, solver, cell_size):
+    def draw_grid(self, grid, solver, cell_size, selected_cells=[]):
         """Draws the game grid with cells and pairs."""
         for i in range(grid.n):
             for j in range(grid.m):
                 color = self.colors[grid.color[i][j]]
+                if (i, j) in selected_cells:
+                    color = self.darken_color(color)
                 pygame.draw.rect(self.screen, color, (j * cell_size, i * cell_size, cell_size, cell_size))
                 pygame.draw.rect(self.screen, (0, 0, 0), (j * cell_size, i * cell_size, cell_size, cell_size), 1)
                 font = pygame.font.Font(None, 36)
@@ -100,7 +102,7 @@ class UIManager:
         y_position = window_size[1] - 110
         self.screen.blit(text, (5, y_position))
         pygame.display.flip()
-        pygame.time.wait(1000)
+        pygame.time.wait(700)
 
     def draw_restart_button(self, window_size, pressed):
         """Draws the restart button."""
@@ -153,7 +155,7 @@ class UIManager:
             "i in {0,...,n−1} (row index), j in {0,...,m−1} (column index).",
             "",
             "Each cell has 2 attributes:",
-            "   — Color c(i,j) in {0(white),1(red),2(blue),3(green),4(black)}",
+            "   — Color c(i,j) in {0 (white), 1 (red), 2 (blue), 3 (green), 4 (black)}",
             "   — Value v(i,j) in N* (positive integer)",
             "",
             "Pairing rules:",
@@ -444,7 +446,7 @@ class Game:
                     else:
                         i, j = y // cell_size, x // cell_size
                         if grid.is_forbidden(i, j):
-                            self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                            self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
                             self.selected_cells = []
                         elif (i, j) in [cell for pair in solver_manager.solver.pairs for cell in pair]:
                             for pair in solver_manager.solver.pairs:
@@ -460,9 +462,9 @@ class Game:
                                     if solver_manager.can_pair(color1, color2):
                                         solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
                                     else:
-                                        self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                                        self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
                                 else:
-                                    self.ui_manager.draw_error_message("You cannot pair these two cells", window_size)
+                                    self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
                                 self.selected_cells = []
                         self.pressed_button = None
                 elif event.type == pygame.MOUSEBUTTONUP:
@@ -502,7 +504,7 @@ class Game:
                         self.pressed_button = None
 
             self.screen.fill((200, 200, 200))
-            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size)
+            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells)
             self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size)
 
             self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'restart')
