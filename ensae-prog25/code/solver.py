@@ -204,7 +204,6 @@ class SolverFordFulkerson(Solver):
         # Sets of cells for later extraction of the matching
         self.even_cells = even_cells
         self.odd_cells = odd_cells
-
         # Get optimal pairs
         self.pairs=self.ford_fulkerson(graph)
         return self.pairs
@@ -301,7 +300,7 @@ class SolverFordFulkerson(Solver):
 
 
 ################################################################################
-#                               WORK IN PROGRESS                              #
+#                               WORK IN PROGRESS                               #
 ################################################################################
 
 
@@ -310,22 +309,15 @@ import numpy as np
 
 class SolverGeneral(Solver):
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        
         pairs = self.grid.all_pairs()
-        if not pairs:
-            self.pairs = []
-            return []
-
         # Bipartite separation
         even_cells = []
         odd_cells = []
-        for i in range(self.grid.n):
-            for j in range(self.grid.m):
-                if self.grid.is_forbidden(i, j):
-                    continue
-                if (i + j) % 2 == 0:
-                    even_cells.append((i, j))
-                else:
-                    odd_cells.append((i, j))
+        for cell1, cell2 in self.grid.all_pairs():
+            even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
+            even_cells.append(even)
+            odd_cells.append(odd)
                     
         large_value = 1000000000
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
@@ -340,12 +332,7 @@ class SolverGeneral(Solver):
             elif v in even_to_idx and u in odd_to_idx:
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
-
-        # Handle the case where no assignment is possible
-        if len(even_cells) == 0 or len(odd_cells) == 0:
-            self.pairs = []
-            return []
-
+                
         # Apply Hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
