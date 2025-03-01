@@ -69,12 +69,14 @@ Jeu-appariement-sur-une-grille/
    cd Jeu-appariement-sur-une-grille
    ```
 
-2. Install the required packages:
+2. In VSCode, use the File menu to open the 'ensae-prog25' folder within the cloned repository.
+
+3. Install the required packages:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Run the game.py script:
+4. Run the game.py script:
    ```bash
    python code/game.py
    ```
