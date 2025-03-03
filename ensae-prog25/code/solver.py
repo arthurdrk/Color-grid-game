@@ -323,8 +323,7 @@ class SolverGeneral(Solver):
         pairs = self.grid.all_pairs()
         even_cells = []
         odd_cells = []
-
-        # Even and odd categories
+        
         for cell1, cell2 in pairs:
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.append(even)
@@ -335,7 +334,6 @@ class SolverGeneral(Solver):
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
         odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
 
-        # Fill the cost matrix with negative weights for maximization
         for u, v in pairs:
             if u in even_to_idx and v in odd_to_idx:
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
@@ -344,13 +342,11 @@ class SolverGeneral(Solver):
                 val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
 
-        # Hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
-        # Reconstruct pairs, only including valid ones (cost less than large_value)
         matched_pairs = []
         for i, j in zip(row_ind, col_ind):
-            if cost_matrix[i, j] < large_value:  # Only include valid pairs
+            if cost_matrix[i, j] < large_value: 
                 even = even_cells[i]
                 odd = odd_cells[j]
                 if (even, odd) in pairs or (odd, even) in pairs:
