@@ -1,5 +1,5 @@
 from grid import Grid
-from solver import SolverGreedy, SolverFordFulkerson, SolverGeneral
+from solver import SolverGreedy, SolverFordFulkerson, SolverGeneral, SolverGreedy2
 import os
 
 # Directory containing the grid files
@@ -23,12 +23,16 @@ for file_name in grid_files:
     solver_greedy = SolverGreedy(grid)
     solver_greedy.run()
     greedy_score = solver_greedy.score()
-
+    solver_greedy2 = SolverGreedy2(grid)
+    solver_greedy2.run()
+    greedy2_score = solver_greedy2.score()
+    
     solver_general = SolverGeneral(grid)
     solver_general.run()
     general_score = solver_general.score()
 
     print(f"  SolverGeneral score: {general_score}")
     print(f"  SolverFordFulkerson score: {ff_score}")
-    print(f"  SolverGreedy score: {greedy_score}\n")
+    print(f"  SolverGreedy score: {greedy_score}")
+    print(f"  SolverGreedy2 score: {greedy_score}\n")
     

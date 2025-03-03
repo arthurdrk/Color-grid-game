@@ -164,6 +164,52 @@ class SolverGreedy(Solver):
         self.pairs = res
         return res
 
+class SolverGreedy2(Solver):
+    """
+    A subclass of Solver that implements a greedy algorithm to find pairs.
+    """
+
+    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        """
+        Runs the greedy algorithm to find pairs of cells.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
+        """
+        used = set()  # Cells that have already been visited
+        res = []
+        pairs = self.grid.all_pairs()
+
+        # Create a dictionary to quickly access pairs by cell
+        pair_dict = defaultdict(list)
+        for pair in pairs:
+            pair_dict[pair[0]].append(pair)
+            pair_dict[pair[1]].append(pair)
+
+        for case in pair_dict:
+                if not case in used:
+                    used.add(case)
+                    # Find the neighboring cell that minimizes the cost
+                    try:
+                        best_pair = min(
+                            (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
+                            key=lambda x: self.grid.cost(x))
+                        if best_pair[0] == case:
+                            res.append((case, best_pair[1]))
+                            used.add(best_pair[1])
+                        else:
+                            res.append((case, best_pair[0]))
+                            used.add(best_pair[0])
+                    except ValueError:
+                        pass
+        self.pairs = res
+        return res
+
 class SolverFordFulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.
@@ -324,6 +370,7 @@ class SolverGeneral(Solver):
         even_cells = []
         odd_cells = []
         
+                    
         for cell1, cell2 in pairs:
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.append(even)
@@ -331,16 +378,16 @@ class SolverGeneral(Solver):
 
         large_value = 1e8
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
-        even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
-        odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
-        
+        even_to_index = {cell: i for i, cell in enumerate(even_cells)}
+        odd_to_index = {cell: i for i, cell in enumerate(odd_cells)}
+
         for u, v in pairs:
-            if u in even_to_idx and v in odd_to_idx:
+            if u in even_to_index and v in odd_to_index:
                 val = self.grid.cost((u, v))  
-                cost_matrix[even_to_idx[u], odd_to_idx[v]] = val
-            elif v in even_to_idx and u in odd_to_idx:
+                cost_matrix[even_to_index[u], odd_to_index[v]] = val
+            elif v in even_to_index and u in odd_to_index:
                 val = val = self.grid.cost((u, v))
-                cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
+                cost_matrix[even_to_index[v], odd_to_index[u]] = val
 
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
@@ -351,7 +398,6 @@ class SolverGeneral(Solver):
                 odd = odd_cells[j]
                 if (even, odd) in pairs or (odd, even) in pairs:
                     matched_pairs.append((even, odd))
-
         self.pairs = matched_pairs
         return matched_pairs
 
