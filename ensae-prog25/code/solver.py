@@ -336,10 +336,10 @@ class SolverGeneral(Solver):
 
         for u, v in pairs:
             if u in even_to_idx and v in odd_to_idx:
-                val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+                val = self.grid.cost((u, v))  
                 cost_matrix[even_to_idx[u], odd_to_idx[v]] = val
             elif v in even_to_idx and u in odd_to_idx:
-                val = -min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+                val = val = self.grid.cost((u, v))
                 cost_matrix[even_to_idx[v], odd_to_idx[u]] = val
 
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
