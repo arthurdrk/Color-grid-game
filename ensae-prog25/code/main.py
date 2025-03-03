@@ -34,5 +34,5 @@ for file_name in grid_files:
     print(f"  SolverGeneral score: {general_score}")
     print(f"  SolverFordFulkerson score: {ff_score}")
     print(f"  SolverGreedy score: {greedy_score}")
-    print(f"  SolverGreedy2 score: {greedy_score}\n")
+    print(f"  SolverGreedy2 score: {greedy2_score}\n")
     
