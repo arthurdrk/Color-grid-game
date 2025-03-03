@@ -333,7 +333,7 @@ class SolverGeneral(Solver):
         cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
         even_to_idx = {cell: idx for idx, cell in enumerate(even_cells)}
         odd_to_idx = {cell: idx for idx, cell in enumerate(odd_cells)}
-
+        
         for u, v in pairs:
             if u in even_to_idx and v in odd_to_idx:
                 val = self.grid.cost((u, v))  
