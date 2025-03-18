@@ -383,10 +383,10 @@ class SolverGeneral(Solver):
 
         for u, v in pairs:
             if u in even_to_index and v in odd_to_index:
-                val = self.grid.cost((u, v))  
+                val = self.grid.cost((u, v))-min(self.grid.value[u],self.grid.value[v])
                 cost_matrix[even_to_index[u], odd_to_index[v]] = val
             elif v in even_to_index and u in odd_to_index:
-                val = val = self.grid.cost((u, v))
+                val = val = self.grid.cost((u, v))-min(self.grid.value[u],self.grid.value[v])
                 cost_matrix[even_to_index[v], odd_to_index[u]] = val
 
         row_ind, col_ind = linear_sum_assignment(cost_matrix)

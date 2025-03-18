@@ -3,7 +3,7 @@ from solver import SolverGreedy, SolverFordFulkerson, SolverGeneral, SolverGreed
 import os
 
 # Directory containing the grid files
-data_path = "./input/"
+data_path = "./ensae-prog25/input/"
 
 # List all files 
 grid_files = [f for f in os.listdir(data_path) if f.endswith(".in")]
