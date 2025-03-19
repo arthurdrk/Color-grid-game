@@ -252,3 +252,39 @@ class Grid:
 
             grid = Grid(n, m, color, value)
         return grid
+    
+    def to_bipartite_graph(self)->dict:
+        """
+        Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
+        The graph already contains the valid pairs as edges.
+        Parameters: None
+        Result: A graph G stored as a dict type with two underdict even and odd edges.
+        """
+        G = {
+            'even': {},
+            'odd': {}
+        } # Preparing the two sets of edges.
+        pairs = self.all_pairs()
+
+    # Adding edges with color and adjacency constraints
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.color[i][j] != 4:  # Ignoring black cells
+                    cell = (i, j)
+                    if i + j % 2 == 0 :
+                        cell_parity = "even"
+                    else : 
+                        cell_parity = "odd"  # Needed to access the Graph set
+                    neighbor_parity = "even" if cell_parity == "odd" else "odd"
+                    for i2, j2 in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]: # Checking all the valid neighbors
+                            if 0 <= i2 < self.n and 0 <= j2 < self.m and not self.is_forbidden(i2, j2): # In the grid and not black
+                                if (cell, (i2, j2)) in pairs or ((i2, j2), cell) in pairs:
+                                    if cell not in G[cell_parity]: # If the cell is not already in the dictionnary
+                                        G[cell_parity][cell] = []
+                                    if (i2, j2) not in G[neighbor_parity]:
+                                        G[neighbor_parity][(i2, j2)] = []
+                                    if (i2, j2) not in G[cell_parity][cell]: # To avoid redundance
+                                        G[cell_parity][cell].append((i2, j2))
+                                        G[neighbor_parity][(i2, j2)].append(cell)
+                    
+        return G
