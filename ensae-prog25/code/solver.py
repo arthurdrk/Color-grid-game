@@ -352,54 +352,83 @@ class SolverFordFulkerson(Solver):
 #                               WORK IN PROGRESS                               #
 ################################################################################
 
-from scipy.optimize import linear_sum_assignment #(Hungarian algorithm, it will be implemented later)
+from scipy.optimize import linear_sum_assignment
 
 class SolverGeneral(Solver):
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
-        Runs the general solver to find pairs of cells using the Hungarian algorithm.
+        Runs the general solver to find pairs of cells using the Hungarian algorithm, allowing some cells to remain unpaired.
 
         Returns:
         --------
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells representing the optimal matching.
-
-        Time Complexity: O(n^3)
-        Space Complexity: O(n^2)
         """
         pairs = self.grid.all_pairs()
         even_cells = []
         odd_cells = []
-        
         for cell1, cell2 in pairs:
-            even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
+            if (cell1[0] + cell1[1]) % 2 == 0:
+                even, odd = cell1, cell2
+            else:
+                even, odd = cell2, cell1
             even_cells.append(even)
             odd_cells.append(odd)
-
-        large_value = 1e8
-        cost_matrix = np.full((len(even_cells), len(odd_cells)), large_value)
+        even_cells = list(set(even_cells))
+        odd_cells = list(set(odd_cells))
+        E = len(even_cells)
+        O = len(odd_cells)
+        max_size = max(E, O)
+        large_value = np.inf
+        
+        # Create mappings from cell to index
         even_to_index = {cell: i for i, cell in enumerate(even_cells)}
         odd_to_index = {cell: i for i, cell in enumerate(odd_cells)}
-
+        
+        # Initialize cost matrix with large_value
+        cost_matrix = np.full((max_size, max_size), large_value)
+        
+        # Fill real pairs
         for u, v in pairs:
-            if u in even_to_index and v in odd_to_index:
-                val_u=self.grid.value[u[0]][u[1]]
-                val_v=self.grid.value[v[0]][v[1]]
-                cost_matrix[even_to_index[u], odd_to_index[v]] = -min(val_u, val_v)  
-            elif v in even_to_index and u in odd_to_index:
-                val_u=self.grid.value[u[0]][u[1]]
-                val_v=self.grid.value[v[0]][v[1]]
-                cost_matrix[even_to_index[v], odd_to_index[u]] = -min(val_u, val_v) 
+            if (u[0] + u[1]) % 2 == 0:
+                even, odd = u, v
+            else:
+                even, odd = v, u
+            if even in even_to_index and odd in odd_to_index:
+                i = even_to_index[even]
+                j = odd_to_index[odd]
+                cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
+                cost_matrix[i][j] = cost
+        # Handle even to dummy odd (unpaired even cells)
+        for i in range(E):
+            for j in range(O, max_size):
+                u = even_cells[i]
+                cost = - self.grid.value[u[0]][u[1]]
+                cost_matrix[i][j] = cost
+        
+        # Handle dummy even to odd (unpaired odd cells)
+        for i in range(E, max_size):
+            for j in range(O):
+                v = odd_cells[j]
+                cost = - self.grid.value[v[0]][v[1]]
+                cost_matrix[i][j] = cost
+        
+        # Handle dummy even to dummy odd (no cost)
+        for i in range(E, max_size):
+            for j in range(O, max_size):
+                cost_matrix[i][j] = 0
+        print(cost_matrix)
+        # Apply Hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
-
+        
+        # Collect matched pairs
         matched_pairs = []
         for i, j in zip(row_ind, col_ind):
-            if cost_matrix[i, j] < large_value: 
-                even = even_cells[i]
-                odd = odd_cells[j]
-                if (even, odd) in pairs or (odd, even) in pairs:
-                    matched_pairs.append((even, odd))
+            if i < E and j < O:
+                u = even_cells[i]
+                v = odd_cells[j]
+                if (u, v) in pairs or (v, u) in pairs:
+                    matched_pairs.append((u, v))
+        
         self.pairs = matched_pairs
         return matched_pairs
-
-

@@ -331,7 +331,7 @@ class Game:
         self.screen = pygame.display.set_mode((600, 600))
         pygame.display.set_caption("ColorGrid")
         self.ui_manager = UIManager(self.screen, self.colors, self.colors_title)
-        self.grid_manager = GridManager("./input/")
+        self.grid_manager = GridManager("./ensae-prog25/input/")
         self.selected_grid = None
         self.scroll = 0
         self.scroll_bar_dragging = False

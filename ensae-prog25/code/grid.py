@@ -176,7 +176,7 @@ class Grid:
                         c2 = self.color[k][l]
                         if c2 in allowed[c1] and c1 in allowed[c2]:
                             res.append(((i, j), (k, l)))
-        return res
+        return sorted(res)
 
     def vois(self, i: int, j: int) -> list[tuple[int, int]]:
         """
