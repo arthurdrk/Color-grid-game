@@ -271,7 +271,7 @@ class Grid:
             for j in range(self.m):
                 if self.color[i][j] != 4:  # Ignoring black cells
                     cell = (i, j)
-                    if i + j % 2 == 0 :
+                    if (i + j)% 2 == 0 :
                         cell_parity = "even"
                     else : 
                         cell_parity = "odd"  # Needed to access the Graph set

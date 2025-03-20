@@ -8,7 +8,14 @@ data_path = "./ensae-prog25/input/"
 grid_files = [f for f in os.listdir(data_path) if f.endswith(".in")]
 
 
-    
+# grid = Grid.grid_from_file("./ensae-prog25/input/grid11.in", read_values=True)
+# solver_general = SolverGeneral(grid)
+# solver_general.run()
+# general_score = solver_general.score()
+# pairs = solver_general.pairs
+# print(f"  SolverGeneral score: {general_score} \n")
+
+
 print("Solving all grids \n")
 for file_name in grid_files:
     
@@ -16,7 +23,6 @@ for file_name in grid_files:
     print("Solving grid:", file_name)
 
     grid = Grid.grid_from_file(full_file_path, read_values=True)
-    
     solver_general = SolverGeneral(grid)
     solver_general.run()
     general_score = solver_general.score()

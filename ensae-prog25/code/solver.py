@@ -48,7 +48,7 @@ class Solver:
 
         # Add all paired cells to the set and calculate the cost of each pair
         score = sum(self.grid.cost(pair) for pair in self.pairs)
-        taken = [cell for pair in self.pairs for cell in pair]
+        taken = set([cell for pair in self.pairs for cell in pair])
         score += sum(self.grid.value[i][j] for i in range(self.grid.n) 
                      for j in range(self.grid.m) 
                      if (i, j) not in taken and not self.grid.is_forbidden(i, j))
@@ -379,8 +379,7 @@ from scipy.optimize import linear_sum_assignment
 #         even_to_index = {cell: i for i, cell in enumerate(even_cells)}
 #         odd_to_index = {cell: i for i, cell in enumerate(odd_cells)}
         
-#         # Determine the maximum size for the cost matrix (E + O to allow all possible pairings and dummies)
-        
+
 #         # Initialize cost matrix with large_value
 #         cost_matrix = np.full((E+1, O+1), large_value)
         
@@ -400,8 +399,8 @@ from scipy.optimize import linear_sum_assignment
 #             cost_matrix[even_to_index[u]][-1] = self.grid.value[u[0]][u[1]]
 #         for v in odd_cells:
 #             cost_matrix[-1][odd_to_index[v]] = self.grid.value[v[0]][v[1]]
-#         # Apply Hungarian algorithm
         
+#         # Apply Hungarian algorithm
 #         row_ind, col_ind = linear_sum_assignment(cost_matrix)
         
 #         # Collect matched pairs
@@ -421,42 +420,102 @@ from scipy.optimize import linear_sum_assignment
 
 import networkx as nx
 
+# class SolverGeneral(Solver):
+#     """
+#     Un solveur qui utilise un appariement pondéré pour minimiser le score dans une grille.
+#     Les paires sont choisies pour maximiser la somme des min(v_u, v_v), ce qui minimise le score global.
+
+#     Attributs :
+#     -----------
+#     grid : Grid
+#         La grille sur laquelle on travaille.
+#     pairs : list[tuple[tuple[int]]]
+#         Liste des paires, chaque paire étant un tuple ((i1, j1), (i2, j2)).
+#     """
+
+#     def run(self):
+#         """
+#         Exécute l’algorithme de matching pondéré pour trouver les paires optimales.
+#         Utilise NetworkX pour calculer un maximum weight matching dans le graphe biparti.
+#         """
+#         # Obtenir le graphe biparti de la grille
+#         graph = self.grid.to_bipartite_graph()
+#         G = nx.Graph()
+
+#         # Ajouter les nœuds (cellules paires et impaires)
+#         for cell in graph['even']:
+#             G.add_node(cell)
+#         for cell in graph['odd']:
+#             G.add_node(cell)
+
+#         # Ajouter les arêtes avec les poids w_(u,v) = min(v_u, v_v)
+#         for u in graph['even']:
+#             for v in graph['even'][u]:
+#                 weight = min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+#                 G.add_edge(u, v, weight=weight)
+
+#         # Trouver le maximum weight matching
+#         matching = nx.max_weight_matching(G, maxcardinality=False)
+
+#         # Convertir le matching en liste de paires
+#         self.pairs = list(matching)
+
+
+
 class SolverGeneral(Solver):
-    """
-    Un solveur qui utilise un appariement pondéré pour minimiser le score dans une grille.
-    Les paires sont choisies pour maximiser la somme des min(v_u, v_v), ce qui minimise le score global.
-
-    Attributs :
-    -----------
-    grid : Grid
-        La grille sur laquelle on travaille.
-    pairs : list[tuple[tuple[int]]]
-        Liste des paires, chaque paire étant un tuple ((i1, j1), (i2, j2)).
-    """
-
-    def run(self):
+    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
-        Exécute l’algorithme de matching pondéré pour trouver les paires optimales.
-        Utilise NetworkX pour calculer un maximum weight matching dans le graphe biparti.
+        Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
         """
-        # Obtenir le graphe biparti de la grille
-        graph = self.grid.to_bipartite_graph()
-        G = nx.Graph()
-
-        # Ajouter les nœuds (cellules paires et impaires)
-        for cell in graph['even']:
-            G.add_node(cell)
-        for cell in graph['odd']:
-            G.add_node(cell)
-
-        # Ajouter les arêtes avec les poids w_(u,v) = min(v_u, v_v)
-        for u in graph['even']:
-            for v in graph['even'][u]:
-                weight = min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
-                G.add_edge(u, v, weight=weight)
-
-        # Trouver le maximum weight matching
-        matching = nx.max_weight_matching(G, maxcardinality=False)
-
-        # Convertir le matching en liste de paires
-        self.pairs = list(matching)
+        pairs = self.grid.all_pairs()
+        # Include all non-forbidden cells in 'taken'
+        taken = []
+        for i in range(self.grid.n):
+            for j in range(self.grid.m):
+                if not self.grid.is_forbidden(i, j):
+                    taken.append((i, j))
+        taken=list(set(taken))
+        l = len(taken)
+        if l == 0:
+            self.pairs = []
+            return []
+        cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
+        
+        # Build adjacency list from allowed pairs
+        d = defaultdict(list)
+        for u, v in pairs:
+            d[u].append(v)
+            d[v].append(u)
+        
+        # Initialize cost matrix with infinity and set diagonal to 0
+        large_value = np.inf
+        cost_matrix = np.full((l, l), large_value)
+        for i in range(l):
+            u = taken[i]
+            for v in d.get(u, []):
+                j = cell_to_idx[v]
+                cost = self.grid.cost((u, v)) - min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
+                cost_matrix[i][j] = cost
+                
+            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] - 
+        
+        # Apply Hungarian algorithm
+        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+        
+        # Collect mutual pairs
+        matched_pairs = []
+        seen = set()
+        for i, j in zip(row_ind, col_ind):
+            if i in seen or j in seen:
+                continue
+            if i == j:
+                seen.add(i)  # Unpaired
+            else:
+                if col_ind[j] == i:  # Check mutual assignment
+                    u, v = taken[i], taken[j]
+                    if (u, v) in pairs or (v, u) in pairs:
+                        matched_pairs.append((u, v))
+                        seen.update([i, j])
+        
+        self.pairs = matched_pairs
+        return matched_pairs
