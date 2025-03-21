@@ -1,8 +1,5 @@
 """Functions for computing and verifying matchings in a graph (adjacency dict version)."""
 
-from itertools import repeat
-
-
 def matching_dict_to_set(matching):
     """Converts matching dict format to matching set format."""
     edges = set()
