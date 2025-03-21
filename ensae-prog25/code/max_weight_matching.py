@@ -1,3 +1,8 @@
+"""Functions for computing and verifying matchings in a graph."""
+
+from itertools import repeat
+
+
 def matching_dict_to_set(matching):
     """Converts matching dict format to matching set format
 
@@ -34,15 +39,15 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
     Parameters
     ----------
     G : NetworkX graph
-    Undirected graph
+      Undirected graph
 
     maxcardinality: bool, optional (default=False)
-    If maxcardinality is True, compute the maximum-cardinality matching
-    with maximum weight among all maximum-cardinality matchings.
+       If maxcardinality is True, compute the maximum-cardinality matching
+       with maximum weight among all maximum-cardinality matchings.
 
     weight: string, optional (default='weight')
-    Edge data key corresponding to the edge weight.
-    If key not found, uses 1 as weight.
+       Edge data key corresponding to the edge weight.
+       If key not found, uses 1 as weight.
 
 
     Returns
@@ -50,7 +55,7 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
     matching : set
         A maximal matching of the graph.
 
-    Examples
+     Examples
     --------
     >>> G = nx.Graph()
     >>> edges = [(1, 2, 6), (1, 3, 2), (2, 3, 1), (2, 4, 7), (3, 5, 9), (4, 5, 3)]
@@ -80,7 +85,7 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
     References
     ----------
     .. [1] "Efficient Algorithms for Finding Maximum Matching in Graphs",
-    Zvi Galil, ACM Computing Surveys, 1986.
+       Zvi Galil, ACM Computing Surveys, 1986.
     """
     #
     # The algorithm is taken from "Efficient Algorithms for Finding Maximum
