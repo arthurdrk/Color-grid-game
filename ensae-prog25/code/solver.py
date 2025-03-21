@@ -347,49 +347,32 @@ class SolverFordFulkerson(Solver):
 #                               WORK IN PROGRESS                               #
 ################################################################################
 
-
-import networkx as nx
-
 class SolverGeneral1(Solver):
     """
     Un solveur qui utilise un appariement pondéré pour minimiser le score dans une grille.
-    Les paires sont choisies pour maximiser la somme des min(v_u, v_v), ce qui minimise le score global.
-
-    Attributs :
-    -----------
-    grid : Grid
-        La grille sur laquelle on travaille.
-    pairs : list[tuple[tuple[int]]]
-        Liste des paires, chaque paire étant un tuple ((i1, j1), (i2, j2)).
+    Adapté pour utiliser un dictionnaire d'adjacence au lieu de NetworkX.
     """
 
     def run(self):
         """
-        Exécute l’algorithme de matching pondéré pour trouver les paires optimales.
-        Utilise NetworkX pour calculer un maximum weight matching dans le graphe biparti.
+        Construit un graphe sous forme de dictionnaire d'adjacence et utilise
+        l'algorithme max_weight_matching personnalisé.
         """
-        # Obtenir le graphe biparti de la grille
         graph = self.grid.to_bipartite_graph()
-        G = defaultdict(dict)
-        U = []
-        V = []
-        # Ajouter les nœuds (cellules paires et impaires)
-        for cell in graph['even']:
-            U.append(cell)
-        for cell in graph['odd']:
-            V.append(cell)
-        # Ajouter les arêtes avec les poids w_(u,v) = min(v_u, v_v)
+        G = {}  
         for u in graph['even']:
             for v in graph['even'][u]:
-                weight = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                G[u][v] = -weight
-        print(G)
-        # Trouver le maximum weight matching
-        matching = self.max_weight_matching(G, U, V)
+                cost = self.grid.cost((u, v))
+                value_u = self.grid.value[u[0]][u[1]]
+                value_v = self.grid.value[v[0]][v[1]]
+                weight = cost - value_u - value_v
+                
+                # Ajout bidirectionnel des arêtes
+                G.setdefault(u, {})[v] = -weight
+                G.setdefault(v, {})[u] = -weight
 
-        # Convertir le matching en liste de paires
+        # Calcul de l'appariement maximal
+        matching = max_weight_matching(G, maxcardinality=False)
+        
+        # Conversion du résultat
         self.pairs = list(matching)
-
-    from itertools import repeat
-
-
