@@ -348,77 +348,7 @@ class SolverFordFulkerson(Solver):
 
 from scipy.optimize import linear_sum_assignment
 
-# class SolverGeneral(Solver):
-#     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-#         """
-#         Runs the general solver to find pairs of cells using the Hungarian algorithm, allowing some cells to remain unpaired.
-
-#         Returns:
-#         --------
-#         list[tuple[tuple[int, int], tuple[int, int]]]
-#             A list of pairs of cells representing the optimal matching.
-#         """
-#         pairs = self.grid.all_pairs()
-#         even_cells = []
-#         odd_cells = []
-#         for cell1, cell2 in pairs:
-#             # Determine even and odd based on sum of coordinates
-#             if (cell1[0] + cell1[1]) % 2 == 0:
-#                 even, odd = cell1, cell2
-#             else:
-#                 even, odd = cell2, cell1
-#             even_cells.append(even)
-#             odd_cells.append(odd)
-#         even_cells = list(set(even_cells))
-#         odd_cells = list(set(odd_cells))
-#         E = len(even_cells)
-#         O = len(odd_cells)
-#         large_value = np.inf
-        
-#         # Create mappings from cell to index
-#         even_to_index = {cell: i for i, cell in enumerate(even_cells)}
-#         odd_to_index = {cell: i for i, cell in enumerate(odd_cells)}
-        
-
-#         # Initialize cost matrix with large_value
-#         cost_matrix = np.full((E+1, O+1), large_value)
-        
-#         # Fill real pairs
-#         for u, v in pairs:
-#             if (u[0] + u[1]) % 2 == 0:
-#                 even, odd = u, v
-#             else:
-#                 even, odd = v, u
-#             if even in even_to_index and odd in odd_to_index:
-#                 i = even_to_index[even]
-#                 j = odd_to_index[odd]
-#                 cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-#                 cost_matrix[i][j] = cost
-
-#         for u in even_cells:
-#             cost_matrix[even_to_index[u]][-1] = self.grid.value[u[0]][u[1]]
-#         for v in odd_cells:
-#             cost_matrix[-1][odd_to_index[v]] = self.grid.value[v[0]][v[1]]
-        
-#         # Apply Hungarian algorithm
-#         row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
-#         # Collect matched pairs
-#         matched_pairs = []
-#         for i, j in zip(row_ind, col_ind):
-#             if i < E and j < O:
-#                 u = even_cells[i]
-#                 v = odd_cells[j]
-#                 # Check if the pair (u, v) or (v, u) is allowed
-#                 if (u, v) in pairs or (v, u) in pairs:
-#                     matched_pairs.append((u, v))
-        
-#         self.pairs = matched_pairs
-#         return matched_pairs
-    
-
-
-import networkx as nx
+# import networkx as nx
 
 # class SolverGeneral(Solver):
 #     """
@@ -451,71 +381,137 @@ import networkx as nx
 #         # Ajouter les arêtes avec les poids w_(u,v) = min(v_u, v_v)
 #         for u in graph['even']:
 #             for v in graph['even'][u]:
-#                 weight = min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
-#                 G.add_edge(u, v, weight=weight)
+#                 weight = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
+#                 G.add_edge(u, v, weight=-weight)
 
 #         # Trouver le maximum weight matching
 #         matching = nx.max_weight_matching(G, maxcardinality=False)
 
 #         # Convertir le matching en liste de paires
 #         self.pairs = list(matching)
-
-
+        
 
 class SolverGeneral(Solver):
-    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
-        """
+    """
+    Un solveur qui utilise un appariement pondéré biparti sans dépendances externes.
+    Implémentation manuelle de l'algorithme hongrois.
+    """
+    
+    def run(self):
+        """Exécute l'algorithme de matching pondéré biparti."""
+        # Construction du graphe biparti
+        graph = self._build_bipartite_graph()
+        
+        # Application de l'algorithme hongrois
+        pairs = self._hungarian_algorithm(graph)
+        
+        self.pairs = pairs
+        return pairs
+
+    def _build_bipartite_graph(self):
+        """Construit la représentation du graphe biparti avec les poids."""
+        graph = {
+            'even': {},
+            'odd': {},
+            'weights': {}
+        }
+        
+        # Récupère toutes les paires valides
         pairs = self.grid.all_pairs()
-        # Include all non-forbidden cells in 'taken'
-        taken = []
-        for i in range(self.grid.n):
-            for j in range(self.grid.m):
-                if not self.grid.is_forbidden(i, j):
-                    taken.append((i, j))
-        taken=list(set(taken))
-        l = len(taken)
-        if l == 0:
-            self.pairs = []
-            return []
-        cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
         
-        # Build adjacency list from allowed pairs
-        d = defaultdict(list)
-        for u, v in pairs:
-            d[u].append(v)
-            d[v].append(u)
-        
-        # Initialize cost matrix with infinity and set diagonal to 0
-        large_value = np.inf
-        cost_matrix = np.full((l, l), large_value)
-        for i in range(l):
-            u = taken[i]
-            for v in d.get(u, []):
-                j = cell_to_idx[v]
-                cost = self.grid.cost((u, v)) - min(self.grid.value[u[0]][u[1]], self.grid.value[v[0]][v[1]])
-                cost_matrix[i][j] = cost
-                
-            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] - 
-        
-        # Apply Hungarian algorithm
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
-        # Collect mutual pairs
-        matched_pairs = []
-        seen = set()
-        for i, j in zip(row_ind, col_ind):
-            if i in seen or j in seen:
-                continue
-            if i == j:
-                seen.add(i)  # Unpaired
+        for pair in pairs:
+            u, v = pair
+            # Détermine la parité des cellules
+            if (u[0] + u[1]) % 2 == 0:
+                even, odd = u, v
             else:
-                if col_ind[j] == i:  # Check mutual assignment
-                    u, v = taken[i], taken[j]
-                    if (u, v) in pairs or (v, u) in pairs:
-                        matched_pairs.append((u, v))
-                        seen.update([i, j])
+                even, odd = v, u
+            
+            # Calcule le poids comme dans la version originale
+            weight = -(self.grid.cost(pair) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]])
+            
+            # Ajoute l'arête au graphe
+            if even not in graph['even']:
+                graph['even'][even] = []
+            if odd not in graph['odd']:
+                graph['odd'][odd] = []
+                
+            graph['even'][even].append(odd)
+            graph['weights'][(even, odd)] = weight
+            
+        return graph
+
+    def _hungarian_algorithm(self, graph):
+        """Implémentation de l'algorithme hongrois pour les graphes bipartis."""
+        # Initialisation des variables
+        even_nodes = list(graph['even'].keys())
+        odd_nodes = list(graph['odd'].keys())
+        n = len(even_nodes)
+        m = len(odd_nodes)
         
-        self.pairs = matched_pairs
-        return matched_pairs
+        # Matrice des coûts (initialisée à -infini pour les arêtes manquantes)
+        cost = [[-float('inf')]*m for _ in range(n)]
+        for i, u in enumerate(even_nodes):
+            for j, v in enumerate(odd_nodes):
+                if v in graph['even'][u]:
+                    cost[i][j] = graph['weights'][(u, v)]
+        
+        # Algorithmes auxiliaires
+        def max_weight_matching():
+            u = [0] * (n+1)
+            v = [0] * (m+1)
+            p = [0] * (m+1)
+            way = [0] * (m+1)
+
+            for i in range(1, n+1):
+                p[0] = i
+                minv = [float('inf')] * (m+1)
+                used = [False] * (m+1)
+                j0 = 0
+                i0 = i
+                delta = 0
+                
+                while True:
+                    used[j0] = True
+                    i0 = p[j0]
+                    delta = float('inf')
+                    j1 = 0
+                    
+                    for j in range(1, m+1):
+                        if not used[j]:
+                            cur = cost[i0-1][j-1] - u[i0] - v[j]
+                            if cur < minv[j]:
+                                minv[j] = cur
+                                way[j] = j0
+                            if minv[j] < delta:
+                                delta = minv[j]
+                                j1 = j
+                                
+                    for j in range(m+1):
+                        if used[j]:
+                            u[p[j]] += delta
+                            v[j] -= delta
+                        else:
+                            minv[j] -= delta
+                            
+                    j0 = j1
+                    if p[j0] == 0:
+                        break
+                        
+                while True:
+                    j1 = way[j0]
+                    p[j0] = p[j1]
+                    j0 = j1
+                    if j0 == 0:
+                        break
+                        
+            matches = {}
+            for j in range(1, m+1):
+                if p[j] != 0:
+                    matches[even_nodes[p[j]-1]] = odd_nodes[j-1]
+                    
+            return matches
+
+        # Exécution et conversion des résultats
+        matching = max_weight_matching()
+        return list(matching.items())
