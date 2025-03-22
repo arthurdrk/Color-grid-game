@@ -209,7 +209,11 @@ class Grid:
                         for l in range(self.m):
                             if (i == k and j == l) or self.is_forbidden(k, l):
                                 continue
-                            res.append(((i, j), (k, l)))
+                            c2 = self.color[k][l]
+                            if c2 in allowed[c1] and c1 in allowed[c2]:
+                                # Ensure each pair is added once in order (i,j) < (k,l)
+                                if (i, j) < (k, l):
+                                    res.append(((i, j), (k, l)))
                 else:  # Non-white cells follow original adjacency rules
                     for dx, dy in directions:
                         k, l = i + dx, j + dy

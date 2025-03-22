@@ -6,7 +6,7 @@ import pygame
 import sys
 import os
 from grid import Grid
-from solver import Solver, SolverGeneral
+from solver import Solver, SolverBlossom
 
 pygame.init()
 
@@ -67,6 +67,7 @@ class UIManager:
 
     def draw_grid(self, grid, solver, cell_size, selected_cells=[]):
         """Draws the game grid with cells and pairs."""
+        # Draw cells first
         for i in range(grid.n):
             for j in range(grid.m):
                 color = self.colors[grid.color[i][j]]
@@ -78,10 +79,44 @@ class UIManager:
                 text = font.render(str(grid.value[i][j]), True, (0, 0, 0))
                 self.screen.blit(text, (j * cell_size + cell_size // 2 - text.get_width() // 2, i * cell_size + cell_size // 2 - text.get_height() // 2))
 
+        # Draw yellow frames around pairs with more inset
         for pair in solver.pairs:
-            start = (pair[0][1] * cell_size + cell_size // 2, pair[0][0] * cell_size + cell_size // 2)
-            end = (pair[1][1] * cell_size + cell_size // 2, pair[1][0] * cell_size + cell_size // 2)
-            pygame.draw.line(self.screen, self.colors[5], start, end, 4)
+            (i1, j1), (i2, j2) = pair
+            min_i = min(i1, i2)
+            max_i = max(i1, i2)
+            min_j = min(j1, j2)
+            max_j = max(j1, j2)
+            
+            # Increased inset from 2px to 4px
+            frame_inset = 4
+            frame_x = min_j * cell_size + frame_inset
+            frame_y = min_i * cell_size + frame_inset
+            frame_width = (max_j - min_j + 1) * cell_size - 2 * frame_inset
+            frame_height = (max_i - min_i + 1) * cell_size - 2 * frame_inset
+            
+            # Draw yellow border with adjusted position/size
+            pygame.draw.rect(self.screen, self.colors[5], 
+                            (frame_x, frame_y, frame_width, frame_height), 
+                            3)  # Keep 4px border thickness
+
+        # Draw yellow frames around pairs
+        for pair in solver.pairs:
+            (i1, j1), (i2, j2) = pair
+            min_i = min(i1, i2)
+            max_i = max(i1, i2)
+            min_j = min(j1, j2)
+            max_j = max(j1, j2)
+            
+            # Calculate frame dimensions with 2px inset
+            frame_x = min_j * cell_size + 2
+            frame_y = min_i * cell_size + 2
+            frame_width = (max_j - min_j + 1) * cell_size - 4
+            frame_height = (max_i - min_i + 1) * cell_size - 4
+            
+            # Draw thick yellow border
+            pygame.draw.rect(self.screen, self.colors[5], 
+                            (frame_x, frame_y, frame_width, frame_height), 
+                            4)  # 4px thick border
 
     def draw_score(self, solver, window_size, cell_size):
         """Draws the current score."""
@@ -283,7 +318,7 @@ class SolverManager:
 
     def __init__(self, grid):
         self.solver = Solver(grid)
-        self.solver_general = SolverGeneral(grid)
+        self.solver_general = SolverBlossom(grid)
         self.solver_general.run()
         self.general_score = self.solver_general.score()
 

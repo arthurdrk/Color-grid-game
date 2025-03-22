@@ -372,7 +372,7 @@ class SolverBlossom(Solver):
                 G.setdefault(v, {})[u] = -weight
 
         # Calcul de l'appariement maximal
-        matching = max_weight_matching(G, maxcardinality=False)
+        matching = max_weight_matching(G)
         
         # Conversion du résultat
         self.pairs = list(matching)

@@ -1,7 +1,7 @@
 import os
 import time
 from grid import Grid
-from solver import SolverGreedy, SolverFordFulkerson, SolverBlossom, SolverGreedy2, SolverHungarian, SolverHungarian2
+from solver import SolverGreedy, SolverFordFulkerson, SolverBlossom, SolverGreedy2, SolverHungarian
 
 # Directory containing the grid files
 data_path = "./ensae-prog25/input/"
@@ -14,7 +14,7 @@ for file_name in grid_files:
     print("Solving grid:", file_name)
 
     grid = Grid.grid_from_file(full_file_path, read_values=True)
-    solver_general = SolverHungarian2(grid)
+    solver_general = SolverBlossom(grid)
 
     # Start the timer
     start_time = time.time()
