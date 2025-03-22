@@ -14,7 +14,7 @@ for file_name in grid_files:
     print("Solving grid:", file_name)
 
     grid = Grid.grid_from_file(full_file_path, read_values=True)
-    solver_general = SolverHungarian(grid)
+    solver_general = SolverHungarian2(grid)
 
     # Start the timer
     start_time = time.time()

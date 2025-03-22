@@ -430,58 +430,83 @@ class SolverHungarian(Solver):
         self.pairs = matched_pairs
         return matched_pairs
     
-class SolverHungarian2(Solver):
-    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
-        """
-        pairs = self.grid.all_pairs()
-        taken = list(set([cell for pair in pairs for cell in pair]))
-        # Include all non-forbidden cells in 'taken'
-        l = len(taken)
-        if l == 0:
-            self.pairs = []
-            return []
-        cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
-        # Build adjacency list from allowed pairs
-        d = defaultdict(list)
-        for u, v in pairs:
-            d[u].append(v)
-            d[v].append(u)
-        # Initialize cost matrix with infinity and set diagonal to 0
-        large_value = np.inf
-        cost_matrix = np.full((l, l), large_value)
-        for i in range(l):
-            u = taken[i]
-            for v in d.get(u, []):
-                j = cell_to_idx[v]
-                cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                cost_matrix[i][j] = cost
-            cost=min([self.grid.cost((u,v)) for v in d[u]])
-            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] 
-        # Apply Hungarian algorithm
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
-        # Collect mutual pairs
-        matched_pairs = []
-        seen = set()
-        for i, j in zip(row_ind, col_ind):
-            if i in seen or j in seen:
-                continue
-            if i == j:
-                seen.add(i)  # Unpaired
-            else:
-                if col_ind[j] == i:  # Check mutual assignment
-                    u, v = taken[i], taken[j]
-                    if (u, v) in pairs or (v, u) in pairs:
-                        matched_pairs.append((u, v))
-                        seen.update([i, j])
-        
-        self.pairs = matched_pairs
-        return matched_pairs
-    
 
-class SolverHungarian3(Solver):
+
+from scipy.optimize import linear_sum_assignment
+
+# def min_weight_matching(adjacency_dict):
+#     # Convert the adjacency dictionary to a cost matrix
+#     nodes = list(adjacency_dict.keys())
+#     cost_matrix = np.full((len(nodes), len(nodes)), np.inf)
+
+#     for i, u in enumerate(nodes):
+#         for j, v in enumerate(list(adjacency_dict[u].keys())):
+#                 cost_matrix[i, j] = adjacency_dict[u][v] # No direct edge, set cost to infinity
+
+#     print(cost_matrix)
+#     # Apply the Hungarian algorithm
+#     row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+#     # Create the matching pairs
+#     matching = [(nodes[row], nodes[col]) for row, col in zip(row_ind, col_ind)]
+
+#     return matching
+
+# class SolverHungarian2(Solver):
+#     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+#         """
+#         Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
+#         """
+#         pairs = self.grid.all_pairs()
+#         pairs = list(set(pairs))
+#         taken = list(set([cell for pair in pairs for cell in pair]))
+#         # Include all non-forbidden cells in 'taken'
+#         n,m=self.grid.n,self.grid.m
+#         l = len(taken)
+#         if l == 0:
+#             self.pairs = []
+#             return []
+#         cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
+        
+#         # Build adjacency dictionary from allowed pairs
+#         adjacency_dict = defaultdict(dict)
+#         for u, v in pairs:
+#             cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
+#             if (u[0] + u[1]) % 2 == 0:
+#                 adjacency_dict[u][v] = cost
+#                 adjacency_dict[u][(n + taken.index(u), m + taken.index(u))] = self.grid.value[u[0]][u[1]]
+#                 adjacency_dict[(n + taken.index(v), m + taken.index(v))][v] = self.grid.value[v[0]][v[1]]
+#             else:
+#                 adjacency_dict[v][u] = cost
+#                 adjacency_dict[v][(n + taken.index(v), m + taken.index(v))] = self.grid.value[v[0]][v[1]]
+#                 adjacency_dict[(n + taken.index(u), m + taken.index(u))][u] = self.grid.value[u[0]][u[1]]
+#         print(adjacency_dict)
+
+#         d =min_weight_matching(adjacency_dict)
+
+#         matched_pairs = []
+#         for (u, v) in d:
+#             if u[0] >= n and v[0] >= n:
+#                 matched_pairs.append(((u[0] - n, u[1] - m), (v[0] - n, v[1] - m)))
+#             elif u[0] >= n and v[0] < n:
+#                 matched_pairs.append(((u[0] - n, u[1] - m), v))
+#             elif u[0] < n and v[0] >= n:
+#                 matched_pairs.append((u, (v[0] - n, v[1] - m)))
+#             elif u[0] < n and v[0] < n:
+#                 matched_pairs.append((u,v))
+#         self.pairs = matched_pairs
+#         return matched_pairs
+
+
+
+
+
+
+
+
+
+
+class SolverGeneral(Solver):
     """
     Un solveur qui utilise l'algorithme hongrois pour trouver un appariement optimal.
     """
@@ -532,6 +557,7 @@ class SolverHungarian3(Solver):
             cost_matrix[i][O + i] = self.grid.value[cell[0]][cell[1]]
         for j, cell in enumerate(odd_cells):
             cost_matrix[E + j][j] = self.grid.value[cell[0]][cell[1]]
+        print(cost_matrix)
         # Appliquer l'algorithme hongrois
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
