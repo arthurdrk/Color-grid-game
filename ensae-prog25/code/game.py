@@ -182,6 +182,27 @@ class UIManager:
         color = (30, 30, 30) if pressed else (50, 50, 50)
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
+    
+    def draw_player_choice(self, window_size, pressed_button):
+        """Draws the player choice buttons."""
+        font = pygame.font.Font(None, 50)
+        
+        # One Player button
+        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
+        one_color = (30, 30, 30) if pressed_button == 'one' else (50, 50, 50)
+        pygame.draw.rect(self.screen, one_color, one_rect)
+        text = font.render("One Player", True, (255, 255, 255))
+        text_rect = text.get_rect(center=one_rect.center)
+        self.screen.blit(text, text_rect)
+
+        # Two Players button
+        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 220, 60)
+        two_color = (30, 30, 30) if pressed_button == 'two' else (50, 50, 50)
+        pygame.draw.rect(self.screen, two_color, two_rect)
+        text = font.render("Two Players", True, (255, 255, 255))
+        text_rect = text.get_rect(center=two_rect.center)
+        self.screen.blit(text, text_rect)
+        
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
         """Draws the game rules with scrolling functionality."""
@@ -379,6 +400,7 @@ class Game:
         self.rules_scroll = 0
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
+        self.player_mode = None
 
     def main(self):
         """Main game loop."""
@@ -449,6 +471,38 @@ class Game:
                     self.scroll -= event.y * 50
                     self.scroll = max(0, min(self.scroll, max_scroll))
 
+        self.player_mode = None
+        while self.player_mode is None:
+            self.screen.fill((255, 255, 255))
+            window_size = (600, 600)
+            self.ui_manager.draw_title(window_size)
+            self.ui_manager.draw_player_choice(window_size, self.pressed_button)
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        x, y = event.pos
+                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 200, 40)
+                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 200, 40)
+                        if one_rect.collidepoint(x, y):
+                            self.pressed_button = 'one'
+                        elif two_rect.collidepoint(x, y):
+                            self.pressed_button = 'two'
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1 and self.pressed_button:
+                        x, y = event.pos
+                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 200, 40)
+                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 200, 40)
+                        if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
+                            self.player_mode = 'one'
+                        elif two_rect.collidepoint(x, y) and self.pressed_button == 'two':
+                            self.player_mode = 'two'
+                        self.pressed_button = None
+        
         grid = self.grid_manager.load_grid(self.selected_grid)
         solver_manager = SolverManager(grid)
         general_score = solver_manager.general_score
