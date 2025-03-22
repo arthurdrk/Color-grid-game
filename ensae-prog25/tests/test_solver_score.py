@@ -1,6 +1,5 @@
 import sys 
 sys.path.append("./ensae-prog25/code/")
-
 import unittest
 from grid import Grid
 from solver import Solver
