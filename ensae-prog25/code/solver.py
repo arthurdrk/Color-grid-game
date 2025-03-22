@@ -125,8 +125,8 @@ class SolverGreedy(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
 
-        Time Complexity: O((n * m)^2)
-        Space Complexity: O((n * m)^2)
+        Time Complexity: O((n * m) * log(n * m)
+        Space Complexity: O((n * m) * log(n * m))
         """
         used = set()  # Cells that have already been visited
         res = []
