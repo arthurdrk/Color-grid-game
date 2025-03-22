@@ -486,8 +486,8 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 200, 40)
-                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 200, 40)
+                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
+                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 220, 60)
                         if one_rect.collidepoint(x, y):
                             self.pressed_button = 'one'
                         elif two_rect.collidepoint(x, y):
@@ -495,8 +495,8 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 200, 40)
-                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 200, 40)
+                        one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
+                        two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 220, 60)
                         if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
                             self.player_mode = 'one'
                         elif two_rect.collidepoint(x, y) and self.pressed_button == 'two':
