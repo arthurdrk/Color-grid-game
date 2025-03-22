@@ -149,7 +149,7 @@ class SolverGreedy(Solver):
                             best_pair = min(
                                 (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
                                 key=lambda x: self.grid.cost(x))
-                            if best_pair[0] == case:
+                            if best_pair[0] == case:  # indentify what is the index of the best cell in pair and what is the one of case
                                 res.append((case, best_pair[1]))
                                 used.add(best_pair[1])
                             else:
