@@ -358,7 +358,7 @@ class SolverBlossom(Solver):
         Construit un graphe sous forme de dictionnaire d'adjacence et utilise
         l'algorithme max_weight_matching personnalisé.
         """
-        graph = self.grid.to_bipartite_graph()
+        graph = self.grid.bipartite_graph()
         G = {}  
         for u in graph['even']:
             for v in graph['even'][u]:

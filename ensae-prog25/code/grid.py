@@ -177,6 +177,49 @@ class Grid:
                         if c2 in allowed[c1] and c1 in allowed[c2]:
                             res.append(((i, j), (k, l)))
         return sorted(res)
+    
+    def all_pairs2(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        """
+        Returns all allowed pairs of cells, where white cells can pair with any non-forbidden cell.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells that are allowed to be paired.
+
+        Time Complexity: O((n*m)^2) in the worst case where all cells are white.
+        Space Complexity: O((n*m)^2) in the worst case.
+        """
+        res = []
+        allowed = {
+            0: {0, 1, 2, 3},  # white can pair with all except forbidden (black)
+            1: {0, 1, 2},     # red can pair with white, red, blue
+            2: {0, 1, 2},     # blue can pair with white, red, blue
+            3: {0, 3}         # green can pair with white, green
+        }
+        directions = [(0, 1), (1, 0)]
+
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.is_forbidden(i, j):
+                    continue
+                c1 = self.color[i][j]
+                if c1 == 0:  # White cell can pair with any non-forbidden cell
+                    for k in range(self.n):
+                        for l in range(self.m):
+                            if (i == k and j == l) or self.is_forbidden(k, l):
+                                continue
+                            res.append(((i, j), (k, l)))
+                else:  # Non-white cells follow original adjacency rules
+                    for dx, dy in directions:
+                        k, l = i + dx, j + dy
+                        if 0 <= k < self.n and 0 <= l < self.m:
+                            if self.is_forbidden(k, l):
+                                continue
+                            c2 = self.color[k][l]
+                            if c2 in allowed[c1] and c1 in allowed[c2]:
+                                res.append(((i, j), (k, l)))
+        return sorted(res)
 
     def vois(self, i: int, j: int) -> list[tuple[int, int]]:
         """
@@ -253,7 +296,7 @@ class Grid:
             grid = Grid(n, m, color, value)
         return grid
     
-    def to_bipartite_graph(self)->dict:
+    def bipartite_graph(self)->dict:
         """
         Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
         The graph already contains the valid pairs as edges.

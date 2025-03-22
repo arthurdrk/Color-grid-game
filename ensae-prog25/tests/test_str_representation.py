@@ -1,5 +1,5 @@
 import sys
-sys.path.append("code/")
+sys.path.append("./ensae-prog25/code/")
 
 import unittest
 from grid import Grid
