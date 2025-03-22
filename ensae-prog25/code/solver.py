@@ -160,6 +160,67 @@ class SolverGreedy(Solver):
         self.pairs = res
         return res
 
+class SolverGreedy_upgraded(Solver):
+    """
+    improvement of solverGreedy that tries all the starting point possible and keeps the one with the best score
+    """
+
+    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        """
+        Runs the greedy algorithm (upgraded) to find pairs of cells.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        complexity : O((n*m)^2)
+        """
+        used = set()  # Cells that have already been visited
+        res = []
+        pairs = self.grid.all_pairs()
+
+        # Create a dictionary to quickly access pairs by cell
+        pair_dict = defaultdict(list)
+        for pair in pairs:
+            pair_dict[pair[0]].append(pair)
+            pair_dict[pair[1]].append(pair)
+        
+        best = float('inf')
+        best_pairs = []
+
+        for k in range(self.grid.n):
+            for l in range(self.grid.m):
+                for m in range(self.grid.n):
+                    for n in range(self.grid.m):
+                        i = (m+k)%self.grid.n
+                        j = (n+l)%self.grid.m
+                        case = (i, j)
+                        if case not in used:
+                            used.add(case)
+                            if case in pair_dict:
+                                # Find the neighboring cell that minimizes the cost
+                                try:
+                                    best_pair = min(
+                                        (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
+                                        key=lambda x: self.grid.cost(x))
+                                    if best_pair[0] == case:  # indentify what is the index of the best cell in pair and what is the one of case
+                                        res.append((case, best_pair[1]))
+                                        used.add(best_pair[1])
+                                    else:
+                                        res.append((case, best_pair[0]))
+                                        used.add(best_pair[0])
+                                except ValueError:
+                                    pass
+                self.pairs = res
+                score = self.score()
+                if score < best:
+                    best = score
+                    best_pairs = res
+        self.pairs = best_pairs
+        return best_pairs
+
+
 class SolverGreedy2(Solver):
     """
     A subclass of Solver that implements a greedy algorithm to find pairs.
