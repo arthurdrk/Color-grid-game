@@ -212,8 +212,12 @@ class SolverGreedy_upgraded(Solver):
                                         used.add(best_pair[0])
                                 except ValueError:
                                     pass
-                self.pairs = res
-                score = self.score()
+                #compute the score of this starting point
+                score = sum(self.grid.cost(pair) for pair in res)
+                taken = set([cell for pair in res for cell in pair])
+                score += sum(self.grid.value[i][j] for i in range(self.grid.n) 
+                for j in range(self.grid.m) 
+                    if (i, j) not in taken and not self.grid.is_forbidden(i, j))
                 if score < best:
                     best = score
                     best_pairs = res
