@@ -16,7 +16,7 @@ def calcul_coup(grid : Grid):
             The pair of cells to be played
         or None if no choice is possible   
 
-        complexity : ?
+        complexity : O((n*m)²) can be bettered to O(n*m)
         """ 
 
         pairs = grid.all_pairs()
