@@ -61,7 +61,7 @@ class UIManager:
         """Darkens a color by a given factor."""
         return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor))
 
-    def draw_grid(self, grid, solver, cell_size, selected_cells=[], game_mode='one', player_pairs=None,top_margin=0):
+    def draw_grid(self, grid, solver, cell_size, selected_cells=[], game_mode='one', player_pairs=None, top_margin=0):
         """Draws the game grid with cells and pairs."""
         # Draw cells
         for i in range(grid.n):
@@ -69,26 +69,26 @@ class UIManager:
                 color = self.colors[grid.color[i][j]]
                 if (i, j) in selected_cells:
                     color = self.darken_color(color)
-                pygame.draw.rect(self.screen, color, (j * cell_size, i * cell_size, cell_size, cell_size))
-                pygame.draw.rect(self.screen, (0, 0, 0), (j * cell_size, i * cell_size, cell_size, cell_size), 1)
+                pygame.draw.rect(self.screen, color, (j * cell_size, i * cell_size + top_margin, cell_size, cell_size))
+                pygame.draw.rect(self.screen, (0, 0, 0), (j * cell_size, i * cell_size + top_margin, cell_size, cell_size), 1)
                 font = pygame.font.Font(None, 36)
                 text = font.render(str(grid.value[i][j]), True, (0, 0, 0))
-                self.screen.blit(text, (j * cell_size + cell_size // 2 - text.get_width() // 2, i * cell_size + cell_size // 2 - text.get_height() // 2))
+                self.screen.blit(text, (j * cell_size + cell_size // 2 - text.get_width() // 2, i * cell_size + top_margin + cell_size // 2 - text.get_height() // 2))
 
         # Draw pairs
         if game_mode == 'one':
             for pair in solver.pairs:
-                self.draw_pair_frame(pair, self.colors[5], cell_size)
+                self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
         else:
             if player_pairs:
                 # Player 1 pairs (yellow)
                 for pair in player_pairs[0]:
-                    self.draw_pair_frame(pair, self.colors[5], cell_size)
+                    self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
                 # Player 2 pairs (purple)
                 for pair in player_pairs[1]:
-                    self.draw_pair_frame(pair, (148, 0, 211), cell_size)
+                    self.draw_pair_frame(pair, (148, 0, 211), cell_size, top_margin)
 
-    def draw_pair_frame(self, pair, color, cell_size):
+    def draw_pair_frame(self, pair, color, cell_size, top_margin):
         """Draws a frame around a pair of cells."""
         (i1, j1), (i2, j2) = pair
         min_i = min(i1, i2)
@@ -98,7 +98,7 @@ class UIManager:
 
         frame_inset = 4
         frame_x = min_j * cell_size + frame_inset
-        frame_y = min_i * cell_size + frame_inset
+        frame_y = min_i * cell_size + top_margin + frame_inset
         frame_width = (max_j - min_j + 1) * cell_size - 2 * frame_inset
         frame_height = (max_i - min_i + 1) * cell_size - 2 * frame_inset
 
@@ -108,7 +108,7 @@ class UIManager:
 
     def draw_score(self, solver, window_size, cell_size, game_mode='one', player1_score=0, player2_score=0):
         """Draws the current score."""
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 38)
 
         if game_mode == 'one':
             text = font.render(f"Score: {solver.score()}", True, (0, 0, 0))
@@ -121,41 +121,57 @@ class UIManager:
             text = font.render(f"Player 2: {player2_score}", True, (148, 0, 211))
             self.screen.blit(text, (5, window_size[1] - cell_size - 40))
 
-    def draw_turn_indicator(self, current_player, window_size):
+    def draw_turn_indicator(self, current_player, window_size, top_margin):
         """Shows whose turn it is."""
-        font = pygame.font.Font(None, 48)
-        text = font.render(f"Player {current_player} to play", True, (0, 0, 0))
+        font = pygame.font.Font(None, 46)
+        color = self.colors[5] if current_player == 1 else (148, 0, 211)
+        text = font.render(f"Player {current_player} to play", True, color) 
         x_position = (window_size[0] - text.get_width()) // 2
-        self.screen.blit(text, (x_position, 5))
+        self.screen.blit(text, (x_position, top_margin // 2 - 20))
 
     def draw_end_screen(self, message, color, window_size):
         """Displays the end screen with a message."""
         font = pygame.font.Font(None, 72)
         text = font.render(message, True, color)
-        y_position = window_size[1] - 120
-        x_position = (window_size[0] - text.get_width()) // 2
+        y_position = window_size[1] - 140
+        x_position = (window_size[0] - text.get_width()) // 2 + 80
         self.screen.blit(text, (x_position, y_position))
         pygame.display.flip()
-        pygame.time.wait(1000)
+        pygame.time.wait(2000)
 
-    def draw_error_message(self, message, window_size):
+    def draw_error_message(self, message, window_size, mode, cell_size):
         """Displays an error message."""
-        font = pygame.font.Font(None, 48)
+        font = pygame.font.Font(None, 38)
         text = font.render(message, True, (200, 0, 0))
-        y_position = window_size[1] - 110
-        self.screen.blit(text, (5, y_position))
-        pygame.display.flip()
-        pygame.time.wait(700)
+        if mode == "one":
+            y_position = window_size[1] - cell_size - 40
+            self.screen.blit(text, (5, y_position))
+            pygame.display.flip()
+            pygame.time.wait(700)
+        else:
+            y_position = window_size[1] - cell_size
+            self.screen.blit(text, (5, y_position))
+            pygame.display.flip()
+            pygame.time.wait(700)
 
-    def draw_restart_button(self, window_size, pressed):
+    def draw_restart_button(self, window_size, pressed, mode):
         """Draws the restart button."""
-        font = pygame.font.Font(None, 36)
-        text = font.render("Restart", True, (255, 255, 255))
-        button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
-        text_rect = text.get_rect(center=button_rect.center)
-        color = (30, 30, 30) if pressed else (50, 50, 50)
-        pygame.draw.rect(self.screen, color, button_rect)
-        self.screen.blit(text, text_rect.topleft)
+        if mode == "one":
+            font = pygame.font.Font(None, 36)
+            text = font.render("Restart", True, (255, 255, 255))
+            button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+            text_rect = text.get_rect(center=button_rect.center)
+            color = (30, 30, 30) if pressed else (50, 50, 50)
+            pygame.draw.rect(self.screen, color, button_rect)
+            self.screen.blit(text, text_rect.topleft)
+        else:
+            font = pygame.font.Font(None, 36)
+            text = font.render("Restart", True, (255, 255, 255))
+            button_rect = pygame.Rect(window_size[0] - 220, window_size[1] - 70, 100, 40)
+            text_rect = text.get_rect(center=button_rect.center)
+            color = (30, 30, 30) if pressed else (50, 50, 50)
+            pygame.draw.rect(self.screen, color, button_rect)
+            self.screen.blit(text, text_rect.topleft)
 
     def draw_solution_button(self, window_size, pressed):
         """Draws the solution button."""
@@ -336,8 +352,9 @@ class GridManager:
     def load_grid(self, selected_grid):
         """Loads a grid from a file."""
         return Grid.grid_from_file(os.path.join(self.data_path, selected_grid), read_values=True)
+
 class SolverManager:
-    """Manages the solver logic for the game."""
+    """Gère la logique du solveur pour le jeu."""
 
     def __init__(self, grid):
         self.solver = Solver(grid)
@@ -346,7 +363,7 @@ class SolverManager:
         self.general_score = self.solver_general.score()
 
     def can_pair(self, color1, color2):
-        """Checks if two colors can be paired."""
+        """Vérifie si deux couleurs peuvent être appariées."""
         allowed = {
             0: {0, 1, 2, 3},
             1: {0, 1, 2},
@@ -355,8 +372,8 @@ class SolverManager:
         }
         return color2 in allowed.get(color1, set()) and color1 in allowed.get(color2, set())
 
-    def pair_is_valid(self, pair, existing_pairs, grid):
-        """Checks if a pair is valid."""
+    def pair_is_valid(self, pair, existing_pairs, grid, player_pairs, current_player):
+        """Vérifie si une paire est valide en considérant les paires des deux joueurs."""
         (i1, j1), (i2, j2) = pair
         if grid.is_forbidden(i1, j1) or grid.is_forbidden(i2, j2):
             return False
@@ -364,12 +381,16 @@ class SolverManager:
             return False
         if (i2, j2) in [cell for pair in existing_pairs for cell in pair]:
             return False
+        if (i1, j1) in [cell for pair in player_pairs[0] for cell in pair] or (i2, j2) in [cell for pair in player_pairs[0] for cell in pair]:
+            return False
+        if (i1, j1) in [cell for pair in player_pairs[1] for cell in pair] or (i2, j2) in [cell for pair in player_pairs[1] for cell in pair]:
+            return False
         if self.can_pair(grid.color[i1][j1], grid.color[i2][j2]):
             return True
         return False
 
     def calculate_player_score(self, player_pairs, grid):
-        """Calculates the score for a player considering their pairs and unpaired cells."""
+        """Calcule le score pour un joueur en considérant ses paires et les cellules non appariées."""
         paired_cells = set(cell for pair in player_pairs for cell in pair)
         score = sum(abs(grid.value[i1][j1] - grid.value[i2][j2]) for (i1, j1), (i2, j2) in player_pairs)
         score += sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if (i, j) not in paired_cells and grid.color[i][j] != 4)
@@ -381,11 +402,11 @@ class Game:
     def __init__(self):
         self.colors = {
             0: (255, 255, 255),
-            1: (200, 0, 0),
-            2: (0, 0, 200),
-            3: (0, 200, 0),
+            1: (198, 44, 44),
+            2: (65, 129, 255),
+            3: (80, 193, 45),
             4: (0, 0, 0),
-            5: (220, 220, 0)
+            5: (255, 188, 0)
         }
         self.colors_title = {
             0: (0, 0, 0),
@@ -522,7 +543,8 @@ class Game:
         cell_size = 60
         top_margin = 50 if self.player_mode == 'two' else 0
         window_height = grid.n * cell_size + 150 + top_margin
-        window_size = (max(600, grid.m * cell_size), window_height)
+        window_width = max(600, grid.m * cell_size + 500)  # Adjust width to fit error messages
+        window_size = (window_width, window_height)
         self.screen = pygame.display.set_mode(window_size)
         self.selected_cells = []
         self.game_over = False
@@ -537,23 +559,23 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
-                    if y >= grid.n * cell_size:
-                        restart_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
-                        solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
+                    if y >= grid.n * cell_size + top_margin:
+                        reset_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'two' else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                        solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'one' else None
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
 
-                        if restart_rect.collidepoint(x, y):
-                            self.pressed_button = 'restart'
-                        elif solution_rect.collidepoint(x, y):
+                        if reset_rect.collidepoint(x, y):
+                            self.pressed_button = 'reset'
+                        elif solution_rect and solution_rect.collidepoint(x, y):
                             self.pressed_button = 'solution'
                         elif menu_rect.collidepoint(x, y):
                             self.pressed_button = 'menu'
                         else:
                             self.pressed_button = None
                     else:
-                        i, j = y // cell_size, x // cell_size
+                        i, j = (y - top_margin) // cell_size, x // cell_size
                         if grid.is_forbidden(i, j):
-                            self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
+                            self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size, self.player_mode, cell_size)
                             self.selected_cells = []
                         elif (i, j) in [cell for pair in solver_manager.solver.pairs for cell in pair]:
                             for pair in solver_manager.solver.pairs:
@@ -570,39 +592,34 @@ class Game:
                                         if self.player_mode == 'one':
                                             solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
                                         else:
-                                            self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
-                                            self.player_scores[self.current_player - 1] = solver_manager.calculate_player_score(self.player_pairs[self.current_player - 1], grid)
-                                            self.current_player = 2 if self.current_player == 1 else 1
+                                            if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs, self.current_player):
+                                                self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
+                                                self.player_scores[self.current_player - 1] = solver_manager.calculate_player_score(self.player_pairs[self.current_player - 1], grid)
+                                                self.current_player = 2 if self.current_player == 1 else 1
+                                            else:
+                                                self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size, self.player_mode, cell_size)
                                     else:
-                                        self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
+                                        self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size, self.player_mode, cell_size)
                                 else:
-                                    self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
+                                    self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size, self.player_mode, cell_size)
                                 self.selected_cells = []
                         self.pressed_button = None
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = event.pos
                     if self.pressed_button:
                         button_rect = None
-                        if self.pressed_button == 'restart':
-                            button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
-                        elif self.pressed_button == 'solution':
+                        if self.pressed_button == 'reset':
+                            button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'two' else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                        elif self.pressed_button == 'solution' and self.player_mode == 'one':
                             button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         elif self.pressed_button == 'menu':
                             button_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
 
                         if button_rect and button_rect.collidepoint(x, y):
-                            if self.pressed_button == 'restart':
-                                self.ui_manager.draw_restart_button(window_size, True)
-                            elif self.pressed_button == 'solution':
-                                self.ui_manager.draw_solution_button(window_size, True)
-                            elif self.pressed_button == 'menu':
-                                self.ui_manager.draw_menu_button(window_size, True)
-                            pygame.display.update(button_rect)
-
                             if self.pressed_button == 'menu':
                                 pygame.time.delay(100)
 
-                            if self.pressed_button == 'restart':
+                            if self.pressed_button == 'reset':
                                 solver_manager.solver.pairs = []
                                 self.selected_cells = []
                                 self.game_over = False
@@ -618,20 +635,24 @@ class Game:
 
                         self.pressed_button = None
 
-            self.screen.fill((200, 200, 200))
-            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs)
+            self.screen.fill((220, 220, 220))
+            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
             self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size, self.player_mode, self.player_scores[0], self.player_scores[1])
 
             if self.player_mode == 'two':
-                self.ui_manager.draw_turn_indicator(self.current_player, window_size)
-
-            self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'restart')
-            self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin)
+                self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+            if self.player_mode == 'one':
+                self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
 
             pygame.display.flip()
 
-            if not self.show_solution and not any(solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid) for pair in grid.all_pairs()):
+            if not self.show_solution and not any(
+    solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs, self.current_player)
+    for pair in grid.all_pairs()
+):
                 if not self.game_over:
                     self.game_over = True
                     if self.player_mode == 'one':
@@ -644,7 +665,7 @@ class Game:
                         self.game_over = False
                     else:
                         if self.player_scores[0] < self.player_scores[1]:
-                            self.ui_manager.draw_end_screen("Player 1 has won!", (0, 200, 0), window_size)
+                            self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
