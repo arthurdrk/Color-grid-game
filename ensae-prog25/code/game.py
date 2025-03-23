@@ -1,7 +1,3 @@
-################################################################################
-#                               WORK IN PROGRESS                               #
-################################################################################
-
 import pygame
 import sys
 import os
@@ -65,9 +61,9 @@ class UIManager:
         """Darkens a color by a given factor."""
         return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor))
 
-    def draw_grid(self, grid, solver, cell_size, selected_cells=[]):
+    def draw_grid(self, grid, solver, cell_size, selected_cells=[], game_mode='one', player_pairs=None,top_margin=0):
         """Draws the game grid with cells and pairs."""
-        # Draw cells first
+        # Draw cells
         for i in range(grid.n):
             for j in range(grid.m):
                 color = self.colors[grid.color[i][j]]
@@ -79,50 +75,58 @@ class UIManager:
                 text = font.render(str(grid.value[i][j]), True, (0, 0, 0))
                 self.screen.blit(text, (j * cell_size + cell_size // 2 - text.get_width() // 2, i * cell_size + cell_size // 2 - text.get_height() // 2))
 
-        # Draw yellow frames around pairs with more inset
-        for pair in solver.pairs:
-            (i1, j1), (i2, j2) = pair
-            min_i = min(i1, i2)
-            max_i = max(i1, i2)
-            min_j = min(j1, j2)
-            max_j = max(j1, j2)
-            
-            # Increased inset from 2px to 4px
-            frame_inset = 4
-            frame_x = min_j * cell_size + frame_inset
-            frame_y = min_i * cell_size + frame_inset
-            frame_width = (max_j - min_j + 1) * cell_size - 2 * frame_inset
-            frame_height = (max_i - min_i + 1) * cell_size - 2 * frame_inset
-            
-            # Draw yellow border with adjusted position/size
-            pygame.draw.rect(self.screen, self.colors[5], 
-                            (frame_x, frame_y, frame_width, frame_height), 
-                            3)  # Keep 4px border thickness
+        # Draw pairs
+        if game_mode == 'one':
+            for pair in solver.pairs:
+                self.draw_pair_frame(pair, self.colors[5], cell_size)
+        else:
+            if player_pairs:
+                # Player 1 pairs (yellow)
+                for pair in player_pairs[0]:
+                    self.draw_pair_frame(pair, self.colors[5], cell_size)
+                # Player 2 pairs (purple)
+                for pair in player_pairs[1]:
+                    self.draw_pair_frame(pair, (148, 0, 211), cell_size)
 
-        # Draw yellow frames around pairs
-        for pair in solver.pairs:
-            (i1, j1), (i2, j2) = pair
-            min_i = min(i1, i2)
-            max_i = max(i1, i2)
-            min_j = min(j1, j2)
-            max_j = max(j1, j2)
-            
-            # Calculate frame dimensions with 2px inset
-            frame_x = min_j * cell_size + 2
-            frame_y = min_i * cell_size + 2
-            frame_width = (max_j - min_j + 1) * cell_size - 4
-            frame_height = (max_i - min_i + 1) * cell_size - 4
-            
-            # Draw thick yellow border
-            pygame.draw.rect(self.screen, self.colors[5], 
-                            (frame_x, frame_y, frame_width, frame_height), 
-                            4)  # 4px thick border
+    def draw_pair_frame(self, pair, color, cell_size):
+        """Draws a frame around a pair of cells."""
+        (i1, j1), (i2, j2) = pair
+        min_i = min(i1, i2)
+        max_i = max(i1, i2)
+        min_j = min(j1, j2)
+        max_j = max(j1, j2)
 
-    def draw_score(self, solver, window_size, cell_size):
+        frame_inset = 4
+        frame_x = min_j * cell_size + frame_inset
+        frame_y = min_i * cell_size + frame_inset
+        frame_width = (max_j - min_j + 1) * cell_size - 2 * frame_inset
+        frame_height = (max_i - min_i + 1) * cell_size - 2 * frame_inset
+
+        pygame.draw.rect(self.screen, color,
+                        (frame_x, frame_y, frame_width, frame_height),
+                        3)
+
+    def draw_score(self, solver, window_size, cell_size, game_mode='one', player1_score=0, player2_score=0):
         """Draws the current score."""
+        font = pygame.font.Font(None, 36)
+
+        if game_mode == 'one':
+            text = font.render(f"Score: {solver.score()}", True, (0, 0, 0))
+            self.screen.blit(text, (5, window_size[1] - cell_size - 80))
+        else:
+            # Player 1 score (yellow)
+            text = font.render(f"Player 1: {player1_score}", True, self.colors[5])
+            self.screen.blit(text, (5, window_size[1] - cell_size - 80))
+            # Player 2 score (purple)
+            text = font.render(f"Player 2: {player2_score}", True, (148, 0, 211))
+            self.screen.blit(text, (5, window_size[1] - cell_size - 40))
+
+    def draw_turn_indicator(self, current_player, window_size):
+        """Shows whose turn it is."""
         font = pygame.font.Font(None, 48)
-        text = font.render(f"Score: {solver.score()}", True, (0, 0, 0))
-        self.screen.blit(text, (5, window_size[1] - cell_size - 80))
+        text = font.render(f"Player {current_player} to play", True, (0, 0, 0))
+        x_position = (window_size[0] - text.get_width()) // 2
+        self.screen.blit(text, (x_position, 5))
 
     def draw_end_screen(self, message, color, window_size):
         """Displays the end screen with a message."""
@@ -182,11 +186,11 @@ class UIManager:
         color = (30, 30, 30) if pressed else (50, 50, 50)
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
-    
+
     def draw_player_choice(self, window_size, pressed_button):
         """Draws the player choice buttons."""
         font = pygame.font.Font(None, 50)
-        
+
         # One Player button
         one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
         one_color = (30, 30, 30) if pressed_button == 'one' else (50, 50, 50)
@@ -202,7 +206,6 @@ class UIManager:
         text = font.render("Two Players", True, (255, 255, 255))
         text_rect = text.get_rect(center=two_rect.center)
         self.screen.blit(text, text_rect)
-        
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
         """Draws the game rules with scrolling functionality."""
@@ -333,7 +336,6 @@ class GridManager:
     def load_grid(self, selected_grid):
         """Loads a grid from a file."""
         return Grid.grid_from_file(os.path.join(self.data_path, selected_grid), read_values=True)
-
 class SolverManager:
     """Manages the solver logic for the game."""
 
@@ -365,6 +367,13 @@ class SolverManager:
         if self.can_pair(grid.color[i1][j1], grid.color[i2][j2]):
             return True
         return False
+
+    def calculate_player_score(self, player_pairs, grid):
+        """Calculates the score for a player considering their pairs and unpaired cells."""
+        paired_cells = set(cell for pair in player_pairs for cell in pair)
+        score = sum(abs(grid.value[i1][j1] - grid.value[i2][j2]) for (i1, j1), (i2, j2) in player_pairs)
+        score += sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if (i, j) not in paired_cells and grid.color[i][j] != 4)
+        return score
 
 class Game:
     """Main game class that handles the game loop and user interactions."""
@@ -401,6 +410,9 @@ class Game:
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
         self.player_mode = None
+        self.current_player = 1
+        self.player_pairs = [[], []]
+        self.player_scores = [0, 0]
 
     def main(self):
         """Main game loop."""
@@ -502,15 +514,16 @@ class Game:
                         elif two_rect.collidepoint(x, y) and self.pressed_button == 'two':
                             self.player_mode = 'two'
                         self.pressed_button = None
-        
+
         grid = self.grid_manager.load_grid(self.selected_grid)
         solver_manager = SolverManager(grid)
         general_score = solver_manager.general_score
 
         cell_size = 60
-        window_size = (max(600, grid.m * cell_size), grid.n * cell_size + 150)
+        top_margin = 50 if self.player_mode == 'two' else 0
+        window_height = grid.n * cell_size + 150 + top_margin
+        window_size = (max(600, grid.m * cell_size), window_height)
         self.screen = pygame.display.set_mode(window_size)
-
         self.selected_cells = []
         self.game_over = False
         self.show_solution = False
@@ -521,6 +534,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     if y >= grid.n * cell_size:
@@ -553,7 +567,12 @@ class Game:
                                     color1 = grid.color[self.selected_cells[0][0]][self.selected_cells[0][1]]
                                     color2 = grid.color[self.selected_cells[1][0]][self.selected_cells[1][1]]
                                     if solver_manager.can_pair(color1, color2):
-                                        solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
+                                        if self.player_mode == 'one':
+                                            solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
+                                        else:
+                                            self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
+                                            self.player_scores[self.current_player - 1] = solver_manager.calculate_player_score(self.player_pairs[self.current_player - 1], grid)
+                                            self.current_player = 2 if self.current_player == 1 else 1
                                     else:
                                         self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size)
                                 else:
@@ -588,6 +607,9 @@ class Game:
                                 self.selected_cells = []
                                 self.game_over = False
                                 self.show_solution = False
+                                self.player_pairs = [[], []]
+                                self.player_scores = [0, 0]
+                                self.current_player = 1
                             elif self.pressed_button == 'solution':
                                 solver_manager.solver.pairs = solver_manager.solver_general.pairs
                                 self.show_solution = True
@@ -597,8 +619,11 @@ class Game:
                         self.pressed_button = None
 
             self.screen.fill((200, 200, 200))
-            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells)
-            self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size)
+            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs)
+            self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size, self.player_mode, self.player_scores[0], self.player_scores[1])
+
+            if self.player_mode == 'two':
+                self.ui_manager.draw_turn_indicator(self.current_player, window_size)
 
             self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'restart')
             self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
@@ -609,13 +634,25 @@ class Game:
             if not self.show_solution and not any(solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid) for pair in grid.all_pairs()):
                 if not self.game_over:
                     self.game_over = True
-                    if solver_manager.solver.score() <= general_score:
-                        self.ui_manager.draw_end_screen("You won!", (0, 200, 0), window_size)
+                    if self.player_mode == 'one':
+                        if solver_manager.solver.score() <= general_score:
+                            self.ui_manager.draw_end_screen("You won!", (0, 200, 0), window_size)
+                        else:
+                            self.ui_manager.draw_end_screen("You lost!", (200, 0, 0), window_size)
+                        solver_manager.solver.pairs = []
+                        self.selected_cells = []
+                        self.game_over = False
                     else:
-                        self.ui_manager.draw_end_screen("You lost!", (200, 0, 0), window_size)
-                    solver_manager.solver.pairs = []
-                    self.selected_cells = []
-                    self.game_over = False
+                        if self.player_scores[0] < self.player_scores[1]:
+                            self.ui_manager.draw_end_screen("Player 1 has won!", (0, 200, 0), window_size)
+                        elif self.player_scores[1] < self.player_scores[0]:
+                            self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
+                        else:
+                            self.ui_manager.draw_end_screen("It's a tie!", (0, 0, 200), window_size)
+                        self.player_pairs = [[], []]
+                        self.player_scores = [0, 0]
+                        self.current_player = 1
+                        self.game_over = False
 
     def show_rules(self):
         """Displays the game rules screen."""
