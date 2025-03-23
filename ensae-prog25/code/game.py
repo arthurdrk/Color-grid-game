@@ -106,7 +106,7 @@ class UIManager:
                         (frame_x, frame_y, frame_width, frame_height),
                         4)
 
-    def draw_score(self, solver, window_size, cell_size, game_mode='one', player1_score=0, player2_score=0):
+    def draw_score(self, solver, window_size, cell_size, player1_score="", player2_score="", game_mode='one'):
         """Draws the current score."""
         font = pygame.font.Font(None, 38)
 
@@ -540,6 +540,10 @@ class Game:
         solver_manager = SolverManager(grid)
         general_score = solver_manager.general_score
 
+        # Initialize player scores for two-player mode
+        if self.player_mode == 'two':
+            self.player_scores = [solver_manager.solver.score(), solver_manager.solver.score()]
+
         cell_size = 60
         top_margin = 50 if self.player_mode == 'two' else 0
         window_height = grid.n * cell_size + 150 + top_margin
@@ -638,7 +642,7 @@ class Game:
 
             self.screen.fill((220, 220, 220))
             self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
-            self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size, self.player_mode, self.player_scores[0], self.player_scores[1])
+            self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size, self.player_scores[0], self.player_scores[1], self.player_mode)
 
             if self.player_mode == 'two':
                 self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin)
