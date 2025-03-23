@@ -37,7 +37,7 @@ def calcul_coup(grid : Grid):
                                 return None
                 
                 score = grid_copy.cost(choice)-grid_copy.cost(pair)
-                if score > best:
+                if score < best:
                     best = score
                     res = pair
         return res
