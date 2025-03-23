@@ -133,7 +133,7 @@ class UIManager:
         """Displays the end screen with a message."""
         font = pygame.font.Font(None, 72)
         text = font.render(message, True, color)
-        y_position = window_size[1] - 140
+        y_position = window_size[1] - 130
         x_position = (window_size[0] - text.get_width()) // 2 + 80
         self.screen.blit(text, (x_position, y_position))
         pygame.display.flip()
