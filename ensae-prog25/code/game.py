@@ -104,7 +104,7 @@ class UIManager:
 
         pygame.draw.rect(self.screen, color,
                         (frame_x, frame_y, frame_width, frame_height),
-                        3)
+                        4)
 
     def draw_score(self, solver, window_size, cell_size, game_mode='one', player1_score=0, player2_score=0):
         """Draws the current score."""
@@ -137,7 +137,7 @@ class UIManager:
         x_position = (window_size[0] - text.get_width()) // 2 + 80
         self.screen.blit(text, (x_position, y_position))
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(2500)
 
     def draw_error_message(self, message, window_size, mode, cell_size):
         """Displays an error message."""
@@ -402,11 +402,11 @@ class Game:
     def __init__(self):
         self.colors = {
             0: (255, 255, 255),
-            1: (198, 44, 44),
-            2: (65, 129, 255),
+            1: (199, 14, 14),
+            2: (21, 143, 225),
             3: (80, 193, 45),
             4: (0, 0, 0),
-            5: (255, 188, 0)
+            5: (255, 145, 0)
         }
         self.colors_title = {
             0: (0, 0, 0),
@@ -614,6 +614,7 @@ class Game:
                             button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         elif self.pressed_button == 'menu':
                             button_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
+                            self.reset_game_state()
 
                         if button_rect and button_rect.collidepoint(x, y):
                             if self.pressed_button == 'menu':
@@ -737,7 +738,7 @@ class Game:
             pygame.display.flip()
 
     def reset_game_state(self):
-        """Resets the game state to the initial menu."""
+        """Resets the game state to the initial menu and clears the grid."""
         self.selected_grid = None
         self.scroll = 0
         self.scroll_bar_dragging = False
@@ -750,6 +751,9 @@ class Game:
         self.rules_scroll = 0
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
+        self.player_pairs = [[], []]  # Reset player pairs
+        self.player_scores = [0, 0]   # Reset player scores
+        self.current_player = 1       # Reset current player
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
 
