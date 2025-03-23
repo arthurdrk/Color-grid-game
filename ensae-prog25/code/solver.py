@@ -535,69 +535,69 @@ class SolverHungarian2(Solver):
         self.pairs = matched_pairs
         return matched_pairs
 
-class SolverHungarian2(Solver):
-    """
-    Un solveur qui utilise l'algorithme hongrois pour trouver un appariement optimal.
-    """
+# class SolverHungarian2(Solver):
+#     """
+#     Un solveur qui utilise l'algorithme hongrois pour trouver un appariement optimal.
+#     """
 
-    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Exécute l'algorithme hongrois pour trouver les paires optimales.
-        """
-        pairs = self.grid.all_pairs()
-        even_cells = []
-        odd_cells = []
+#     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+#         """
+#         Exécute l'algorithme hongrois pour trouver les paires optimales.
+#         """
+#         pairs = self.grid.all_pairs()
+#         even_cells = []
+#         odd_cells = []
 
-        # Séparer les cellules paires et impaires
-        for cell1, cell2 in pairs:
-            if (cell1[0] + cell1[1]) % 2 == 0:
-                even, odd = cell1, cell2
-            else:
-                even, odd = cell2, cell1
-            even_cells.append(even)
-            odd_cells.append(odd)
-        even_cells = list(set(even_cells))
-        odd_cells = list(set(odd_cells))
-        E = len(even_cells)
-        O = len(odd_cells)
-        large_value = np.inf
+#         # Séparer les cellules paires et impaires
+#         for cell1, cell2 in pairs:
+#             if (cell1[0] + cell1[1]) % 2 == 0:
+#                 even, odd = cell1, cell2
+#             else:
+#                 even, odd = cell2, cell1
+#             even_cells.append(even)
+#             odd_cells.append(odd)
+#         even_cells = list(set(even_cells))
+#         odd_cells = list(set(odd_cells))
+#         E = len(even_cells)
+#         O = len(odd_cells)
+#         large_value = np.inf
 
-        # Créer des mappings pour les indices
-        even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
-        odd_to_idx = {cell: i for i, cell in enumerate(odd_cells)}
+#         # Créer des mappings pour les indices
+#         even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
+#         odd_to_idx = {cell: i for i, cell in enumerate(odd_cells)}
 
-        # Initialiser la matrice de coût
-        cost_matrix = np.full((E + O, E + O), large_value)
+#         # Initialiser la matrice de coût
+#         cost_matrix = np.full((E + O, E + O), large_value)
 
-        # Remplir les coûts pour les paires valides
-        for u, v in pairs:
-            if (u[0] + u[1]) % 2 == 0:
-                even, odd = u, v
-            else:
-                even, odd = v, u
-            if even in even_to_idx and odd in odd_to_idx:
-                i = even_to_idx[even]
-                j = odd_to_idx[odd]
-                cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                cost_matrix[i][j] = cost
+#         # Remplir les coûts pour les paires valides
+#         for u, v in pairs:
+#             if (u[0] + u[1]) % 2 == 0:
+#                 even, odd = u, v
+#             else:
+#                 even, odd = v, u
+#             if even in even_to_idx and odd in odd_to_idx:
+#                 i = even_to_idx[even]
+#                 j = odd_to_idx[odd]
+#                 cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
+#                 cost_matrix[i][j] = cost
 
-        # Coût pour laisser une cellule non appariée
-        for i, cell in enumerate(even_cells):
-            cost_matrix[i][O + i] = self.grid.value[cell[0]][cell[1]]
-        for j, cell in enumerate(odd_cells):
-            cost_matrix[E + j][j] = self.grid.value[cell[0]][cell[1]]
-        # Appliquer l'algorithme hongrois
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+#         # Coût pour laisser une cellule non appariée
+#         for i, cell in enumerate(even_cells):
+#             cost_matrix[i][O + i] = self.grid.value[cell[0]][cell[1]]
+#         for j, cell in enumerate(odd_cells):
+#             cost_matrix[E + j][j] = self.grid.value[cell[0]][cell[1]]
+#         # Appliquer l'algorithme hongrois
+#         row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
-        # Extraire les paires
-        matched_pairs = []
-        for i, j in zip(row_ind, col_ind):
-            if i < E and j < O:
-                u = even_cells[i]
-                v = odd_cells[j]
-                if ((u, v) in pairs) or ((v, u) in pairs):
-                    matched_pairs.append((u, v))
+#         # Extraire les paires
+#         matched_pairs = []
+#         for i, j in zip(row_ind, col_ind):
+#             if i < E and j < O:
+#                 u = even_cells[i]
+#                 v = odd_cells[j]
+#                 if ((u, v) in pairs) or ((v, u) in pairs):
+#                     matched_pairs.append((u, v))
 
-        self.pairs = matched_pairs
-        return matched_pairs
+#         self.pairs = matched_pairs
+#         return matched_pairs
     
