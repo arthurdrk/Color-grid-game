@@ -112,11 +112,11 @@ class UIManager:
 
         if game_mode == 'one':
             text = font.render(f"Score: {solver.score()}", True, (0, 0, 0))
-            self.screen.blit(text, (5, window_size[1] - cell_size - 80))
+            self.screen.blit(text, (5, window_size[1] - cell_size - 70))
         else:
             # Player 1 score (yellow)
             text = font.render(f"Player 1: {player1_score}", True, self.colors[5])
-            self.screen.blit(text, (5, window_size[1] - cell_size - 80))
+            self.screen.blit(text, (5, window_size[1] - cell_size - 70))
             # Player 2 score (purple)
             text = font.render(f"Player 2: {player2_score}", True, (148, 0, 211))
             self.screen.blit(text, (5, window_size[1] - cell_size - 40))
@@ -149,7 +149,7 @@ class UIManager:
             pygame.display.flip()
             pygame.time.wait(700)
         else:
-            y_position = window_size[1] - cell_size
+            y_position = window_size[1] - cell_size - 10
             self.screen.blit(text, (5, y_position))
             pygame.display.flip()
             pygame.time.wait(700)
@@ -542,12 +542,12 @@ class Game:
 
         # Initialize player scores for two-player mode
         if self.player_mode == 'two':
-            self.player_scores = [solver_manager.solver.score(), solver_manager.solver.score()]
+            self.reset_player_scores(grid)
 
         cell_size = 60
         top_margin = 50 if self.player_mode == 'two' else 0
-        window_height = grid.n * cell_size + 150 + top_margin
-        window_width = max(600, grid.m * cell_size + 500)  # Adjust width to fit error messages
+        window_height = grid.n * cell_size + 140 + top_margin
+        window_width = max(600, grid.m * cell_size + 400)  # Adjust width to fit error messages
         window_size = (window_width, window_height)
         self.screen = pygame.display.set_mode(window_size)
         self.selected_cells = []
@@ -629,8 +629,8 @@ class Game:
                                 self.selected_cells = []
                                 self.game_over = False
                                 self.show_solution = False
+                                self.reset_player_scores(grid)
                                 self.player_pairs = [[], []]
-                                self.player_scores = [0, 0]
                                 self.current_player = 1
                             elif self.pressed_button == 'solution':
                                 solver_manager.solver.pairs = solver_manager.solver_general.pairs
@@ -676,7 +676,7 @@ class Game:
                         else:
                             self.ui_manager.draw_end_screen("It's a tie!", (0, 0, 200), window_size)
                         self.player_pairs = [[], []]
-                        self.player_scores = [0, 0]
+                        self.reset_player_scores(grid)
                         self.current_player = 1
                         self.game_over = False
 
@@ -756,10 +756,14 @@ class Game:
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
         self.player_pairs = [[], []]  # Reset player pairs
-        self.player_scores = [, 0]   # Reset player scores
         self.current_player = 1       # Reset current player
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
+
+    def reset_player_scores(self, grid):
+        """Resets the player scores to the sum of the values of non-black cells."""
+        score = sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if grid.color[i][j] != 4)
+        self.player_scores = [score, score]
 
 if __name__ == "__main__":
     game = Game()
