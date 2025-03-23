@@ -162,67 +162,69 @@ class SolverGreedy(Solver):
 
 class SolverGreedy_upgraded(Solver):
     """
-    improvement of solverGreedy that tries all the starting point possible and keeps the one with the best score
+    Improvement of SolverGreedy that tries all possible starting points and keeps the pairing with the minimum score.
     """
 
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
-        Runs the greedy algorithm (upgraded) to find pairs of cells.
+        Runs the greedy algorithm from all possible starting cells and selects the best pairing.
 
         Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
-
-        complexity : O((n*m)^2)
+            list[tuple[tuple[int, int], tuple[int, int]]: List of pairs with the lowest score.
         """
-        used = set()  # Cells that have already been visited
-        res = []
         pairs = self.grid.all_pairs()
-
-        # Create a dictionary to quickly access pairs by cell
         pair_dict = defaultdict(list)
         for pair in pairs:
             pair_dict[pair[0]].append(pair)
             pair_dict[pair[1]].append(pair)
-        
-        best = float('inf')
+
+        best_score = float('inf')
         best_pairs = []
 
+        # Iterate over all possible starting cells (k, l)
         for k in range(self.grid.n):
             for l in range(self.grid.m):
-                for m in range(self.grid.n):
-                    for n in range(self.grid.m):
-                        i = (m+k)%self.grid.n
-                        j = (n+l)%self.grid.m
-                        case = (i, j)
-                        if case not in used:
-                            used.add(case)
-                            if case in pair_dict:
-                                # Find the neighboring cell that minimizes the cost
-                                try:
-                                    best_pair = min(
-                                        (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
-                                        key=lambda x: self.grid.cost(x))
-                                    if best_pair[0] == case:  # indentify what is the index of the best cell in pair and what is the one of case
-                                        res.append((case, best_pair[1]))
-                                        used.add(best_pair[1])
-                                    else:
-                                        res.append((case, best_pair[0]))
-                                        used.add(best_pair[0])
-                                except ValueError:
-                                    pass
-                #compute the score of this starting point
-                score = sum(self.grid.cost(pair) for pair in res)
-                taken = set([cell for pair in res for cell in pair])
-                score += sum(self.grid.value[i][j] for i in range(self.grid.n) 
-                for j in range(self.grid.m) 
-                    if (i, j) not in taken and not self.grid.is_forbidden(i, j))
-                if score < best:
-                    best = score
-                    best_pairs = res
+                used = set()
+                current_pairs = []
+                # Traverse grid in shifted order based on k and l
+                for row_shift in range(self.grid.n):
+                    for col_shift in range(self.grid.m):
+                        i = (row_shift + k) % self.grid.n
+                        j = (col_shift + l) % self.grid.m
+                        current_cell = (i, j)
+                        if current_cell not in used and not self.grid.is_forbidden(i, j):
+                            used.add(current_cell)
+                            # Find all possible pairs for current_cell not yet used
+                            available_pairs = []
+                            for pair in pair_dict.get(current_cell, []):
+                                other = pair[0] if pair[1] == current_cell else pair[1]
+                                if other not in used and not self.grid.is_forbidden(other[0], other[1]):
+                                    available_pairs.append(pair)
+                            if available_pairs:
+                                best_pair = min(available_pairs, key=lambda p: self.grid.cost(p))
+                                other_cell = best_pair[0] if best_pair[1] == current_cell else best_pair[1]
+                                current_pairs.append((current_cell, other_cell))
+                                used.add(other_cell)
+                # Calculate score for current_pairs
+                score = sum(self.grid.cost(pair) for pair in current_pairs)
+                taken = {cell for pair in current_pairs for cell in pair}
+                # Sum unpaired, non-forbidden cells
+                unpaired_sum = 0
+                for i in range(self.grid.n):
+                    for j in range(self.grid.m):
+                        cell = (i, j)
+                        if cell not in taken and not self.grid.is_forbidden(i, j):
+                            unpaired_sum += self.grid.value[i][j]
+                score += unpaired_sum
+                # Update best if current score is better
+                if score < best_score:
+                    best_score = score
+                    best_pairs = current_pairs.copy()
         self.pairs = best_pairs
         return best_pairs
+    
+
+
 
 
 class SolverGreedy2(Solver):

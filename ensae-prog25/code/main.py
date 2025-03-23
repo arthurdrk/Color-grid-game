@@ -1,7 +1,7 @@
 import os
 import time
 from grid import Grid
-from solver import SolverGreedy, SolverFordFulkerson, SolverBlossom, SolverGreedy2, SolverHungarian
+from solver import SolverGreedy, SolverBlossom, SolverGreedy_upgraded
 
 # Directory containing the grid files
 data_path = "./ensae-prog25/input/"
@@ -14,18 +14,33 @@ for file_name in grid_files:
     print("Solving grid:", file_name)
 
     grid = Grid.grid_from_file(full_file_path, read_values=True)
-    solver_general = SolverBlossom(grid)
-
+    solver_blossom = SolverBlossom(grid)
+    solver_greedy = SolverGreedy(grid)
+    solver_greedy_upgraded = SolverGreedy_upgraded(grid)
     # Start the timer
-    start_time = time.time()
+    start_blossom = time.time()
+    solver_blossom.run()
+    end_blossom = time.time()
 
-    solver_general.run()
+    start_greedy = time.time()
+    solver_greedy.run()
+    end_greedy = time.time()
 
-    # End the timer
-    end_time = time.time()
+    start_greedy_upgraded = time.time()
+    solver_greedy_upgraded.run()
+    end_greedy_upgraded = time.time()
 
-    general_score = solver_general.score()
-    pairs = solver_general.pairs
-    elapsed_time = end_time - start_time
-    print(f"  SolverGeneral score: {general_score}")
-    print(f"  Computation time: {elapsed_time:.4f} seconds\n")
+    blossom_score = solver_blossom.score()
+    greedy_score = solver_greedy.score()
+    greedy_upgraded_score = solver_greedy_upgraded.score()
+
+    time_blossom = end_blossom - start_blossom
+    time_greedy = end_greedy - start_greedy
+    time_greedy_upgraded = end_greedy_upgraded - start_greedy_upgraded
+
+    print(f"  SolverBlossom score: {blossom_score}")
+    print(f"  Time Blossom: {time_blossom:.4f} seconds")
+    print(f"  SolverGreedy score: {greedy_score}")
+    print(f"  Time Greedy: {time_greedy:.4f} seconds")
+    print(f"  SolverGreedyUpgraded score: {greedy_upgraded_score}")
+    print(f"  Time GreedyUpgraded: {time_greedy_upgraded:.4f} seconds\n")
