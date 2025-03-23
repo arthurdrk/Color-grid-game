@@ -137,7 +137,7 @@ class UIManager:
         x_position = (window_size[0] - text.get_width()) // 2 + 80
         self.screen.blit(text, (x_position, y_position))
         pygame.display.flip()
-        pygame.time.wait(2500)
+        pygame.time.wait(3000)
 
     def draw_error_message(self, message, window_size, mode, cell_size):
         """Displays an error message."""
@@ -756,7 +756,7 @@ class Game:
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
         self.player_pairs = [[], []]  # Reset player pairs
-        self.player_scores = [0, 0]   # Reset player scores
+        self.player_scores = [, 0]   # Reset player scores
         self.current_player = 1       # Reset current player
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
