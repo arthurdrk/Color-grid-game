@@ -409,213 +409,156 @@ class SolverBlossom(Solver):
     """
 
     def run(self):
-        """
-        Construit un graphe sous forme de dictionnaire d'adjacence et utilise
-        l'algorithme max_weight_matching personnalisé.
-        """
         graph = self.grid.bipartite_graph()
-        G = {}  
+        G = {}
         for u in graph['even']:
             for v in graph['even'][u]:
                 cost = self.grid.cost((u, v))
                 value_u = self.grid.value[u[0]][u[1]]
                 value_v = self.grid.value[v[0]][v[1]]
                 weight = cost - value_u - value_v
-                
-                # Ajout bidirectionnel des arêtes
                 G.setdefault(u, {})[v] = -weight
                 G.setdefault(v, {})[u] = -weight
-
-        # Calcul de l'appariement maximal
         matching = max_weight_matching(G)
-        
-        # Conversion du résultat
         self.pairs = list(matching)
 
-
-from scipy.optimize import linear_sum_assignment
-from hungarian_algorithm import hungarian_algorithm
-
-class SolverHungarian1(Solver):
+class SolverFordFulkerson2(Solver):
+    """
+    A subclass of Solver that implements a bipartite matching algorithm to find pairs.
+    """
+    
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
-        Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
+        Runs the bipartite matching algorithm to find pairs of cells.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        Time Complexity: O(E * V) where E is the number of edges and V is the number of vertices
+        Space Complexity: O(E + V)
         """
-        pairs = self.grid.all_pairs()
-        taken = list(set([cell for pair in pairs for cell in pair]))
-        # Include all non-forbidden cells in 'taken'
-        l = len(taken)
-        if l == 0:
-            self.pairs = []
-            return []
-        cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
-        # Build adjacency list from allowed pairs
-        d = defaultdict(list)
-        for u, v in pairs:
-            d[u].append(v)
-            d[v].append(u)
-        # Initialize cost matrix with infinity and set diagonal to 0
-        large_value = np.inf
-        cost_matrix = np.full((l, l), large_value)
-        for i in range(l):
-            u = taken[i]
-            for v in d.get(u, []):
-                j = cell_to_idx[v]
-                cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                cost_matrix[i][j] = cost
-            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] - min([self.grid.value[v[0]][v[1]] for v in d[u]])
-        
-
-        # Apply Hungarian algorithm
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
-        # Collect mutual pairs
-        matched_pairs = []
-        seen = set()
-        for i, j in zip(row_ind, col_ind):
-            if i in seen or j in seen:
-                continue
-            if i == j:
-                seen.add(i)  # Unpaired
-            else:
-                if col_ind[j] == i:  # Check mutual assignment
-                    u, v = taken[i], taken[j]
-                    if (u, v) in pairs or (v, u) in pairs:
-                        matched_pairs.append((u, v))
-                        seen.update([i, j])
-        
-        self.pairs = matched_pairs
-        return matched_pairs
-    
-
-import heapq
-from collections import defaultdict
-import math
-
-class Edge:
-    def __init__(self, to, rev, cap, cost):
-        self.to = to
-        self.rev = rev
-        self.cap = cap
-        self.cost = cost
-
-class SolverMinCost(Solver):
-    def run(self):
-        """Runs the minimum-cost flow algorithm to find optimal pairs with minimal total cost."""
-        graph = defaultdict(list)
-        source = 's'
-        sink = 't'
+        graph = defaultdict(dict)
         even_cells = set()
         odd_cells = set()
-        allowed_pairs = self.grid.all_pairs()
 
-        # Build the graph with allowed pairs
-        for cell1, cell2 in allowed_pairs:
-            # Determine even and odd cells based on coordinate sum parity
-            if (sum(cell1) % 2) == 0:
-                even, odd = cell1, cell2
-            else:
-                even, odd = cell2, cell1
+        # Add edges between cells (direction: from even to odd)
+        for cell1, cell2 in self.grid.all_pairs():
+            even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.add(even)
             odd_cells.add(odd)
-            pair_cost = self.grid.cost((cell1, cell2))
-            self.add_edge(graph, even, odd, 1, pair_cost)
+            cost = self.grid.cost((cell1, cell2))
+            value_u = self.grid.value[cell1[0]][cell2[1]]
+            value_v = self.grid.value[cell1[0]][cell2[1]]
+            weight = cost - value_u - value_v
+            graph[even][odd] = cost
+            graph[odd][even] = cost
 
-        # Connect source to even cells and odd cells to sink
+        # Add edges from source "s" to even cells
         for even in even_cells:
-            self.add_edge(graph, source, even, 1, 0)
+            graph['s'][even] = 1
+
+        # Add edges from odd cells to sink "t"
         for odd in odd_cells:
-            self.add_edge(graph, odd, sink, 1, 0)
+            graph[odd]['t'] = 1
 
-        # Initialize prices
-        prices = {cell: 0 for cell in even_cells}
-        prices.update({cell: min(self.grid.cost((cell, other)) for other in self.grid.vois(*cell)) for cell in odd_cells})
-
-        # Calculate maximum possible flow (number of even cells)
-        max_flow = min(len(even_cells), len(odd_cells))
-        flow, total_cost = self.min_cost_flow(graph, source, sink, max_flow, prices)
-
-        # Extract pairs from the residual graph
-        self.pairs = []
-        for even in even_cells:
-            for e in graph[even]:
-                if isinstance(e.to, tuple) and e.cap == 0 and e.to in odd_cells:
-                    self.pairs.append((even, e.to))
+        # Sets of cells for later extraction of the matching
+        self.even_cells = even_cells
+        self.odd_cells = odd_cells
+        # Get optimal pairs
+        self.pairs = self.ford_fulkerson(graph, even_cells, odd_cells)
         return self.pairs
 
-    def add_edge(self, graph, u, v, cap, cost):
-        """Adds a directed edge and its reverse to the residual graph."""
-        forward = Edge(v, len(graph[v]), cap, cost)
-        backward = Edge(u, len(graph[u]), 0, -cost)
-        graph[u].append(forward)
-        graph[v].append(backward)
+    @staticmethod
+    def bfs(graph: dict, s: str, t: str) -> list[int]:
+        """
+        Performs a BFS to find a path from source 's' to sink 't' in the graph.
 
-    def min_cost_flow(self, graph, s, t, max_flow, prices):
-        """Computes the minimum-cost maximum flow using successive shortest paths with potentials."""
-        flow = 0
-        total_cost = 0
+        Parameters:
+        -----------
+        graph : dict
+            The graph represented as an adjacency list.
+        s : str
+            The source node.
+        t : str
+            The sink node.
 
-        while flow < max_flow:
-            dist, prev, prev_edge = self.dijkstra(graph, s, t, prices)
-            if dist[t] == math.inf:
-                break  # No augmenting path found
+        Returns:
+        --------
+        list[int]
+            The path from 's' to 't' if found, otherwise None.
 
-            # Update prices based on the shortest paths
-            for v in dist:
-                if dist[v] < math.inf:
-                    prices[v] += dist[v]
+        Time Complexity: O(V + E)
+        Space Complexity: O(V)
+        """
+        queue = deque([s])
+        parents = {s: None}
 
-            # Determine the maximum possible augmenting flow
-            path_flow = max_flow - flow
-            v = t
-            path = []
-            while v != s:
-                u = prev.get(v)
-                if u is None:
-                    break  # Path is invalid
-                e = prev_edge[v]
-                path_flow = min(path_flow, e.cap)
-                path.append(e)
-                v = u
-            if v != s:
-                break  # Incomplete path
+        while queue:
+            u = queue.popleft()
+            for v in graph.get(u, []):
+                if v not in parents:
+                    parents[v] = u
+                    if v == t:
+                        return SolverFordFulkerson.reconstruct_path(parents, s, t)
+                    queue.append(v)
 
-            # Update flow and cost
-            flow += path_flow
-            actual_cost = sum(e.cost for e in path) * path_flow
-            total_cost += actual_cost
+        return None
 
-            # Update residual capacities
-            v = t
-            while v != s:
-                u = prev[v]
-                e = prev_edge[v]
-                e.cap -= path_flow
-                graph[e.to][e.rev].cap += path_flow
-                v = u
+    @staticmethod
+    def reconstruct_path(parents: dict, s: str, t: str) -> list[int]:
+        """
+        Reconstructs the path from 's' to 't' using the parents dictionary.
 
-        return flow, total_cost
+        Parameters:
+        -----------
+        parents : dict
+            A dictionary where parents[v] is the predecessor of v on the path from 's' to 'v'.
+        s : str
+            The source node.
+        t : str
+            The sink node.
 
-    def dijkstra(self, graph, s, t, prices):
-        """Performs Dijkstra's algorithm to find the shortest path from s to t with reduced costs."""
-        dist = defaultdict(lambda: math.inf)
-        dist[s] = 0
-        prev = {}
-        prev_edge = {}
-        heap = [(0, s)]
+        Returns:
+        --------
+        list[int]
+            The reconstructed path from 's' to 't'.
 
-        while heap:
-            d, u = heapq.heappop(heap)
-            if d > dist[u]:
-                continue
-            for e in graph[u]:
-                if e.cap > 0:
-                    v = e.to
-                    reduced_cost = e.cost + prices[u] - prices[v]
-                    if dist[v] > d + reduced_cost:
-                        dist[v] = d + reduced_cost
-                        prev[v] = u
-                        prev_edge[v] = e
-                        heapq.heappush(heap, (dist[v], v))
+        Time Complexity: O(V)
+        Space Complexity: O(V)
+        """
+        path = []
+        current = t
+        while current is not None:
+            path.append(current)
+            current = parents[current]
+        return path[::-1]
 
-        return dist, prev, prev_edge
+    @classmethod
+    def ford_fulkerson(cls, graph: dict, even_cells: set, odd_cells: set) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+        """
+        Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.
+
+        Parameters:
+        -----------
+        graph : dict
+            The graph represented as an adjacency list.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            The maximum matching as a list of pairs of cells.
+
+        Time Complexity: O(E * V)
+        Space Complexity: O(E + V)
+        """
+        while True:
+            path = cls.bfs(graph, "s", "t")
+            if path is None:
+                break
+            for u, v in zip(path, path[1:]):
+                graph[u].remove(v)
+                graph[v].append(u)
+
+        return [(u, odd) for odd in odd_cells for u in graph[odd] if u in even_cells]

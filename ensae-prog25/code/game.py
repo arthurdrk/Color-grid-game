@@ -106,7 +106,7 @@ class UIManager:
                         (frame_x, frame_y, frame_width, frame_height),
                         4)
 
-    def draw_score(self, solver, window_size, cell_size, player1_score="", player2_score="", game_mode='one'):
+    def draw_score(self, solver, window_size, cell_size, player1_score, player2_score, game_mode='one'):
         """Draws the current score."""
         font = pygame.font.Font(None, 38)
 
@@ -221,6 +221,13 @@ class UIManager:
         pygame.draw.rect(self.screen, two_color, two_rect)
         text = font.render("Two Players", True, (255, 255, 255))
         text_rect = text.get_rect(center=two_rect.center)
+        self.screen.blit(text, text_rect)
+
+        bot_rect = pygame.Rect(window_size[0]//2 - 100, 400, 220, 60)
+        bot_color = (30, 30, 30) if pressed_button == 'bot' else (50, 50, 50)
+        pygame.draw.rect(self.screen, bot_color, bot_rect)
+        text = font.render("Versus Bot", True, (255, 255, 255))
+        text_rect = text.get_rect(center=bot_rect.center)
         self.screen.blit(text, text_rect)
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
@@ -527,19 +534,25 @@ class Game:
                         x, y = event.pos
                         one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
                         two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 220, 60)
+                        bot_rect = pygame.Rect(window_size[0]//2 - 100, 400, 220, 60)
                         if one_rect.collidepoint(x, y):
                             self.pressed_button = 'one'
                         elif two_rect.collidepoint(x, y):
                             self.pressed_button = 'two'
+                        elif bot_rect.collidepoint(x, y):
+                            self.pressed_button = 'bot'
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
                         one_rect = pygame.Rect(window_size[0]//2 - 100, 200, 220, 60)
                         two_rect = pygame.Rect(window_size[0]//2 - 100, 300, 220, 60)
+                        bot_rect = pygame.Rect(window_size[0]//2 - 100, 400, 220, 60)
                         if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
                             self.player_mode = 'one'
                         elif two_rect.collidepoint(x, y) and self.pressed_button == 'two':
                             self.player_mode = 'two'
+                        elif bot_rect.collidepoint(x, y) and self.pressed_button == 'bot':
+                            self.player_mode = 'bot'
                         self.pressed_button = None
 
         grid = self.grid_manager.load_grid(self.selected_grid)
@@ -624,6 +637,7 @@ class Game:
 
                         if button_rect and button_rect.collidepoint(x, y):
                             if self.pressed_button == 'menu':
+                                self.reset_game_state()
                                 pygame.time.delay(100)
 
                             if self.pressed_button == 'reset':
@@ -716,6 +730,7 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.pressed_button == 'menu':
+                        self.reset_game_state()
                         x, y = event.pos
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
                         if menu_rect.collidepoint(x, y):
@@ -757,11 +772,11 @@ class Game:
         self.rules_scroll = 0
         self.rules_scroll_bar_dragging = False
         self.rules_mouse_y_offset = 0
+        self.player_scores = [0, 0]
         self.player_pairs = [[], []]  # Reset player pairs
         self.current_player = 1       # Reset current player
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
-        self.player_scores = [0, 0]
 
 if __name__ == "__main__":
     game = Game()

@@ -1,7 +1,7 @@
 import os
 import time
 from grid import Grid
-from solver import SolverGreedy, SolverBlossom, SolverGreedy_upgraded, SolverHungarian1, SolverMinCost
+from solver import SolverGreedy, SolverBlossom, SolverGreedy_upgraded
 
 # Directory containing the grid files
 data_path = "./ensae-prog25/input/"
@@ -17,8 +17,8 @@ for file_name in grid_files:
     solver_blossom = SolverBlossom(grid)
     solver_greedy = SolverGreedy(grid)
     solver_greedy_upgraded = SolverGreedy_upgraded(grid)
-    solver_hungarian1 = SolverHungarian1(grid)
-    solver_mincost = SolverMinCost(grid)
+    # solver_hungarian1 = SolverHungarian1(grid)
+    # solver_mincost = SolverMinCost(grid)
     # Start the timer
     start_blossom = time.time()
     solver_blossom.run()
@@ -33,18 +33,18 @@ for file_name in grid_files:
     end_greedy_upgraded = time.time()
 
     start_hungarian1 = time.time()
-    solver_hungarian1.run()
+    # solver_hungarian1.run()
     end_hungarian1 = time.time()
 
     start_mincost = time.time()
-    solver_mincost.run()
+    # solver_mincost.run()
     end_mincost = time.time()
 
     blossom_score = solver_blossom.score()
     greedy_score = solver_greedy.score()
     greedy_upgraded_score = solver_greedy_upgraded.score()
-    hungarian1_score = solver_hungarian1.score()
-    mincost_score = solver_mincost.score()
+    # hungarian1_score = solver_hungarian1.score()
+    # mincost_score = solver_mincost.score()
 
     time_blossom = end_blossom - start_blossom
     #time_greedy = end_greedy - start_greedy
@@ -55,5 +55,5 @@ for file_name in grid_files:
     print(f"  SolverBlossom score: {blossom_score},  Time : {time_blossom:.4f} seconds")
     #print(f"  SolverGreedy score: {greedy_score},  Time : {time_greedy:.4f} seconds")
     #print(f"  SolverGreedyUpgraded score: {greedy_upgraded_score},  Time : {time_greedy_upgraded:.4f} seconds")
-    print(f"  SolverMinCost score: {mincost_score},  Time : {time_mincost:.4f} seconds\n")
+    # print(f"  SolverMinCost score: {mincost_score},  Time : {time_mincost:.4f} seconds\n")
     #print(f"  SolverHungarian2 score: {hungarian2_score},  Time : {time_hungarian2:.4f} seconds\n")

@@ -70,22 +70,15 @@ def max_weight_matching(G, weight="weight"):
         return dualvar[v] + dualvar[w] - 2 * wt
 
     def assignLabel(w, t, v):
-        b = inblossom[w]
-        assert label.get(w) is None and label.get(b) is None
-        label[w] = label[b] = t
-        if v is not None:
-            labeledge[w] = labeledge[b] = (v, w)
-        else:
-            labeledge[w] = labeledge[b] = None
-        bestedge[w] = bestedge[b] = None
-        if t == 1:
-            if isinstance(b, Blossom):
-                queue.extend(b.leaves())
-            else:
-                queue.append(b)
-        elif t == 2:
-            base = blossombase[b]
-            assignLabel(mate[base], 1, base)
+        assert label.get(w) is None
+        label[w] = t
+        labeledge[w] = (v, w) if v is not None else None
+        bestedge[w] = None
+        if t == 1:  # Even distance, add to queue
+            queue.append(w)
+        elif t == 2:  # Odd distance, if matched, label its mate
+            if w in mate:
+                assignLabel(mate[w], 1, w)
 
     def scanBlossom(v, w):
         path = []
