@@ -22,6 +22,9 @@ def move_to_play(grid: Grid):
     res = None  # tuple[tuple[int, int], tuple[int, int]]
     best = float('inf')  # best score with this choice of pair
 
+    # Sort pairs by cost
+    pairs.sort(key=lambda pair: grid.cost(pair))
+
     if len(pairs) == 1:
         return pairs[0]
     else:
@@ -37,11 +40,16 @@ def move_to_play(grid: Grid):
                 # If there are no pairs left, skip this iteration
                 continue
 
-            player_choice = min(pairs2, key=lambda x: grid_copy.cost(x))
-            score = grid_copy.cost(pair) - grid_copy.cost(player_choice)
+            player_choice = min([grid_copy.cost(x) for x in pairs2])
+            score = grid.cost(pair) - player_choice
 
             if score < best:
                 best = score
                 res = pair
 
+            # If we find a pair with cost 0, return it immediately
+            if grid.cost(pair) == 0:
+                return pair
+
         return res
+
