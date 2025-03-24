@@ -14,7 +14,50 @@ class UIManager:
         self.screen = screen
         self.colors = colors
         self.colors_title = colors_title
+        self.volume_theme = 0.03  # Initial volume level 
+        self.volume = 0.02
+        # Load sound effects and images
+        self.game_theme = pygame.mixer.Sound("./ensae-prog25/medias/game theme.mp3")
+        self.win_sound = pygame.mixer.Sound("./ensae-prog25/medias/win.mp3")
+        self.lose_sound = pygame.mixer.Sound("./ensae-prog25/medias/lose.mp3")
+        self.sound_on_img = pygame.transform.scale(
+            pygame.image.load("./ensae-prog25/medias/sound on.png").convert_alpha(),
+            (30, 30)
+        )
+        self.sound_off_img = pygame.transform.scale(
+            pygame.image.load("./ensae-prog25/medias/sound off.png").convert_alpha(),
+            (30, 30)
+        )
+
+        self.game_theme.set_volume(self.volume_theme)
+        self.win_sound.set_volume(self.volume)
+        self.lose_sound.set_volume(self.volume)
+        self.game_theme.play(loops=-1)
+
+    def draw_volume_button(self, window_size, pressed):
+        """Draws the volume toggle button."""
+        button_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
+        color = (30, 30, 30) if pressed else (50, 50, 50)
+        pygame.draw.rect(self.screen, color, button_rect)
         
+        # Choose image based on volume state
+        img = self.sound_off_img if self.volume == 0 else self.sound_on_img
+        img_rect = img.get_rect(center=button_rect.center)
+        self.screen.blit(img, img_rect)
+
+    def toggle_volume(self):
+        """Toggles the volume between muted and last volume."""
+        if self.volume == 0:
+            self.volume = 0.02
+            self.volume_theme = 0.03
+            self.game_theme.set_volume(self.volume_theme)
+            self.win_sound.set_volume(self.volume)
+            self.lose_sound.set_volume(self.volume)
+        else:
+            self.volume = 0
+            self.game_theme.set_volume(self.volume)
+            self.win_sound.set_volume(self.volume)
+            self.lose_sound.set_volume(self.volume)
 
     def draw_title(self, window_size):
         """Draws the title of the game."""
@@ -150,14 +193,14 @@ class UIManager:
         font = pygame.font.Font(None, 72)
         text = font.render(message, True, color)
         text_rect = text.get_rect(center=(window_size[0]//2, window_size[1]//2))
-        
+
         # Ajouter un contour au texte
         border_surface = pygame.Surface((text_rect.width + 4, text_rect.height + 4), pygame.SRCALPHA)
         self.screen.blit(border_surface, (text_rect.x - 2, text_rect.y - 2))
-        
+
         self.screen.blit(text, text_rect)
         pygame.display.flip()
-        pygame.time.wait(2500)
+        pygame.time.wait(4000)
 
     def draw_error_message(self, message, window_size, mode, cell_size):
         """Displays an error message."""
@@ -468,6 +511,7 @@ class Game:
         self.current_player = 1
         self.player_pairs = [[], []]
         self.player_scores = [0, 0]
+        self.volume_button_pressed_time = None
 
     def main(self):
         """Main game loop."""
@@ -488,6 +532,11 @@ class Game:
             pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, 600, 100))
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_rules_button(window_size, self.pressed_button == 'rules')
+            self.ui_manager.draw_volume_button(window_size, self.pressed_button == 'volume') 
+            current_time = pygame.time.get_ticks()
+            if (self.volume_button_pressed_time is not None and current_time - self.volume_button_pressed_time >= 150):
+                self.pressed_button = None
+                self.volume_button_pressed_time = None 
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -497,18 +546,38 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
+                        volume_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
+                        if volume_rect.collidepoint(x, y):
+                            self.pressed_button = 'volume'
+                            self.volume_button_pressed_time = pygame.time.get_ticks()
+                            self.ui_manager.toggle_volume()
                         if scroll_bar_rect.collidepoint(x, y) and max_scroll > 0:
                             self.scroll_bar_dragging = True
                             self.mouse_y_offset = y - scroll_bar_rect.y
                         else:
-                            visible_y = y + self.scroll - 100
-                            self.pressed_grid_index = visible_y // 50
+                            # Check each grid option to see if the click is within a visible button
+                            self.pressed_grid_index = -1
+                            for i in range(len(self.grid_manager.grid_files)):
+                                btn_y = 100 + i * 50 - self.scroll
+                                # Check if the button is within the visible area (100 <= y <= window_size[1] - 70 - 40)
+                                if btn_y < 100 or btn_y + 40 > window_size[1] - 70:
+                                    continue
+                                btn_rect = pygame.Rect(window_size[0]//2 - 100, btn_y, 200, 40)
+                                if btn_rect.collidepoint(x, y):
+                                    self.pressed_grid_index = i
+                                    break
+                            # Handle rules button and volume control
                             rules_rect = pygame.Rect(window_size[0] - 200, window_size[1] - 70, 100, 40)
                             if rules_rect.collidepoint(x, y):
                                 self.pressed_button = 'rules'
+                            elif y >= window_size[1] - 40 and x <= 220:
+                                self.ui_manager.update_volume((x - 20) / 200)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_grid_index != -1:
                         x, y = event.pos
+                        volume_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
+                        if self.pressed_button == 'volume' and volume_rect.collidepoint(x, y):
+                            self.ui_manager.toggle_volume()
                         visible_y = y + self.scroll - 100
                         released_index = visible_y // 50
 
@@ -522,7 +591,7 @@ class Game:
 
                     self.scroll_bar_dragging = False
                     self.pressed_grid_index = -1
-
+                    
                     if self.pressed_button == 'rules':
                         self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
                         self.show_rules()
@@ -562,6 +631,8 @@ class Game:
                             self.pressed_button = 'two'
                         elif bot_rect.collidepoint(x, y):
                             self.pressed_button = 'bot'
+                        elif y >= window_size[1] - 40 and x <= 220:
+                            self.ui_manager.update_volume((x - 20) / 200)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
@@ -641,6 +712,8 @@ class Game:
                             self.pressed_button = 'solution'
                         elif menu_rect.collidepoint(x, y):
                             self.pressed_button = 'menu'
+                        elif y >= window_size[1] - 40 and x <= 220:
+                            self.ui_manager.update_volume((x - 20) / 200)
                         else:
                             self.pressed_button = None
                     else:
@@ -747,18 +820,23 @@ class Game:
                     self.game_over = True
                     if self.player_mode == 'one':
                         if solver_manager.solver.score() <= general_score:
+                            self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("You won!", (0, 200, 0), window_size)
                         else:
+                            self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("You lost!", (200, 0, 0), window_size)
                         solver_manager.solver.pairs = []
                         self.selected_cells = []
                         self.game_over = False
                     elif self.player_mode == 'two':
                         if self.player_scores[0] < self.player_scores[1]:
+                            self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
+                            self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
+                            self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("It's a tie!", (0, 212, 184), window_size)
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
@@ -766,10 +844,13 @@ class Game:
                         self.game_over = False
                     elif self.player_mode == 'bot':
                         if self.player_scores[0] < self.player_scores[1]:
+                            self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("You won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
+                            self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("Stockfish wins!", (148, 0, 211), window_size)
                         else:
+                            self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("It's a tie!", (0, 0, 200), window_size)
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
