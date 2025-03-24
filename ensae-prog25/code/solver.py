@@ -463,7 +463,9 @@ class SolverHungarian1(Solver):
                 j = cell_to_idx[v]
                 cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
                 cost_matrix[i][j] = cost
-            cost_matrix[i][i] = self.grid.value[u[0]][u[1]]
+            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] - min([self.grid.value[v[0]][v[1]] for v in d[u]])
+        
+
         # Apply Hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
         
@@ -485,119 +487,135 @@ class SolverHungarian1(Solver):
         self.pairs = matched_pairs
         return matched_pairs
     
-class SolverHungarian2(Solver):
-    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Runs the general solver using the Hungarian algorithm to find optimal pairs, allowing unpaired cells.
-        """
-        pairs = self.grid.all_pairs()
-        taken = list(set([cell for pair in pairs for cell in pair]))
-        # Include all non-forbidden cells in 'taken'
-        l = len(taken)
-        if l == 0:
-            self.pairs = []
-            return []
-        cell_to_idx = {cell: idx for idx, cell in enumerate(taken)}
-        # Build adjacency list from allowed pairs
-        d = defaultdict(list)
-        for u, v in pairs:
-            d[u].append(v)
-            d[v].append(u)
-        # Initialize cost matrix with infinity and set diagonal to 0
-        large_value = np.inf
-        cost_matrix = np.full((l, l), large_value)
-        for i in range(l):
-            u = taken[i]
-            for v in d.get(u, []):
-                j = cell_to_idx[v]
-                cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                cost_matrix[i][j] = cost
-            cost=max([self.grid.cost((u,v)) for v in d[u]])
-            cost_matrix[i][i] = self.grid.value[u[0]][u[1]] - cost
-        # Apply Hungarian algorithm
-        row_ind, col_ind = hungarian_algorithm(cost_matrix)
-        
-        # Collect mutual pairs
-        matched_pairs = []
-        seen = set()
-        for i, j in zip(row_ind, col_ind):
-            if i in seen or j in seen:
-                continue
-            if i == j:
-                seen.add(i)  # Unpaired
+
+import heapq
+from collections import defaultdict
+import math
+
+class Edge:
+    def __init__(self, to, rev, cap, cost):
+        self.to = to
+        self.rev = rev
+        self.cap = cap
+        self.cost = cost
+
+class SolverMinCost(Solver):
+    def run(self):
+        """Runs the minimum-cost flow algorithm to find optimal pairs with minimal total cost."""
+        graph = defaultdict(list)
+        source = 's'
+        sink = 't'
+        even_cells = set()
+        odd_cells = set()
+        allowed_pairs = self.grid.all_pairs()
+
+        # Build the graph with allowed pairs
+        for cell1, cell2 in allowed_pairs:
+            # Determine even and odd cells based on coordinate sum parity
+            if (sum(cell1) % 2) == 0:
+                even, odd = cell1, cell2
             else:
-                if col_ind[j] == i:  # Check mutual assignment
-                    u, v = taken[i], taken[j]
-                    if (u, v) in pairs or (v, u) in pairs:
-                        matched_pairs.append((u, v))
-                        seen.update([i, j])
-        
-        self.pairs = matched_pairs
-        return matched_pairs
+                even, odd = cell2, cell1
+            even_cells.add(even)
+            odd_cells.add(odd)
+            pair_cost = self.grid.cost((cell1, cell2))
+            self.add_edge(graph, even, odd, 1, pair_cost)
 
-# class SolverHungarian2(Solver):
-#     """
-#     Un solveur qui utilise l'algorithme hongrois pour trouver un appariement optimal.
-#     """
+        # Connect source to even cells and odd cells to sink
+        for even in even_cells:
+            self.add_edge(graph, source, even, 1, 0)
+        for odd in odd_cells:
+            self.add_edge(graph, odd, sink, 1, 0)
 
-#     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-#         """
-#         Exécute l'algorithme hongrois pour trouver les paires optimales.
-#         """
-#         pairs = self.grid.all_pairs()
-#         even_cells = []
-#         odd_cells = []
+        # Initialize prices
+        prices = {cell: 0 for cell in even_cells}
+        prices.update({cell: min(self.grid.cost((cell, other)) for other in self.grid.vois(*cell)) for cell in odd_cells})
 
-#         # Séparer les cellules paires et impaires
-#         for cell1, cell2 in pairs:
-#             if (cell1[0] + cell1[1]) % 2 == 0:
-#                 even, odd = cell1, cell2
-#             else:
-#                 even, odd = cell2, cell1
-#             even_cells.append(even)
-#             odd_cells.append(odd)
-#         even_cells = list(set(even_cells))
-#         odd_cells = list(set(odd_cells))
-#         E = len(even_cells)
-#         O = len(odd_cells)
-#         large_value = np.inf
+        # Calculate maximum possible flow (number of even cells)
+        max_flow = min(len(even_cells), len(odd_cells))
+        flow, total_cost = self.min_cost_flow(graph, source, sink, max_flow, prices)
 
-#         # Créer des mappings pour les indices
-#         even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
-#         odd_to_idx = {cell: i for i, cell in enumerate(odd_cells)}
+        # Extract pairs from the residual graph
+        self.pairs = []
+        for even in even_cells:
+            for e in graph[even]:
+                if isinstance(e.to, tuple) and e.cap == 0 and e.to in odd_cells:
+                    self.pairs.append((even, e.to))
+        return self.pairs
 
-#         # Initialiser la matrice de coût
-#         cost_matrix = np.full((E + O, E + O), large_value)
+    def add_edge(self, graph, u, v, cap, cost):
+        """Adds a directed edge and its reverse to the residual graph."""
+        forward = Edge(v, len(graph[v]), cap, cost)
+        backward = Edge(u, len(graph[u]), 0, -cost)
+        graph[u].append(forward)
+        graph[v].append(backward)
 
-#         # Remplir les coûts pour les paires valides
-#         for u, v in pairs:
-#             if (u[0] + u[1]) % 2 == 0:
-#                 even, odd = u, v
-#             else:
-#                 even, odd = v, u
-#             if even in even_to_idx and odd in odd_to_idx:
-#                 i = even_to_idx[even]
-#                 j = odd_to_idx[odd]
-#                 cost = self.grid.cost((u, v)) - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-#                 cost_matrix[i][j] = cost
+    def min_cost_flow(self, graph, s, t, max_flow, prices):
+        """Computes the minimum-cost maximum flow using successive shortest paths with potentials."""
+        flow = 0
+        total_cost = 0
 
-#         # Coût pour laisser une cellule non appariée
-#         for i, cell in enumerate(even_cells):
-#             cost_matrix[i][O + i] = self.grid.value[cell[0]][cell[1]]
-#         for j, cell in enumerate(odd_cells):
-#             cost_matrix[E + j][j] = self.grid.value[cell[0]][cell[1]]
-#         # Appliquer l'algorithme hongrois
-#         row_ind, col_ind = linear_sum_assignment(cost_matrix)
+        while flow < max_flow:
+            dist, prev, prev_edge = self.dijkstra(graph, s, t, prices)
+            if dist[t] == math.inf:
+                break  # No augmenting path found
 
-#         # Extraire les paires
-#         matched_pairs = []
-#         for i, j in zip(row_ind, col_ind):
-#             if i < E and j < O:
-#                 u = even_cells[i]
-#                 v = odd_cells[j]
-#                 if ((u, v) in pairs) or ((v, u) in pairs):
-#                     matched_pairs.append((u, v))
+            # Update prices based on the shortest paths
+            for v in dist:
+                if dist[v] < math.inf:
+                    prices[v] += dist[v]
 
-#         self.pairs = matched_pairs
-#         return matched_pairs
-    
+            # Determine the maximum possible augmenting flow
+            path_flow = max_flow - flow
+            v = t
+            path = []
+            while v != s:
+                u = prev.get(v)
+                if u is None:
+                    break  # Path is invalid
+                e = prev_edge[v]
+                path_flow = min(path_flow, e.cap)
+                path.append(e)
+                v = u
+            if v != s:
+                break  # Incomplete path
+
+            # Update flow and cost
+            flow += path_flow
+            actual_cost = sum(e.cost for e in path) * path_flow
+            total_cost += actual_cost
+
+            # Update residual capacities
+            v = t
+            while v != s:
+                u = prev[v]
+                e = prev_edge[v]
+                e.cap -= path_flow
+                graph[e.to][e.rev].cap += path_flow
+                v = u
+
+        return flow, total_cost
+
+    def dijkstra(self, graph, s, t, prices):
+        """Performs Dijkstra's algorithm to find the shortest path from s to t with reduced costs."""
+        dist = defaultdict(lambda: math.inf)
+        dist[s] = 0
+        prev = {}
+        prev_edge = {}
+        heap = [(0, s)]
+
+        while heap:
+            d, u = heapq.heappop(heap)
+            if d > dist[u]:
+                continue
+            for e in graph[u]:
+                if e.cap > 0:
+                    v = e.to
+                    reduced_cost = e.cost + prices[u] - prices[v]
+                    if dist[v] > d + reduced_cost:
+                        dist[v] = d + reduced_cost
+                        prev[v] = u
+                        prev_edge[v] = e
+                        heapq.heappush(heap, (dist[v], v))
+
+        return dist, prev, prev_edge

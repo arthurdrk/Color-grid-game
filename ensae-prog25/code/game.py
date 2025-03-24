@@ -395,6 +395,12 @@ class SolverManager:
         score = sum(abs(grid.value[i1][j1] - grid.value[i2][j2]) for (i1, j1), (i2, j2) in player_pairs)
         score += sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if (i, j) not in paired_cells and grid.color[i][j] != 4)
         return score
+    
+    def calculate_two_player_score(self, player_pairs, grid):
+        """Calcule le score pour un joueur en considérant ses paires et les cellules non appariées."""
+        paired_cells = set(cell for pair in player_pairs for cell in pair)
+        score = sum(grid.cost((u,v)) for u, v in player_pairs)
+        return score
 
 class Game:
     """Main game class that handles the game loop and user interactions."""
@@ -540,10 +546,6 @@ class Game:
         solver_manager = SolverManager(grid)
         general_score = solver_manager.general_score
 
-        # Initialize player scores for two-player mode
-        if self.player_mode == 'two':
-            self.reset_player_scores(grid)
-
         cell_size = 60
         top_margin = 50 if self.player_mode == 'two' else 0
         window_height = grid.n * cell_size + 140 + top_margin
@@ -598,7 +600,7 @@ class Game:
                                         else:
                                             if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs, self.current_player):
                                                 self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
-                                                self.player_scores[self.current_player - 1] = solver_manager.calculate_player_score(self.player_pairs[self.current_player - 1], grid)
+                                                self.player_scores[self.current_player - 1] = solver_manager.calculate_two_player_score(self.player_pairs[self.current_player - 1], grid)
                                                 self.current_player = 2 if self.current_player == 1 else 1
                                             else:
                                                 self.ui_manager.draw_error_message("You cannot pair these two cells!", window_size, self.player_mode, cell_size)
@@ -629,9 +631,9 @@ class Game:
                                 self.selected_cells = []
                                 self.game_over = False
                                 self.show_solution = False
-                                self.reset_player_scores(grid)
                                 self.player_pairs = [[], []]
                                 self.current_player = 1
+                                self.player_scores = [0, 0]
                             elif self.pressed_button == 'solution':
                                 solver_manager.solver.pairs = solver_manager.solver_general.pairs
                                 self.show_solution = True
@@ -676,7 +678,7 @@ class Game:
                         else:
                             self.ui_manager.draw_end_screen("It's a tie!", (0, 0, 200), window_size)
                         self.player_pairs = [[], []]
-                        self.reset_player_scores(grid)
+                        self.player_scores = [0, 0]
                         self.current_player = 1
                         self.game_over = False
 
@@ -759,11 +761,7 @@ class Game:
         self.current_player = 1       # Reset current player
         self.screen = pygame.display.set_mode((600, 600))
         self.main()
-
-    def reset_player_scores(self, grid):
-        """Resets the player scores to the sum of the values of non-black cells."""
-        score = sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if grid.color[i][j] != 4)
-        self.player_scores = [score, score]
+        self.player_scores = [0, 0]
 
 if __name__ == "__main__":
     game = Game()
