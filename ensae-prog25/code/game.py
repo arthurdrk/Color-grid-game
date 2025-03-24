@@ -14,7 +14,7 @@ class UIManager:
         self.screen = screen
         self.colors = colors
         self.colors_title = colors_title
-        self.volume_theme = 0.03  # Initial volume level 
+        self.volume_theme = 0.01  # Initial volume level
         self.volume = 0.02
         # Load sound effects and images
         self.game_theme = pygame.mixer.Sound("./ensae-prog25/medias/game theme.mp3")
@@ -34,12 +34,17 @@ class UIManager:
         self.lose_sound.set_volume(self.volume)
         self.game_theme.play(loops=-1)
 
+        # Animation variables
+        self.color_index = 0
+        self.color_timer = 0
+        self.color_interval = 500  # Time interval for color change in milliseconds
+
     def draw_volume_button(self, window_size, pressed):
         """Draws the volume toggle button."""
         button_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
         color = (30, 30, 30) if pressed else (50, 50, 50)
         pygame.draw.rect(self.screen, color, button_rect)
-        
+
         # Choose image based on volume state
         img = self.sound_off_img if self.volume == 0 else self.sound_on_img
         img_rect = img.get_rect(center=button_rect.center)
@@ -49,7 +54,7 @@ class UIManager:
         """Toggles the volume between muted and last volume."""
         if self.volume == 0:
             self.volume = 0.02
-            self.volume_theme = 0.03
+            self.volume_theme = 0.01
             self.game_theme.set_volume(self.volume_theme)
             self.win_sound.set_volume(self.volume)
             self.lose_sound.set_volume(self.volume)
@@ -60,10 +65,18 @@ class UIManager:
             self.lose_sound.set_volume(self.volume)
 
     def draw_title(self, window_size):
-        """Draws the title of the game."""
+        """Draws the title of the game with animated colors."""
         font = pygame.font.Font(None, 72)
         title = "ColorGrid"
-        colors = [self.colors_title[i % len(self.colors_title)] for i in range(len(title))]
+
+        # Update the color index based on the timer
+        current_time = pygame.time.get_ticks()
+        if current_time - self.color_timer > self.color_interval:
+            self.color_index = (self.color_index + 1) % len(self.colors_title)
+            self.color_timer = current_time
+
+        # Assign colors based on the current index
+        colors = [self.colors_title[(self.color_index + i) % len(self.colors_title)] for i in range(len(title))]
 
         total_width = sum(font.size(char)[0] for char in title)
         start_x = (window_size[0] - total_width) // 2
@@ -295,7 +308,7 @@ class UIManager:
         self.screen.blit(text, text_rect)
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
-        """Draws the game rules with scrolling functionality."""
+        """Draws the game rules with scrolling functionality and animated title."""
         font = pygame.font.Font(None, 72)
         font_title = pygame.font.Font(None, 72)
         font_content = pygame.font.Font(None, 24)
@@ -325,26 +338,30 @@ class UIManager:
 
         self.screen.fill((255, 255, 255))
 
-        title_rect = pygame.Rect(0, 20, window_size[0], 72)
-        pygame.draw.rect(self.screen, (255, 255, 255), title_rect)
-
+        # Animated title "Game Rules"
+        title = "Game Rules"
         title_colors = [
             (0, 0, 0), (200, 0, 0), (0, 0, 200), (0, 200, 0), (0, 0, 0),
             (200, 0, 0), (0, 0, 200), (0, 200, 0), (200, 0, 0), (0, 0, 200)
         ]
 
-        title = "Game Rules"
-        total_width = sum(font.size(char)[0] for char in title)
-        title_surface = pygame.Surface(title_rect.size, pygame.SRCALPHA)
-        x_offset = (window_size[0] - total_width) // 2
-        for i, char in enumerate(title):
-            color = title_colors[i]
-            char_surface = font_title.render(char, True, color)
-            title_surface.blit(char_surface, (x_offset, 0))
-            x_offset += char_surface.get_width()
+        # Update the color index based on the timer
+        current_time = pygame.time.get_ticks()
+        if current_time - self.color_timer > self.color_interval:
+            self.color_index = (self.color_index + 1) % len(title_colors)
+            self.color_timer = current_time
 
-        title_x = (window_size[0] - title_surface.get_width()) // 2
-        self.screen.blit(title_surface, (title_x, 20))
+        # Assign colors based on the current index
+        colors = [title_colors[(self.color_index + i) % len(title_colors)] for i in range(len(title))]
+
+        total_width = sum(font_title.size(char)[0] for char in title)
+        start_x = (window_size[0] - total_width) // 2
+
+        current_x = start_x
+        for i, char in enumerate(title):
+            text = font_title.render(char, True, colors[i])
+            self.screen.blit(text, (current_x, 20))
+            current_x += text.get_width()
 
         content_clip_top = 92
         content_clip_bottom = window_size[1] - 70
@@ -443,7 +460,7 @@ class SolverManager:
         }
         return color2 in allowed.get(color1, set()) and color1 in allowed.get(color2, set())
 
-    def pair_is_valid(self, pair, existing_pairs, grid, player_pairs, current_player):
+    def pair_is_valid(self, pair, existing_pairs, grid, player_pairs):
         """Vérifie si une paire est valide en considérant les paires des deux joueurs."""
         (i1, j1), (i2, j2) = pair
         if grid.is_forbidden(i1, j1) or grid.is_forbidden(i2, j2):
@@ -491,7 +508,7 @@ class Game:
             2: (0, 0, 200),
             3: (0, 200, 0)
         }
-        self.screen = pygame.display.set_mode((600, 600), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((600, 600))
         pygame.display.set_caption("ColorGrid")
         self.ui_manager = UIManager(self.screen, self.colors, self.colors_title)
         self.grid_manager = GridManager("./ensae-prog25/input/")
@@ -532,11 +549,11 @@ class Game:
             pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, 600, 100))
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_rules_button(window_size, self.pressed_button == 'rules')
-            self.ui_manager.draw_volume_button(window_size, self.pressed_button == 'volume') 
+            self.ui_manager.draw_volume_button(window_size, self.pressed_button == 'volume')
             current_time = pygame.time.get_ticks()
             if (self.volume_button_pressed_time is not None and current_time - self.volume_button_pressed_time >= 150):
                 self.pressed_button = None
-                self.volume_button_pressed_time = None 
+                self.volume_button_pressed_time = None
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -591,9 +608,9 @@ class Game:
 
                     self.scroll_bar_dragging = False
                     self.pressed_grid_index = -1
-                    
+
                     if self.pressed_button == 'rules':
-                        self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+                        self.screen = pygame.display.set_mode((800, 600))
                         self.show_rules()
                         self.pressed_button = None
 
@@ -680,8 +697,7 @@ class Game:
                 bot_pair = move_to_play(grid_copy)
                 if bot_pair is not None:
                     valid = solver_manager.pair_is_valid(
-                        bot_pair, [], grid, self.player_pairs, 2
-                    )
+                        bot_pair, [], grid, self.player_pairs)
                     if valid:
                         # Ajout d'un délai avant que le bot ne joue son coup
                         pygame.time.wait(1000)  # Délai de 1 seconde (1000 millisecondes)
@@ -739,8 +755,7 @@ class Game:
                                             elif self.player_mode == 'bot':
                                                 valid = solver_manager.pair_is_valid(
                                                     (self.selected_cells[0], self.selected_cells[1]),
-                                                    [], grid, self.player_pairs, 1
-                                                )
+                                                    [], grid, self.player_pairs)
                                                 if valid:
                                                     self.player_pairs[0].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[0] = solver_manager.calculate_two_player_score(self.player_pairs[0], grid)
@@ -748,7 +763,7 @@ class Game:
                                                 else:
                                                     self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
                                             else:  # two players
-                                                if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs, self.current_player):
+                                                if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs):
                                                     self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[self.current_player - 1] = solver_manager.calculate_two_player_score(self.player_pairs[self.current_player - 1], grid)
                                                     self.current_player = 2 if self.current_player == 1 else 1
@@ -813,7 +828,7 @@ class Game:
             pygame.display.flip()
 
             if not self.show_solution and not any(
-                solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs, self.current_player)
+                solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs)
                 for pair in grid.all_pairs()
             ):
                 if not self.game_over:
@@ -936,7 +951,7 @@ class Game:
         self.player_scores = [0, 0]
         self.player_pairs = [[], []]
         self.current_player = 1
-        self.screen = pygame.display.set_mode((600, 600), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((600, 600))
         self.main()
 
 if __name__ == "__main__":
