@@ -1,6 +1,6 @@
 from grid import Grid
 
-def calcul_coup(grid : Grid):
+def move_to_play(grid : Grid):
         """
 
         choose the best pair considering that the opponent is playing greedy and want to choose the best pair possible with a prediction of one turn

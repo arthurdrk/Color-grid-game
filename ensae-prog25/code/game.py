@@ -3,7 +3,7 @@ import sys
 import os
 from grid import Grid
 from solver import Solver, SolverBlossom
-
+from bot_2_players import calcul
 pygame.init()
 
 class UIManager:
