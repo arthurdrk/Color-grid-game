@@ -141,7 +141,7 @@ class UIManager:
     def draw_end_screen(self, message, color, window_size):
         """Affiche l'écran de fin avec fond semi-transparent et message centré."""
         # Créer un overlay semi-transparent
-        pygame.time.delay(400)
+        pygame.time.delay(200)
         overlay = pygame.Surface(window_size, pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 190))  # Noir semi-transparent
         self.screen.blit(overlay, (0, 0))
