@@ -441,3 +441,43 @@ class SolverHungarian(Solver):
             pass
             
         return self.pairs
+
+class SolverHungarian2(Solver):
+    def run(self):
+        if self.rules == "original rules":
+            valid_pairs = self.grid.all_pairs()
+        elif self.rules == "new rules":
+            valid_pairs = self.grid.all_pairs_new_rules()
+        # Collecte de toutes les cellules appariables (uniques)
+        all_cells = list({cell for pair in valid_pairs for cell in pair})
+        num_cells = len(all_cells)
+        cell_to_idx = {cell: i for i, cell in enumerate(all_cells)}
+
+        # Initialisation de la matrice avec des coûts infinis
+        cost_matrix = np.full((num_cells, num_cells), 0)
+
+        # Remplissage des coûts pour les paires valides
+        for u, v in valid_pairs:
+            i, j = cell_to_idx[u], cell_to_idx[v]
+            cost = self.grid.cost((u, v))
+            value_u = self.grid.value[u[0]][u[1]]
+            value_v = self.grid.value[v[0]][v[1]]
+            weight = cost - value_u - value_v
+            cost_matrix[i][j] = weight
+            cost_matrix[j][i] = weight
+
+        # Application de l'algorithme hongrois
+        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+        # Extraction des paires valides
+        self.pairs = []
+        for i, j in zip(row_ind, col_ind):
+            if cost_matrix[i][j] != 0:
+                u, v = all_cells[i], all_cells[j]
+                if (u, v) in valid_pairs :
+                    self.pairs.append((u, v))
+
+        # Suppression des doublons
+        self.pairs = list(dict.fromkeys(self.pairs))
+        return self.pairs
+
+
