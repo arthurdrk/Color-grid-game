@@ -16,7 +16,7 @@ class Solver:
         A list of pairs, each being a tuple ((i1, j1), (i2, j2)) representing paired cells.
     """
 
-    def __init__(self, grid: Grid):
+    def __init__(self, grid: Grid, rules="original rules"):
         """
         Initializes the solver with a grid.
 
@@ -30,6 +30,7 @@ class Solver:
         """
         self.grid = grid
         self.pairs = []
+        self.rules = rules
 
     def score(self) -> int:
         """
@@ -402,170 +403,125 @@ class SolverFordFulkerson(Solver):
 #                               WORK IN PROGRESS                               #
 ################################################################################
 
+import networkx as nx
+from collections import defaultdict
+
+from max_weight_matching import max_weight_matching
+
 class SolverBlossom(Solver):
     """
     Un solveur qui utilise un appariement pondéré pour minimiser le score dans une grille.
-    Adapté pour utiliser un dictionnaire d'adjacence au lieu de NetworkX.
+    Adapté pour utiliser un graphe NetworkX au lieu d'un dictionnaire d'adjacence.
     """
 
     def run(self):
         """
-        Construit un graphe sous forme de dictionnaire d'adjacence et utilise
-        l'algorithme max_weight_matching personnalisé.
+        Construit un graphe NetworkX et utilise l'algorithme max_weight_matching de NetworkX.
         """
-        graph = self.grid.bipartite_graph()
-        G = {}
-        for u in graph['even']:
-            for v in graph['even'][u]:
+        if self.rules == "original rules":
+            pairs = self.grid.all_pairs()
+        elif self.rules == "new rules":
+            pairs = self.grid.all_pairs_new_rules()   
+        G = nx.Graph()
+        for u,v in pairs:
                 cost = self.grid.cost((u, v))
                 value_u = self.grid.value[u[0]][u[1]]
                 value_v = self.grid.value[v[0]][v[1]]
                 weight = cost - value_u - value_v
 
-                G.setdefault(u, {})[v] = -weight
-                G.setdefault(v, {})[u] = -weight
+                G.add_edge(u, v, weight=-weight)
 
         matching = max_weight_matching(G, maxcardinality=False)
 
-        self.pairs = list(matching) 
+        self.pairs = list(matching)
 
-class SolverFordFulkerson2(Solver):
-    """
-    A subclass of Solver that implements a bipartite matching algorithm to find pairs.
-    """
-    
-    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Runs the bipartite matching algorithm to find pairs of cells.
+from scipy.optimize import linear_sum_assignment
+import numpy as np
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
+class SolverHungarian(Solver):
+    def run(self):
+        if self.rules == "original rules":
+            valid_pairs = self.grid.all_pairs()
+        elif self.rules == "new rules":
+            valid_pairs = self.grid.all_pairs_new_rules()
 
-        Time Complexity: O(E * V) where E is the number of edges and V is the number of vertices
-        Space Complexity: O(E + V)
-        """
-        graph = defaultdict(dict)
-        even_cells = set()
-        odd_cells = set()
+        # Collecte de toutes les cellules appariables (uniques)
+        all_cells = list({cell for pair in valid_pairs for cell in pair})
+        num_cells = len(all_cells)
+        cell_to_idx = {cell: i for i, cell in enumerate(all_cells)}
 
-        # Add edges between cells (direction: from even to odd)
-        for cell1, cell2 in self.grid.all_pairs():
-            even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
-            even_cells.add(even)
-            odd_cells.add(odd)
-            cost = self.grid.cost((cell1, cell2))
-            value_u = self.grid.value[cell1[0]][cell2[1]]
-            value_v = self.grid.value[cell1[0]][cell2[1]]
+        # Initialisation de la matrice avec des coûts infinis
+        cost_matrix = np.full((num_cells, num_cells), 1)
+
+        # Remplissage des coûts pour les paires valides
+        for u, v in valid_pairs:
+            i, j = cell_to_idx[u], cell_to_idx[v]
+            cost = self.grid.cost((u, v))
+            value_u = self.grid.value[u[0]][u[1]]
+            value_v = self.grid.value[v[0]][v[1]]
             weight = cost - value_u - value_v
-            graph[even][odd] = cost
-            graph[odd][even] = cost
+            cost_matrix[i][j] = weight
+            cost_matrix[j][i] = weight  # Bidirectionnel
 
-        # Add edges from source "s" to even cells
-        for even in even_cells:
-            graph['s'][even] = 1
+        # Application de l'algorithme hongrois
+        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+        # Extraction des paires valides
+        self.pairs = []
+        for i, j in zip(row_ind, col_ind):
+            if cost_matrix[i][j] != 1:
+                u, v = all_cells[i], all_cells[j]
+                if (u, v) in valid_pairs or (v, u) in valid_pairs:
+                    self.pairs.append((u, v) if u > v else (v, u))
 
-        # Add edges from odd cells to sink "t"
-        for odd in odd_cells:
-            graph[odd]['t'] = 1
-
-        # Sets of cells for later extraction of the matching
-        self.even_cells = even_cells
-        self.odd_cells = odd_cells
-        # Get optimal pairs
-        self.pairs = self.ford_fulkerson(graph, even_cells, odd_cells)
+        # Suppression des doublons
+        self.pairs = list(dict.fromkeys(self.pairs))
         return self.pairs
 
-    @staticmethod
-    def bfs(graph: dict, s: str, t: str) -> list[int]:
+class SolverHungarian2(Solver):
+
+    def run(self):
         """
-        Performs a BFS to find a path from source 's' to sink 't' in the graph.
-
-        Parameters:
-        -----------
-        graph : dict
-            The graph represented as an adjacency list.
-        s : str
-            The source node.
-        t : str
-            The sink node.
-
-        Returns:
-        --------
-        list[int]
-            The path from 's' to 't' if found, otherwise None.
-
-        Time Complexity: O(V + E)
-        Space Complexity: O(V)
+        Builds a bipartite cost matrix using only cells present in valid pairs.
+        Applies the Hungarian algorithm to find optimal pairs.
         """
-        queue = deque([s])
-        parents = {s: None}
-
-        while queue:
-            u = queue.popleft()
-            for v in graph.get(u, []):
-                if v not in parents:
-                    parents[v] = u
-                    if v == t:
-                        return SolverFordFulkerson.reconstruct_path(parents, s, t)
-                    queue.append(v)
-
-        return None
-
-    @staticmethod
-    def reconstruct_path(parents: dict, s: str, t: str) -> list[int]:
-        """
-        Reconstructs the path from 's' to 't' using the parents dictionary.
-
-        Parameters:
-        -----------
-        parents : dict
-            A dictionary where parents[v] is the predecessor of v on the path from 's' to 'v'.
-        s : str
-            The source node.
-        t : str
-            The sink node.
-
-        Returns:
-        --------
-        list[int]
-            The reconstructed path from 's' to 't'.
-
-        Time Complexity: O(V)
-        Space Complexity: O(V)
-        """
-        path = []
-        current = t
-        while current is not None:
-            path.append(current)
-            current = parents[current]
-        return path[::-1]
-
-    @classmethod
-    def ford_fulkerson(cls, graph: dict, even_cells: set, odd_cells: set) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.
-
-        Parameters:
-        -----------
-        graph : dict
-            The graph represented as an adjacency list.
-
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            The maximum matching as a list of pairs of cells.
-
-        Time Complexity: O(E * V)
-        Space Complexity: O(E + V)
-        """
-        while True:
-            path = cls.bfs(graph, "s", "t")
-            if path is None:
-                break
-            for u, v in zip(path, path[1:]):
-                graph[u].remove(v)
-                graph[v].append(u)
-
-        return [(u, odd) for odd in odd_cells for u in graph[odd] if u in even_cells]
+        if self.rules == "original rules":
+            # Collect all unique cells from valid pairs
+            valid_pairs = self.grid.all_pairs()
+            all_cells = set()
+            for u, v in valid_pairs:
+                all_cells.add(u)
+                all_cells.add(v)
+            
+            # Split into even/odd based on coordinate parity
+            even_cells = [cell for cell in all_cells if (cell[0] + cell[1]) % 2 == 0]
+            odd_cells = [cell for cell in all_cells if (cell[0] + cell[1]) % 2 == 1]
+            
+            # Create mappings for matrix indices
+            even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
+            odd_to_idx = {cell: j for j, cell in enumerate(odd_cells)}
+            
+            # Build cost matrix with valid pairs only
+            cost_matrix = np.full((len(even_cells), len(odd_cells)), 0)
+            for u, v in valid_pairs:
+                # Ensure u is even and v is odd
+                if (u[0] + u[1]) % 2 != 0:
+                    u, v = v, u
+                if u in even_to_idx and v in odd_to_idx:
+                    cost = self.grid.cost((u, v))
+                    weight = cost - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
+                    cost_matrix[even_to_idx[u], odd_to_idx[v]] =  weight
+            
+            # Apply Hungarian algorithm
+            row_ind, col_ind = linear_sum_assignment(cost_matrix)
+            
+            # Rebuild pairs from matrix indices
+            self.pairs = []
+            for i, j in zip(row_ind, col_ind):
+                if cost_matrix[i][j] !=0:
+                    self.pairs.append((even_cells[i], odd_cells[j]))
+                    
+        elif self.rules == "new rules":
+            # Handle new rules (implementation omitted)
+            pass
+            
+        return self.pairs

@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 from grid import Grid
-from solver import Solver, SolverBlossom
+from solver import Solver, SolverBlossom, SolverHungarian
 from bot_2_players import move_to_play
 
 pygame.init()
@@ -446,7 +446,7 @@ class SolverManager:
 
     def __init__(self, grid):
         self.solver = Solver(grid)
-        self.solver_general = SolverBlossom(grid)
+        self.solver_general = SolverHungarian(grid)
         self.solver_general.run()
         self.general_score = self.solver_general.score()
 

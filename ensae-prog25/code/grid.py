@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
+from collections import defaultdict
 
 class Grid:
     """
@@ -142,7 +143,7 @@ class Grid:
         """
         return abs(self.value[pair[0][0]][pair[0][1]] - self.value[pair[1][0]][pair[1][1]])
 
-    def all_pairs(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+    def all_pairs(self, rules="original rules") -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Returns all allowed pairs of neighboring cells.
 
@@ -178,7 +179,7 @@ class Grid:
                             res.append(((i, j), (k, l)))
         return sorted(res)
     
-    def all_pairs2(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+    def all_pairs_new_rules(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Returns all allowed pairs of cells, where white cells can pair with any non-forbidden cell.
 
@@ -209,11 +210,8 @@ class Grid:
                         for l in range(self.m):
                             if (i == k and j == l) or self.is_forbidden(k, l):
                                 continue
-                            c2 = self.color[k][l]
-                            if c2 in allowed[c1] and c1 in allowed[c2]:
-                                # Ensure each pair is added once in order (i,j) < (k,l)
-                                if (i, j) < (k, l):
-                                    res.append(((i, j), (k, l)))
+                            if (i, j) < (k, l):
+                                res.append(((i, j), (k, l)))
                 else:  # Non-white cells follow original adjacency rules
                     for dx, dy in directions:
                         k, l = i + dx, j + dy
@@ -299,7 +297,7 @@ class Grid:
 
             grid = Grid(n, m, color, value)
         return grid
-    
+
     def bipartite_graph(self)->dict:
         """
         Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
@@ -335,3 +333,4 @@ class Grid:
                                         G[neighbor_parity][(i2, j2)].append(cell)
                     
         return G
+    
