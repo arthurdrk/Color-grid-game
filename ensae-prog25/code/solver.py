@@ -518,12 +518,13 @@ class SolverHungarian2(Solver):
         # Extraction des paires valides
         self.pairs = []
         for i, j in zip(row_ind, col_ind):
-            if cost_matrix[i][j]< 0:
+            if cost_matrix[i][j] != 0:
                 u, v = all_cells[i], all_cells[j]
                 if (u, v) in valid_pairs :
-                    self.pairs.append((u, v) if u < v else (v, u))
+                    self.pairs.append((u, v))
 
         # Suppression des doublons
         self.pairs = list(dict.fromkeys(self.pairs))
         return self.pairs
+
 

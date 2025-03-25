@@ -38,7 +38,9 @@ for file_name in grid_files:
     start_hungarian1 = time.time()
     solver_hungarian1.run()
     end_hungarian1 = time.time()
-
+    if file_name == "grid13.in":
+        print(solver_hungarian1.pairs)
+    
     # start_mincost = time.time()
     # # solver_mincost.run()
     # end_mincost = time.time()
