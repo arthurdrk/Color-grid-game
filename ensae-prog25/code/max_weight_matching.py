@@ -1,3 +1,8 @@
+"""Functions for computing and verifying matchings in a graph (adjacency dict version)."""
+
+from itertools import repeat
+
+
 def matching_dict_to_set(matching):
     """Converts matching dict format to matching set format."""
     edges = set()
@@ -10,7 +15,8 @@ def matching_dict_to_set(matching):
         edges.add(edge)
     return edges
 
-def max_weight_matching(G, weight="weight"):
+
+def max_weight_matching(G, maxcardinality=False, weight="weight"):
     """Compute a maximum-weighted matching of G represented as an adjacency dict."""
     class NoNode:
         pass
@@ -37,10 +43,12 @@ def max_weight_matching(G, weight="weight"):
         return set()
 
     maxweight = 0
+    allinteger = True
+    # Iterate through all edges to find max weight and check if all are integers
     for u in G:
         for v in G[u]:
             if u == v:
-                continue
+                continue  # Skip self-loops
             edge_data = G[u][v]
             if isinstance(edge_data, dict):
                 wt = edge_data.get(weight, 1)
@@ -48,6 +56,8 @@ def max_weight_matching(G, weight="weight"):
                 wt = edge_data
             if wt > maxweight:
                 maxweight = wt
+            if not isinstance(wt, int):
+                allinteger = False
 
     mate = {}
     label = {}
@@ -70,15 +80,22 @@ def max_weight_matching(G, weight="weight"):
         return dualvar[v] + dualvar[w] - 2 * wt
 
     def assignLabel(w, t, v):
-        assert label.get(w) is None
-        label[w] = t
-        labeledge[w] = (v, w) if v is not None else None
-        bestedge[w] = None
-        if t == 1:  # Even distance, add to queue
-            queue.append(w)
-        elif t == 2:  # Odd distance, if matched, label its mate
-            if w in mate:
-                assignLabel(mate[w], 1, w)
+        b = inblossom[w]
+        assert label.get(w) is None and label.get(b) is None
+        label[w] = label[b] = t
+        if v is not None:
+            labeledge[w] = labeledge[b] = (v, w)
+        else:
+            labeledge[w] = labeledge[b] = None
+        bestedge[w] = bestedge[b] = None
+        if t == 1:
+            if isinstance(b, Blossom):
+                queue.extend(b.leaves())
+            else:
+                queue.append(b)
+        elif t == 2:
+            base = blossombase[b]
+            assignLabel(mate[base], 1, base)
 
     def scanBlossom(v, w):
         path = []
@@ -177,6 +194,9 @@ def max_weight_matching(G, weight="weight"):
                 if isinstance(s, Blossom):
                     if endstage and blossomdual[s] == 0:
                         yield s
+                    else:
+                        for v in s.leaves():
+                            inblossom[v] = s
                 else:
                     inblossom[s] = s
             if (not endstage) and label.get(b) == 2:
@@ -306,9 +326,13 @@ def max_weight_matching(G, weight="weight"):
                 mate[j] = s
 
     def verifyOptimum():
-        vdualoffset = 0
+        if maxcardinality:
+            vdualoffset = max(0, -min(dualvar.values()))
+        else:
+            vdualoffset = 0
         assert min(dualvar.values()) + vdualoffset >= 0
         assert len(blossomdual) == 0 or min(blossomdual.values()) >= 0
+        # Verify all edges have non-negative slack and matched edges have zero slack
         for i in G:
             for j in G[i]:
                 if i == j:
@@ -335,9 +359,11 @@ def max_weight_matching(G, weight="weight"):
                 if mate.get(i) == j or mate.get(j) == i:
                     assert mate[i] == j and mate[j] == i
                     assert s == 0, f"Matched edge {i}-{j} has slack {s}"
+        # Verify that all single nodes have dualvar == 0 (if maxcardinality)
         for v in gnodes:
             if v not in mate:
                 assert dualvar[v] + vdualoffset == 0, f"Exposed node {v} has dualvar {dualvar[v]}"
+        # Verify that blossoms with positive dual have odd number of edges
         for b in blossomdual:
             if blossomdual[b] > 0:
                 assert len(b.edges) % 2 == 1, f"Blossom {b} has even number of edges"
@@ -352,11 +378,13 @@ def max_weight_matching(G, weight="weight"):
             b.mybestedges = None
         allowedge.clear()
         queue[:] = []
+        # Initialize queue with exposed nodes
         for v in gnodes:
             if (v not in mate) and label.get(inblossom[v]) is None:
                 assignLabel(v, 1, None)
         augmented = 0
         while 1:
+            # Process nodes in the queue
             while queue and not augmented:
                 v = queue.pop()
                 assert label[inblossom[v]] == 1
@@ -394,10 +422,14 @@ def max_weight_matching(G, weight="weight"):
                             bestedge[w] = (v, w)
             if augmented:
                 break
+            # No augmenting path found, update dual variables
             deltatype = -1
             delta = deltaedge = deltablossom = None
-            deltatype = 1
-            delta = min(dualvar.values())
+            # Compute delta based on different cases
+            if not maxcardinality:
+                deltatype = 1
+                delta = min(dualvar.values())
+            # Check for delta from edges between S and other nodes
             for v in gnodes:
                 if label.get(inblossom[v]) is None and bestedge.get(v) is not None:
                     d = slack(*bestedge[v])
@@ -405,6 +437,7 @@ def max_weight_matching(G, weight="weight"):
                         delta = d
                         deltatype = 2
                         deltaedge = bestedge[v]
+            # Check for delta from edges between S-blossoms and other blossoms
             for b in blossomparent:
                 if (
                     blossomparent[b] is None
@@ -412,11 +445,15 @@ def max_weight_matching(G, weight="weight"):
                     and bestedge.get(b) is not None
                 ):
                     kslack = slack(*bestedge[b])
-                    d = kslack // 2  # Use integer division
+                    if allinteger:
+                        d = kslack // 2
+                    else:
+                        d = kslack / 2.0
                     if deltatype == -1 or d < delta:
                         delta = d
                         deltatype = 3
                         deltaedge = bestedge[b]
+            # Check for delta from dual variables of T-blossoms
             for b in blossomdual:
                 if (
                     blossomparent[b] is None
@@ -429,6 +466,7 @@ def max_weight_matching(G, weight="weight"):
             if deltatype == -1:
                 deltatype = 1
                 delta = max(0, min(dualvar.values()))
+            # Update dual variables according to delta
             for v in gnodes:
                 if label.get(inblossom[v]) == 1:
                     dualvar[v] -= delta
@@ -440,6 +478,7 @@ def max_weight_matching(G, weight="weight"):
                         blossomdual[b] += delta
                     elif label.get(b) == 2:
                         blossomdual[b] -= delta
+            # Expand blossoms with zero dual
             if deltatype == 1:
                 break
             elif deltatype == 2:
@@ -452,12 +491,16 @@ def max_weight_matching(G, weight="weight"):
                 queue.append(v)
             elif deltatype == 4:
                 expandBlossom(deltablossom, False)
+        # Check if matching is updated
         if not augmented:
             break
+        # Expand all blossoms with zero dual
         for b in list(blossomdual.keys()):
             if b not in blossomdual:
                 continue
             if blossomparent[b] is None and label.get(b) == 1 and blossomdual[b] == 0:
                 expandBlossom(b, True)
-    verifyOptimum()
+    # Verify the solution if all weights are integers
+    if allinteger:
+        verifyOptimum()
     return matching_dict_to_set(mate)

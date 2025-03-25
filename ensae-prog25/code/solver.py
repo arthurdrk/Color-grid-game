@@ -409,6 +409,10 @@ class SolverBlossom(Solver):
     """
 
     def run(self):
+        """
+        Construit un graphe sous forme de dictionnaire d'adjacence et utilise
+        l'algorithme max_weight_matching personnalisé.
+        """
         graph = self.grid.bipartite_graph()
         G = {}
         for u in graph['even']:
@@ -417,10 +421,13 @@ class SolverBlossom(Solver):
                 value_u = self.grid.value[u[0]][u[1]]
                 value_v = self.grid.value[v[0]][v[1]]
                 weight = cost - value_u - value_v
+
                 G.setdefault(u, {})[v] = -weight
                 G.setdefault(v, {})[u] = -weight
-        matching = max_weight_matching(G)
-        self.pairs = list(matching)
+
+        matching = max_weight_matching(G, maxcardinality=False)
+
+        self.pairs = list(matching) 
 
 class SolverFordFulkerson2(Solver):
     """

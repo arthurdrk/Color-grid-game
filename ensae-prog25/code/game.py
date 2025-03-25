@@ -852,7 +852,7 @@ class Game:
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
                             self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("It's a tie!", (0, 212, 184), window_size)
+                            self.ui_manager.draw_end_screen("It's a tie!", (0, 255, 255), window_size)
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
                         self.current_player = 1
@@ -866,7 +866,7 @@ class Game:
                             self.ui_manager.draw_end_screen("Stockfish wins!", (148, 0, 211), window_size)
                         else:
                             self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("It's a tie!", (0, 0, 200), window_size)
+                            self.ui_manager.draw_end_screen("It's a tie!", (0, 255, 255), window_size)
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
                         self.current_player = 1

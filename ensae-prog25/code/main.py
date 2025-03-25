@@ -24,33 +24,33 @@ for file_name in grid_files:
     solver_blossom.run()
     end_blossom = time.time()
 
-    start_greedy = time.time()
-    solver_greedy.run()
-    end_greedy = time.time()
+    # start_greedy = time.time()
+    # solver_greedy.run()
+    # end_greedy = time.time()
 
-    start_greedy_upgraded = time.time()
-    solver_greedy_upgraded.run()
-    end_greedy_upgraded = time.time()
+    # start_greedy_upgraded = time.time()
+    # solver_greedy_upgraded.run()
+    # end_greedy_upgraded = time.time()
 
-    start_hungarian1 = time.time()
-    # solver_hungarian1.run()
-    end_hungarian1 = time.time()
+    # start_hungarian1 = time.time()
+    # # solver_hungarian1.run()
+    # end_hungarian1 = time.time()
 
-    start_mincost = time.time()
-    # solver_mincost.run()
-    end_mincost = time.time()
+    # start_mincost = time.time()
+    # # solver_mincost.run()
+    # end_mincost = time.time()
 
     blossom_score = solver_blossom.score()
-    greedy_score = solver_greedy.score()
-    greedy_upgraded_score = solver_greedy_upgraded.score()
+    # greedy_score = solver_greedy.score()
+    # greedy_upgraded_score = solver_greedy_upgraded.score()
     # hungarian1_score = solver_hungarian1.score()
     # mincost_score = solver_mincost.score()
 
     time_blossom = end_blossom - start_blossom
     #time_greedy = end_greedy - start_greedy
     #time_greedy_upgraded = end_greedy_upgraded - start_greedy_upgraded
-    time_hungarian1 = end_hungarian1 - start_hungarian1
-    time_mincost = end_mincost - start_mincost
+    # time_hungarian1 = end_hungarian1 - start_hungarian1
+    # time_mincost = end_mincost - start_mincost
     
     print(f"  SolverBlossom score: {blossom_score},  Time : {time_blossom:.4f} seconds")
     #print(f"  SolverGreedy score: {greedy_score},  Time : {time_greedy:.4f} seconds")
