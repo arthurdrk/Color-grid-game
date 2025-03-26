@@ -16,7 +16,7 @@ if __name__ == '__main__':
         grid = Grid.grid_from_file(full_file_path, read_values=True)
         #solver_blossom_original_rules = SolverBlossom(grid, "original rules")
         #solver_blossom_new_rules = SolverBlossom(grid, "new rules")
-        solver_hungarian1 = SolverHungarian(grid, "original rules")
+        solver_hungarian1 = SolverHungarian_general(grid, "original rules")
 
         # Start the timer
         # start_blossom_original = time.time()
