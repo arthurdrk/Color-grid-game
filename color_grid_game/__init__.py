@@ -4,11 +4,12 @@
 
 import sys
 import os
-import numpy as np
+import numpy as np # type: ignore
 import time
-import pygame
-import matplotlib.pyplot as plt
-import matplotlib.colors
+import pygame # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+import matplotlib.colors # type: ignore
+from collections.abc import Callable
 from collections import deque
 from itertools import repeat
 

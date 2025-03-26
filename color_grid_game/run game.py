@@ -1,3 +1,10 @@
+
+import sys
+import os
+
+# Ajoutez le chemin du dossier parent au sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from color_grid_game import *
 
 pygame.init()
@@ -25,15 +32,15 @@ class UIManager:
         self.volume = 0.02
 
         # Load sound effects and images
-        self.game_theme = pygame.mixer.Sound("./color grid game/medias/game theme.mp3")
-        self.win_sound = pygame.mixer.Sound("./color grid game/medias/win.mp3")
-        self.lose_sound = pygame.mixer.Sound("./color grid game/medias/lose.mp3")
+        self.game_theme = pygame.mixer.Sound("./medias/game theme.mp3")
+        self.win_sound = pygame.mixer.Sound("./medias/win.mp3")
+        self.lose_sound = pygame.mixer.Sound("./medias/lose.mp3")
         self.sound_on_img = pygame.transform.scale(
-            pygame.image.load("./color grid game/medias/sound on.png").convert_alpha(),
+            pygame.image.load("./medias/sound on.png").convert_alpha(),
             (30, 30)
         )
         self.sound_off_img = pygame.transform.scale(
-            pygame.image.load("./color grid game/medias/sound off.png").convert_alpha(),
+            pygame.image.load("./medias/sound off.png").convert_alpha(),
             (30, 30)
         )
 
@@ -790,7 +797,7 @@ class Game:
         self.screen = pygame.display.set_mode((600, 600))
         pygame.display.set_caption("ColorGrid")
         self.ui_manager = UIManager(self.screen, self.colors, self.colors_title)
-        self.grid_manager = GridManager("./color grid game/input/")
+        self.grid_manager = GridManager("./input/")
         self.selected_grid = None
         self.scroll = 0
         self.scroll_bar_dragging = False
@@ -969,7 +976,7 @@ class Game:
                         for (i, j) in pair:
                             grid_copy.color[i][j] = 4
 
-                bot_pair = move_to_play(grid_copy)
+                bot_pair = Bot.move_to_play(grid_copy)
                 if bot_pair is not None:
                     valid = solver_manager.pair_is_valid(
                         bot_pair, [], grid, self.player_pairs)

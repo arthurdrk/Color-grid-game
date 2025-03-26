@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
 class SolverHungarian(Solver):
@@ -47,7 +50,7 @@ class SolverHungarian(Solver):
                     cost_matrix[even_to_idx[u], odd_to_idx[v]] = weight
 
             # Apply Hungarian algorithm
-            row_ind, col_ind = hungarian_algorithm(cost_matrix)
+            row_ind, col_ind = SPUtils.hungarian_algorithm(cost_matrix)
 
             # Rebuild pairs from matrix indices
             self.pairs = []
