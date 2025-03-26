@@ -66,8 +66,8 @@ Jeu-appariement-sur-une-grille/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/arthurdrk/Jeu-appariement-sur-une-grille.git
-   cd Jeu-appariement-sur-une-grille
+   git clone https://github.com/arthurdrk/Color-grid-game.git
+   cd Color-grid-game
    ```
 
 2. In VSCode, use the File menu to open the 'ensae-prog25' folder within the cloned repository.
@@ -79,7 +79,7 @@ Jeu-appariement-sur-une-grille/
 
 4. Run the game.py script:
    ```bash
-   python code/game.py
+   python code/run_game.py
    ```
    
 ## License
