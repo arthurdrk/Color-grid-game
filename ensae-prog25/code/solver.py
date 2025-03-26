@@ -390,7 +390,7 @@ class SolverBlossom(Solver):
         
         return self.pairs
 
-from scipy.optimize import linear_sum_assignment
+from hungarian_algorithm import linear_sum_assignment
 import numpy as np
 
 class SolverHungarian(Solver):
@@ -448,36 +448,43 @@ class SolverHungarian2(Solver):
             valid_pairs = self.grid.all_pairs()
         elif self.rules == "new rules":
             valid_pairs = self.grid.all_pairs_new_rules()
-        # Collecte de toutes les cellules appariables (uniques)
-        all_cells = list({cell for pair in valid_pairs for cell in pair})
-        num_cells = len(all_cells)
-        cell_to_idx = {cell: i for i, cell in enumerate(all_cells)}
 
-        # Initialisation de la matrice avec des coûts infinis
-        cost_matrix = np.full((num_cells, num_cells), 0)
+        # Split cells into even and odd partitions based on coordinates
+        even_cells = []
+        odd_cells = []
+        for cell in {cell for pair in valid_pairs for cell in pair}:
+            if (cell[0] + cell[1]) % 2 == 0:
+                even_cells.append(cell)
+            else:
+                odd_cells.append(cell)
 
-        # Remplissage des coûts pour les paires valides
+        # Create bipartite cost matrix (even rows, odd columns)
+        cost_matrix = np.full((len(even_cells), len(odd_cells)), 0)
+        even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
+        odd_to_idx = {cell: j for j, cell in enumerate(odd_cells)}
+
         for u, v in valid_pairs:
-            i, j = cell_to_idx[u], cell_to_idx[v]
-            cost = self.grid.cost((u, v))
-            value_u = self.grid.value[u[0]][u[1]]
-            value_v = self.grid.value[v[0]][v[1]]
-            weight = cost - value_u - value_v
-            cost_matrix[i][j] = weight
-            cost_matrix[j][i] = weight
+            if (u[0] + u[1]) % 2 != 0:
+                u, v = v, u  # Ensure u is even, v is odd
+            if u in even_to_idx and v in odd_to_idx:
+                cost = self.grid.cost((u, v))
+                value_u = self.grid.value[u[0]][u[1]]
+                value_v = self.grid.value[v[0]][v[1]]
+                weight = cost - value_u - value_v
+                cost_matrix[even_to_idx[u], odd_to_idx[v]] = weight
 
-        # Application de l'algorithme hongrois
+        # Apply Hungarian algorithm on the bipartite matrix
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        # Extraction des paires valides
+        
+        # Rebuild valid pairs from the result
         self.pairs = []
         for i, j in zip(row_ind, col_ind):
-            if cost_matrix[i][j] != 0:
-                u, v = all_cells[i], all_cells[j]
-                if (u, v) in valid_pairs :
+            if cost_matrix[i, j] < 0:
+                u = even_cells[i]
+                v = odd_cells[j]
+                if ((u, v) in valid_pairs) or ((v, u) in valid_pairs):
                     self.pairs.append((u, v))
 
-        # Suppression des doublons
-        self.pairs = list(dict.fromkeys(self.pairs))
         return self.pairs
 
 

@@ -1,141 +1,148 @@
 import numpy as np
 
-def hungarian_algorithm(cost_matrix):
-    """
-    Solves the linear assignment problem using the Hungarian algorithm.
-    Args:
-        cost_matrix: 2D numpy array (n x m) where n is rows, m is columns
-    Returns:
-        row_ind, col_ind: Arrays of row and column indices for the optimal assignment
-    """
-    # Convert to numpy array and make a copy
-    cost = np.array(cost_matrix, dtype=float)
-    n, m = cost.shape
-    
-    # If rectangular, pad with zeros to make it square
-    if n != m:
-        max_dim = max(n, m)
-        padded = np.full((max_dim, max_dim), np.inf)
-        padded[:n, :m] = cost
-        cost = padded
-        n = max_dim
-    
-    # Step 1: Subtract row minima
-    for i in range(n):
-        cost[i] -= np.min(cost[i])
-    
-    # Step 2: Subtract column minima
-    for j in range(n):
-        cost[:, j] -= np.min(cost[:, j])
-    
-    # Initialize labels and assignments
-    row_covered = np.zeros(n, dtype=bool)
-    col_covered = np.zeros(n, dtype=bool)
-    assignments = np.full(n, -1, dtype=int)
-    starred = np.zeros((n, n), dtype=bool)  # starred zeros
-    primed = np.zeros((n, n), dtype=bool)  # primed zeros
-    
-    def find_uncovered_zero():
-        for i in range(n):
-            if not row_covered[i]:
-                for j in range(n):
-                    if not col_covered[j] and cost[i, j] == 0:
-                        return i, j
-        return -1, -1
-    
-    def find_star_in_row(row):
-        for j in range(n):
-            if starred[row, j]:
-                return j
-        return -1
-    
-    def find_star_in_col(col):
-        for i in range(n):
-            if starred[i, col]:
-                return i
-        return -1
-    
-    # Step 3: Cover columns with starred zeros
+def linear_sum_assignment(cost_matrix):
+    cost_matrix = np.asarray(cost_matrix)
+    if len(cost_matrix.shape) != 2:
+        raise ValueError("expected a matrix (2-d array), got a %r array"
+                         % (cost_matrix.shape,))
+
+    # The algorithm expects more columns than rows in the cost matrix.
+    if cost_matrix.shape[1] < cost_matrix.shape[0]:
+        cost_matrix = cost_matrix.T
+        transposed = True
+    else:
+        transposed = False
+
+    state = _Hungary(cost_matrix)
+
+    # No need to bother with assignments if one of the dimensions
+    # of the cost matrix is zero-length.
+    step = None if 0 in cost_matrix.shape else _step1
+
+    while step is not None:
+        step = step(state)
+
+    if transposed:
+        marked = state.marked.T
+    else:
+        marked = state.marked
+    return np.where(marked == 1)
+
+
+class _Hungary(object):
+    def __init__(self, cost_matrix):
+        self.C = cost_matrix.copy()
+
+        n, m = self.C.shape
+        self.row_uncovered = np.ones(n, dtype=bool)
+        self.col_uncovered = np.ones(m, dtype=bool)
+        self.Z0_r = 0
+        self.Z0_c = 0
+        self.path = np.zeros((n + m, 2), dtype=int)
+        self.marked = np.zeros((n, m), dtype=int)
+
+    def _clear_covers(self):
+        """Clear all covered matrix cells"""
+        self.row_uncovered[:] = True
+        self.col_uncovered[:] = True
+
+
+def _step1(state):
+    state.C -= state.C.min(axis=1)[:, np.newaxis]
+    for i, j in zip(*np.where(state.C == 0)):
+        if state.col_uncovered[j] and state.row_uncovered[i]:
+            state.marked[i, j] = 1
+            state.col_uncovered[j] = False
+            state.row_uncovered[i] = False
+
+    state._clear_covers()
+    return _step3
+
+
+def _step3(state):
+    marked = (state.marked == 1)
+    state.col_uncovered[np.any(marked, axis=0)] = False
+
+    if marked.sum() < state.C.shape[0]:
+        return _step4
+
+
+def _step4(state):
+    # We convert to int as numpy operations are faster on int
+    C = (state.C == 0).astype(int)
+    covered_C = C * state.row_uncovered[:, np.newaxis]
+    covered_C *= np.asarray(state.col_uncovered, dtype=int)
+    n = state.C.shape[0]
+    m = state.C.shape[1]
+
     while True:
-        print("**1 ")
-        # Reset coverage
-        row_covered.fill(False)
-        col_covered.fill(False)
-        primed.fill(False)
-        
-        # Initial starring of zeros
-        for i in range(n):
-            for j in range(n):
-                if cost[i, j] == 0 and not col_covered[j]:
-                    starred[i, j] = True
-                    col_covered[j] = True
-                    break
-        
-        # Count covered columns
-        covered_cols = np.sum(col_covered)
-        if covered_cols == n:
-            break
-        
-        # Step 4: Main loop
-        while True:
-            print("**2 ")
-            # Find an uncovered zero
-            row, col = find_uncovered_zero()
-            if row == -1:  # No uncovered zero found
-                # Step 6: Adjust the matrix
-                min_val = np.inf
-                for i in range(n):
-                    if not row_covered[i]:
-                        for j in range(n):
-                            if not col_covered[j]:
-                                min_val = min(min_val, cost[i, j])
-                
-                for i in range(n):
-                    for j in range(n):
-                        if row_covered[i]:
-                            cost[i, j] += min_val
-                        if not col_covered[j]:
-                            cost[i, j] -= min_val
-                continue
-            
-            # Prime the zero
-            primed[row, col] = True
-            
-            # Check for starred zero in the row
-            star_col = find_star_in_row(row)
-            if star_col == -1:
-                # Step 5: Augment path
-                path = [(row, col)]
-                while True:
-                    print("**3 ")
-                    star_row = find_star_in_col(path[-1][1])
-                    if star_row == -1:
-                        break
-                    path.append((star_row, path[-1][1]))
-                    prime_row, prime_col = next((i, j) for i in range(n) 
-                                              for j in range(n) 
-                                              if primed[i, j] and find_star_in_row(i) == path[-1][1])
-                    path.append((prime_row, prime_col))
-                
-                # Update starring
-                for r, c in path:
-                    if starred[r, c]:
-                        starred[r, c] = False
-                    else:
-                        starred[r, c] = True
-                break
+        # Find an uncovered zero
+        row, col = np.unravel_index(np.argmax(covered_C), (n, m))
+        if covered_C[row, col] == 0:
+            return _step6
+        else:
+            state.marked[row, col] = 2
+            # Find the first starred element in the row
+            star_col = np.argmax(state.marked[row] == 1)
+            if state.marked[row, star_col] != 1:
+                # Could not find one
+                state.Z0_r = row
+                state.Z0_c = col
+                return _step5
             else:
-                # Step 4: Cover row, uncover column
-                row_covered[row] = True
-                col_covered[star_col] = False
-    
-    # Extract assignments
-    row_ind = []
-    col_ind = []
-    for i in range(n):
-        for j in range(n):
-            if starred[i, j] and i < cost_matrix.shape[0] and j < cost_matrix.shape[1]:
-                row_ind.append(i)
-                col_ind.append(j)
-    
-    return np.array(row_ind), np.array(col_ind)
+                col = star_col
+                state.row_uncovered[row] = False
+                state.col_uncovered[col] = True
+                covered_C[:, col] = C[:, col] * (
+                    np.asarray(state.row_uncovered, dtype=int))
+                covered_C[row] = 0
+
+
+def _step5(state):
+    count = 0
+    path = state.path
+    path[count, 0] = state.Z0_r
+    path[count, 1] = state.Z0_c
+
+    while True:
+        # Find the first starred element in the col defined by
+        # the path.
+        row = np.argmax(state.marked[:, path[count, 1]] == 1)
+        if state.marked[row, path[count, 1]] != 1:
+            # Could not find one
+            break
+        else:
+            count += 1
+            path[count, 0] = row
+            path[count, 1] = path[count - 1, 1]
+
+        # Find the first prime element in the row defined by the
+        # first path step
+        col = np.argmax(state.marked[path[count, 0]] == 2)
+        if state.marked[row, col] != 2:
+            col = -1
+        count += 1
+        path[count, 0] = path[count - 1, 0]
+        path[count, 1] = col
+
+    # Convert paths
+    for i in range(count + 1):
+        if state.marked[path[i, 0], path[i, 1]] == 1:
+            state.marked[path[i, 0], path[i, 1]] = 0
+        else:
+            state.marked[path[i, 0], path[i, 1]] = 1
+
+    state._clear_covers()
+    # Erase all prime markings
+    state.marked[state.marked == 2] = 0
+    return _step3
+
+
+def _step6(state):
+    # the smallest uncovered value in the matrix
+    if np.any(state.row_uncovered) and np.any(state.col_uncovered):
+        minval = np.min(state.C[state.row_uncovered], axis=0)
+        minval = np.min(minval[state.col_uncovered])
+        state.C[~state.row_uncovered] += minval
+        state.C[:, state.col_uncovered] -= minval
+    return _step4
