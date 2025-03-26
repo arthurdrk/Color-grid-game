@@ -1,5 +1,7 @@
 import sys
 import os
+from collections import defaultdict
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
@@ -12,12 +14,15 @@ class SolverGreedy_upgraded(Solver):
         """
         Runs the greedy algorithm from all possible starting cells and selects the best pairing.
 
-        Returns:
-            list[tuple[tuple[int, int], tuple[int, int]]: List of pairs with the lowest score.
-
-        Raises:
+        Returns
         -------
-        ValueError: If any cell in pairs is invalid.
+        list of tuple
+            List of pairs with the lowest score.
+
+        Raises
+        ------
+        ValueError
+            If any cell in pairs is invalid.
         """
         pairs = self.grid.all_pairs()
         pair_dict = defaultdict(list)

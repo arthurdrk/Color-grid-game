@@ -1,11 +1,15 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from color_grid_game import *
 
 class Grid:
     """
     A class representing a grid with cells that have colors and values.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     n : int
         Number of rows in the grid.
     m : int
@@ -24,8 +28,8 @@ class Grid:
         """
         Initializes the grid.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         n : int
             Number of rows in the grid.
         m : int
@@ -35,13 +39,10 @@ class Grid:
         value : list[list[int]], optional
             The grid cells values. Default is empty, which initializes each cell with value 1.
 
-        Raises:
-        -------
+        Raises
+        ------
         ValueError
             If `n` or `m` is not a positive integer.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         if n <= 0 or m <= 0:
             raise ValueError("Number of rows and columns must be positive integers.")
@@ -60,20 +61,17 @@ class Grid:
         """
         Checks if a cell index is within the grid boundaries.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         i : int
             Row index of the cell.
         j : int
             Column index of the cell.
 
-        Returns:
-        --------
+        Returns
+        -------
         bool
             True if the cell (i, j) is within the grid boundaries, False otherwise.
-
-        Time Complexity: O(1)
-        Space Complexity: O(1)
         """
         return 0 <= i < self.n and 0 <= j < self.m
 
@@ -81,13 +79,10 @@ class Grid:
         """
         Returns a string representation of the grid, including colors and values.
 
-        Returns:
-        --------
+        Returns
+        -------
         str
             A string describing the grid's colors and values.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         output = f"The grid is {self.n} x {self.m}. It has the following colors:\n"
         for i in range(self.n):
@@ -101,8 +96,8 @@ class Grid:
         """
         Returns a formal string representation of the grid.
 
-        Returns:
-        --------
+        Returns
+        -------
         str
             A string representation of the grid with the number of rows and columns.
 
@@ -115,13 +110,10 @@ class Grid:
         """
         Plots a visual representation of the grid using matplotlib.
 
-        Raises:
-        -------
+        Raises
+        ------
         ImportError
             If matplotlib is not installed.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         plt.figure(figsize=(8, 8))
         plt.imshow(self.color, cmap=matplotlib.colors.ListedColormap(self.colors_list), interpolation='nearest')
@@ -138,25 +130,22 @@ class Grid:
         """
         Checks if a cell is forbidden (black).
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         i : int
             Row index of the cell.
         j : int
             Column index of the cell.
 
-        Returns:
-        --------
+        Returns
+        -------
         bool
             True if the cell (i, j) is black, False otherwise.
 
-        Raises:
-        -------
+        Raises
+        ------
         IndexError
             If the cell (i, j) is out of the grid boundaries.
-
-        Time Complexity: O(1)
-        Space Complexity: O(1)
         """
         if not self._is_within_bounds(i, j):
             raise IndexError("Cell index out of grid boundaries.")
@@ -166,23 +155,20 @@ class Grid:
         """
         Returns the cost of a pair of cells.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         pair : tuple[tuple[int, int], tuple[int, int]]
             A pair of cells in the format ((i1, j1), (i2, j2)).
 
-        Returns:
-        --------
+        Returns
+        -------
         int
             The cost of the pair, defined as the absolute value of the difference between their values.
 
-        Raises:
-        -------
+        Raises
+        ------
         ValueError
             If the pair does not contain valid cell indices.
-
-        Time Complexity: O(1)
-        Space Complexity: O(1)
         """
         (i1, j1), (i2, j2) = pair
         if not (self._is_within_bounds(i1, j1) and self._is_within_bounds(i2, j2)):
@@ -193,18 +179,20 @@ class Grid:
         """
         Returns all allowed pairs of neighboring cells.
 
-        Returns:
-        --------
+        Parameters
+        ----------
+        rules : str, optional
+            The rules to apply for determining allowed pairs. Default is "original rules".
+
+        Returns
+        -------
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of neighboring cells that are allowed to be paired.
 
-        Raises:
-        -------
+        Raises
+        ------
         ValueError
             If the rules parameter is not recognized.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         if rules not in ["original rules", "new rules"]:
             raise ValueError("Unrecognized rules parameter.")
@@ -261,25 +249,22 @@ class Grid:
         """
         Returns the list of neighbors of the cell (i, j).
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         i : int
             Row index of the cell.
         j : int
             Column index of the cell.
 
-        Returns:
-        --------
+        Returns
+        -------
         list[tuple[int, int]]
             A list of neighboring cell coordinates.
 
-        Raises:
-        -------
+        Raises
+        ------
         IndexError
             If the cell (i, j) is out of the grid boundaries.
-
-        Time Complexity: O(1)
-        Space Complexity: O(1)
         """
         if not self._is_within_bounds(i, j):
             raise IndexError("Cell index out of grid boundaries.")
@@ -297,8 +282,8 @@ class Grid:
         """
         Creates a Grid object from a file.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         file_name : str
             Name of the file to load. The file must be formatted as follows:
             - The first line contains "n m".
@@ -307,20 +292,17 @@ class Grid:
         read_values : bool, optional
             Indicates whether to read values after reading the colors. Requires the file to have 2n+1 lines.
 
-        Returns:
-        --------
+        Returns
+        -------
         Grid
             The initialized Grid object.
 
-        Raises:
-        -------
+        Raises
+        ------
         FileNotFoundError
             If the file does not exist.
         ValueError
             If the file format is incorrect or contains invalid color values.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         try:
             with open(file_name, "r") as file:
@@ -356,18 +338,15 @@ class Grid:
         Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
         The graph already contains the valid pairs as edges.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             A graph G stored as a dict type with two underdicts 'even' and 'odd' edges.
 
-        Raises:
-        -------
+        Raises
+        ------
         ValueError
             If the grid contains no valid pairs.
-
-        Time Complexity: O(n * m)
-        Space Complexity: O(n * m)
         """
         G = {
             'even': {},

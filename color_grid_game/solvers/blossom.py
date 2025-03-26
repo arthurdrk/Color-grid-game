@@ -1,5 +1,7 @@
 import sys
 import os
+import networkx as nx
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
@@ -13,14 +15,15 @@ class SolverBlossom(Solver):
         """
         Builds a NetworkX graph and uses the max_weight_matching algorithm from NetworkX.
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
-
-        Raises:
+        Returns
         -------
-        ValueError: If the graph is empty or if pairs are invalid.
+        list of tuple
+            A list of pairs of cells, each represented as a tuple of tuples.
+
+        Raises
+        ------
+        ValueError
+            If the graph is empty or if pairs are invalid.
         """
         pairs = self.pairs(self.rules)
         G = nx.Graph()

@@ -1,32 +1,42 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from color_grid_game import *
 
 class Solver:
     """
     A solver class for finding optimal pairs in a grid.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     grid : Grid
         The grid to be solved.
     pairs : list[tuple[tuple[int, int], tuple[int, int]]]
         A list of pairs, each being a tuple ((i1, j1), (i2, j2)) representing paired cells.
+    rules : str
+        The rules to apply for solving the grid. Default is "original rules".
     """
 
     def __init__(self, grid: Grid, rules="original rules"):
         """
         Initializes the solver with a grid.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         grid : Grid
             The grid to be solved.
         rules : str, optional
             The rules to apply for solving the grid. Default is "original rules".
 
-        Raises:
-        -------
-        TypeError: If grid is not an instance of Grid.
+        Raises
+        ------
+        TypeError
+            If grid is not an instance of Grid.
         """
+        if not isinstance(grid, Grid):
+            raise TypeError("grid must be an instance of Grid.")
+
         self.grid = grid
         self.pairs = []
         self.rules = rules
@@ -38,14 +48,15 @@ class Solver:
         The score is calculated as the sum of the values of unpaired cells
         excluding black cells, plus the sum of the cost of each pair of cells.
 
-        Returns:
-        --------
+        Returns
+        -------
         int
             The computed score.
 
-        Raises:
-        -------
-        ValueError: If any cell in pairs is invalid.
+        Raises
+        ------
+        ValueError
+            If any cell in pairs is invalid.
         """
         # Add all paired cells to the set and calculate the cost of each pair
         score = sum(self.grid.cost(pair) for pair in self.pairs)

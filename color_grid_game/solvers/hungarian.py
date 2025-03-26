@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from color_grid_game import *
 
 class SolverHungarian(Solver):
@@ -8,19 +9,20 @@ class SolverHungarian(Solver):
     A solver that uses the Hungarian algorithm to find optimal pairs in a grid.
     """
 
-    def run(self):
+    def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Builds a bipartite cost matrix using only cells present in valid pairs.
         Applies the Hungarian algorithm to find optimal pairs.
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
-
-        Raises:
+        Returns
         -------
-        ValueError: If the cost matrix is empty or if pairs are invalid.
+        list of tuple
+            A list of pairs of cells, each represented as a tuple of tuples.
+
+        Raises
+        ------
+        ValueError
+            If the cost matrix is empty or if pairs are invalid.
         """
         if self.rules == "original rules":
             # Collect all unique cells from valid pairs

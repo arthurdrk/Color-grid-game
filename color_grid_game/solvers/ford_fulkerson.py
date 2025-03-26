@@ -1,5 +1,7 @@
 import sys
 import os
+from collections import defaultdict, deque
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
@@ -12,14 +14,15 @@ class SolverFordFulkerson(Solver):
         """
         Runs the bipartite matching algorithm to find pairs of cells.
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
-
-        Raises:
+        Returns
         -------
-        ValueError: If any cell in pairs is invalid.
+        list of tuple
+            A list of pairs of cells, each represented as a tuple of tuples.
+
+        Raises
+        ------
+        ValueError
+            If any cell in pairs is invalid.
         """
         graph = defaultdict(list)
         even_cells = set()
@@ -52,8 +55,8 @@ class SolverFordFulkerson(Solver):
         """
         Performs a BFS to find a path from source 's' to sink 't' in the graph.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         graph : dict
             The graph represented as an adjacency list.
         s : str
@@ -61,14 +64,15 @@ class SolverFordFulkerson(Solver):
         t : str
             The sink node.
 
-        Returns:
-        --------
-        list[int]
+        Returns
+        -------
+        list of int
             The path from 's' to 't' if found, otherwise None.
 
-        Raises:
-        -------
-        ValueError: If the graph is empty or if s or t is not in the graph.
+        Raises
+        ------
+        ValueError
+            If the graph is empty or if s or t is not in the graph.
         """
         queue = deque([s])
         parents = {s: None}
@@ -89,8 +93,8 @@ class SolverFordFulkerson(Solver):
         """
         Reconstructs the path from 's' to 't' using the parents dictionary.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         parents : dict
             A dictionary where parents[v] is the predecessor of v on the path from 's' to 'v'.
         s : str
@@ -98,14 +102,15 @@ class SolverFordFulkerson(Solver):
         t : str
             The sink node.
 
-        Returns:
-        --------
-        list[int]
+        Returns
+        -------
+        list of int
             The reconstructed path from 's' to 't'.
 
-        Raises:
-        -------
-        ValueError: If the path cannot be reconstructed.
+        Raises
+        ------
+        ValueError
+            If the path cannot be reconstructed.
         """
         if s not in parents or t not in parents:
             raise ValueError("Invalid source or sink nodes")
@@ -122,19 +127,20 @@ class SolverFordFulkerson(Solver):
         """
         Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         graph : dict
             The graph represented as an adjacency list.
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
+        Returns
+        -------
+        list of tuple
             The maximum matching as a list of pairs of cells.
 
-        Raises:
-        -------
-        ValueError: If the graph is empty or if even_cells or odd_cells is empty.
+        Raises
+        ------
+        ValueError
+            If the graph is empty or if even_cells or odd_cells is empty.
         """
         if not graph or not even_cells or not odd_cells:
             raise ValueError("Invalid graph or cell sets")

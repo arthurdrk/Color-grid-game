@@ -1,0 +1,992 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_grid_game package &mdash; ENSAE Programming Project 2025 : Color Grid Game  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="color_grid_game.solvers package" href="color_grid_game.solvers.html" />
+    <link rel="prev" title="ENSAE Programming Project 2025 : Color Grid Game documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ENSAE Programming Project 2025 : Color Grid Game
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">ABITBOL Dimitri &amp; DE ROUCK Arthur</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">color_grid_game package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html">color_grid_game.solvers package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.grid">color_grid_game.grid module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.grid.Grid"><code class="docutils literal notranslate"><span class="pre">Grid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.all_pairs"><code class="docutils literal notranslate"><span class="pre">Grid.all_pairs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.bipartite_graph"><code class="docutils literal notranslate"><span class="pre">Grid.bipartite_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.cost"><code class="docutils literal notranslate"><span class="pre">Grid.cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.grid_from_file"><code class="docutils literal notranslate"><span class="pre">Grid.grid_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.is_forbidden"><code class="docutils literal notranslate"><span class="pre">Grid.is_forbidden()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.plot"><code class="docutils literal notranslate"><span class="pre">Grid.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.grid.Grid.vois"><code class="docutils literal notranslate"><span class="pre">Grid.vois()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.main">color_grid_game.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.min_max_bot">color_grid_game.min_max_bot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.min_max_bot.Bot"><code class="docutils literal notranslate"><span class="pre">Bot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.min_max_bot.Bot.move_to_play"><code class="docutils literal notranslate"><span class="pre">Bot.move_to_play()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.run_game">color_grid_game.run_game module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.run_game.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.Game.main"><code class="docutils literal notranslate"><span class="pre">Game.main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.Game.reset_game_state"><code class="docutils literal notranslate"><span class="pre">Game.reset_game_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.Game.show_rules"><code class="docutils literal notranslate"><span class="pre">Game.show_rules()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.run_game.GridManager"><code class="docutils literal notranslate"><span class="pre">GridManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.GridManager.extract_difficulty"><code class="docutils literal notranslate"><span class="pre">GridManager.extract_difficulty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.GridManager.get_difficulty_color"><code class="docutils literal notranslate"><span class="pre">GridManager.get_difficulty_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.GridManager.load_grid"><code class="docutils literal notranslate"><span class="pre">GridManager.load_grid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.run_game.SolverManager"><code class="docutils literal notranslate"><span class="pre">SolverManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.SolverManager.calculate_player_score"><code class="docutils literal notranslate"><span class="pre">SolverManager.calculate_player_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.SolverManager.calculate_two_player_score"><code class="docutils literal notranslate"><span class="pre">SolverManager.calculate_two_player_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.SolverManager.can_pair"><code class="docutils literal notranslate"><span class="pre">SolverManager.can_pair()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.SolverManager.pair_is_valid"><code class="docutils literal notranslate"><span class="pre">SolverManager.pair_is_valid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.run_game.UIManager"><code class="docutils literal notranslate"><span class="pre">UIManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.darken_color"><code class="docutils literal notranslate"><span class="pre">UIManager.darken_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_end_screen"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_end_screen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_error_message"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_error_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_grid"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_grid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_grid_options"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_grid_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_menu_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_menu_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_pair_frame"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_pair_frame()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_player_choice"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_player_choice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_restart_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_restart_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_rules"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_rules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_rules_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_rules_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_score"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_solution_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_solution_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_title"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_title()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_turn_indicator"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_turn_indicator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_volume_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_volume_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.run_game.UIManager.toggle_volume"><code class="docutils literal notranslate"><span class="pre">UIManager.toggle_volume()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.solver">color_grid_game.solver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.solver.Solver"><code class="docutils literal notranslate"><span class="pre">Solver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.solver.Solver.score"><code class="docutils literal notranslate"><span class="pre">Solver.score()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game.sp_utils">color_grid_game.sp_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils"><code class="docutils literal notranslate"><span class="pre">SPUtils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.hungarian_algorithm"><code class="docutils literal notranslate"><span class="pre">SPUtils.hungarian_algorithm()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.matching_dict_to_set"><code class="docutils literal notranslate"><span class="pre">SPUtils.matching_dict_to_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.max_weight_matching"><code class="docutils literal notranslate"><span class="pre">SPUtils.max_weight_matching()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-color_grid_game">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ENSAE Programming Project 2025 : Color Grid Game</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">color_grid_game package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/color_grid_game.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="color-grid-game-package">
+<h1>color_grid_game package<a class="headerlink" href="#color-grid-game-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="color_grid_game.solvers.html">color_grid_game.solvers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.blossom">color_grid_game.solvers.blossom module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.blossom.SolverBlossom"><code class="docutils literal notranslate"><span class="pre">SolverBlossom</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.blossom.SolverBlossom.run"><code class="docutils literal notranslate"><span class="pre">SolverBlossom.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.empty">color_grid_game.solvers.empty module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.empty.SolverEmpty"><code class="docutils literal notranslate"><span class="pre">SolverEmpty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.empty.SolverEmpty.run"><code class="docutils literal notranslate"><span class="pre">SolverEmpty.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.ford_fulkerson">color_grid_game.solvers.ford_fulkerson module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson"><code class="docutils literal notranslate"><span class="pre">SolverFordFulkerson</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.bfs"><code class="docutils literal notranslate"><span class="pre">SolverFordFulkerson.bfs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.ford_fulkerson"><code class="docutils literal notranslate"><span class="pre">SolverFordFulkerson.ford_fulkerson()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.reconstruct_path"><code class="docutils literal notranslate"><span class="pre">SolverFordFulkerson.reconstruct_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.run"><code class="docutils literal notranslate"><span class="pre">SolverFordFulkerson.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.greedy">color_grid_game.solvers.greedy module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.greedy.SolverGreedy"><code class="docutils literal notranslate"><span class="pre">SolverGreedy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.greedy.SolverGreedy.run"><code class="docutils literal notranslate"><span class="pre">SolverGreedy.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.greedy_upgraded">color_grid_game.solvers.greedy_upgraded module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded"><code class="docutils literal notranslate"><span class="pre">SolverGreedy_upgraded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded.run"><code class="docutils literal notranslate"><span class="pre">SolverGreedy_upgraded.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.hungarian">color_grid_game.solvers.hungarian module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.hungarian.SolverHungarian"><code class="docutils literal notranslate"><span class="pre">SolverHungarian</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.hungarian.SolverHungarian.run"><code class="docutils literal notranslate"><span class="pre">SolverHungarian.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.hungarian_general">color_grid_game.solvers.hungarian_general module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.hungarian_general.SolverHungarian_general"><code class="docutils literal notranslate"><span class="pre">SolverHungarian_general</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color_grid_game.solvers.hungarian_general.SolverHungarian_general.run"><code class="docutils literal notranslate"><span class="pre">SolverHungarian_general.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-color_grid_game.grid">
+<span id="color-grid-game-grid-module"></span><h2>color_grid_game.grid module<a class="headerlink" href="#module-color_grid_game.grid" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.grid.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.grid.Grid" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing a grid with cells that have colors and values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Number of rows in the grid.</p>
+</dd>
+<dt><strong>m</strong><span class="classifier">int</span></dt><dd><p>Number of columns in the grid.</p>
+</dd>
+<dt><strong>color</strong><span class="classifier">list[list[int]]</span></dt><dd><p>The color of each grid cell. <cite>color[i][j]</cite> is the color value in the cell (i, j).
+Lines are numbered from 0 to n-1, and columns from 0 to m-1.</p>
+</dd>
+<dt><strong>value</strong><span class="classifier">list[list[int]]</span></dt><dd><p>The value of each grid cell. <cite>value[i][j]</cite> is the value in the cell (i, j).
+Lines are numbered from 0 to n-1, and columns from 0 to m-1.</p>
+</dd>
+<dt><strong>colors_list</strong><span class="classifier">list[str]</span></dt><dd><p>The mapping between the value of <cite>color[i][j]</cite> and the corresponding color.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.all_pairs" title="color_grid_game.grid.Grid.all_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_pairs</span></code></a>([rules])</p></td>
+<td><p>Returns all allowed pairs of neighboring cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.bipartite_graph" title="color_grid_game.grid.Grid.bipartite_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bipartite_graph</span></code></a>()</p></td>
+<td><p>Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.cost" title="color_grid_game.grid.Grid.cost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cost</span></code></a>(pair)</p></td>
+<td><p>Returns the cost of a pair of cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.grid_from_file" title="color_grid_game.grid.Grid.grid_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_from_file</span></code></a>(file_name[, read_values])</p></td>
+<td><p>Creates a Grid object from a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.is_forbidden" title="color_grid_game.grid.Grid.is_forbidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_forbidden</span></code></a>(i, j)</p></td>
+<td><p>Checks if a cell is forbidden (black).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.plot" title="color_grid_game.grid.Grid.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>()</p></td>
+<td><p>Plots a visual representation of the grid using matplotlib.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.grid.Grid.vois" title="color_grid_game.grid.Grid.vois"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vois</span></code></a>(i, j)</p></td>
+<td><p>Returns the list of neighbors of the cell (i, j).</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.all_pairs">
+<span class="sig-name descname"><span class="pre">all_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.all_pairs" title="Link to this definition"></a></dt>
+<dd><p>Returns all allowed pairs of neighboring cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>rules</strong><span class="classifier">str, optional</span></dt><dd><p>The rules to apply for determining allowed pairs. Default is “original rules”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[tuple[tuple[int, int], tuple[int, int]]]</dt><dd><p>A list of pairs of neighboring cells that are allowed to be paired.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the rules parameter is not recognized.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.bipartite_graph">
+<span class="sig-name descname"><span class="pre">bipartite_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.bipartite_graph" title="Link to this definition"></a></dt>
+<dd><p>Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
+The graph already contains the valid pairs as edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>dict</dt><dd><p>A graph G stored as a dict type with two underdicts ‘even’ and ‘odd’ edges.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the grid contains no valid pairs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.cost" title="Link to this definition"></a></dt>
+<dd><p>Returns the cost of a pair of cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pair</strong><span class="classifier">tuple[tuple[int, int], tuple[int, int]]</span></dt><dd><p>A pair of cells in the format ((i1, j1), (i2, j2)).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>int</dt><dd><p>The cost of the pair, defined as the absolute value of the difference between their values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the pair does not contain valid cell indices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.grid_from_file">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grid_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.grid_from_file" title="Link to this definition"></a></dt>
+<dd><p>Creates a Grid object from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>Name of the file to load. The file must be formatted as follows:
+- The first line contains “n m”.
+- The next n lines contain m integers representing the colors of the corresponding cells.
+- The next n lines contain m integers representing the values of the corresponding cells.</p>
+</dd>
+<dt><strong>read_values</strong><span class="classifier">bool, optional</span></dt><dd><p>Indicates whether to read values after reading the colors. Requires the file to have 2n+1 lines.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Grid</dt><dd><p>The initialized Grid object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If the file does not exist.</p>
+</dd>
+<dt>ValueError</dt><dd><p>If the file format is incorrect or contains invalid color values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.is_forbidden">
+<span class="sig-name descname"><span class="pre">is_forbidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.is_forbidden" title="Link to this definition"></a></dt>
+<dd><p>Checks if a cell is forbidden (black).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong><span class="classifier">int</span></dt><dd><p>Row index of the cell.</p>
+</dd>
+<dt><strong>j</strong><span class="classifier">int</span></dt><dd><p>Column index of the cell.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>bool</dt><dd><p>True if the cell (i, j) is black, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>IndexError</dt><dd><p>If the cell (i, j) is out of the grid boundaries.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots a visual representation of the grid using matplotlib.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ImportError</dt><dd><p>If matplotlib is not installed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.grid.Grid.vois">
+<span class="sig-name descname"><span class="pre">vois</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.grid.Grid.vois" title="Link to this definition"></a></dt>
+<dd><p>Returns the list of neighbors of the cell (i, j).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong><span class="classifier">int</span></dt><dd><p>Row index of the cell.</p>
+</dd>
+<dt><strong>j</strong><span class="classifier">int</span></dt><dd><p>Column index of the cell.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[tuple[int, int]]</dt><dd><p>A list of neighboring cell coordinates.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>IndexError</dt><dd><p>If the cell (i, j) is out of the grid boundaries.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-color_grid_game.main">
+<span id="color-grid-game-main-module"></span><h2>color_grid_game.main module<a class="headerlink" href="#module-color_grid_game.main" title="Link to this heading"></a></h2>
+</section>
+<section id="module-color_grid_game.min_max_bot">
+<span id="color-grid-game-min-max-bot-module"></span><h2>color_grid_game.min_max_bot module<a class="headerlink" href="#module-color_grid_game.min_max_bot" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.min_max_bot.Bot">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.min_max_bot.</span></span><span class="sig-name descname"><span class="pre">Bot</span></span><a class="headerlink" href="#color_grid_game.min_max_bot.Bot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A bot that plays using the min-max strategy.</p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>move_to_play(grid: Grid)</strong></p></td>
+<td><p>Choose the best pair by minimizing the current move’s cost for the bot and maximizing the opponent’s next move cost.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.min_max_bot.Bot.move_to_play">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">move_to_play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#color_grid_game.min_max_bot.Bot.move_to_play" title="Link to this definition"></a></dt>
+<dd><p>Choose the best pair by:
+1. Minimizing the current move’s cost for the bot.
+2. Maximizing the opponent’s next move cost, assuming they choose the minimum cost pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>grid</strong><span class="classifier">Grid</span></dt><dd><p>The grid of the turn to be solved.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>pair</strong><span class="classifier">tuple[tuple[int, int], tuple[int, int]] or None</span></dt><dd><p>The pair of cells to be played, or None if no choice is possible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-color_grid_game.run_game">
+<span id="color-grid-game-run-game-module"></span><h2>color_grid_game.run_game module<a class="headerlink" href="#module-color_grid_game.run_game" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.run_game.Game">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.run_game.</span></span><span class="sig-name descname"><span class="pre">Game</span></span><a class="headerlink" href="#color_grid_game.run_game.Game" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Main game class that handles the game loop and user interactions.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.Game.main" title="color_grid_game.run_game.Game.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Main game loop.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.Game.reset_game_state" title="color_grid_game.run_game.Game.reset_game_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_game_state</span></code></a>()</p></td>
+<td><p>Resets the game state to the initial menu and clears the grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.Game.show_rules" title="color_grid_game.run_game.Game.show_rules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_rules</span></code></a>()</p></td>
+<td><p>Displays the game rules screen.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.Game.main">
+<span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.Game.main" title="Link to this definition"></a></dt>
+<dd><p>Main game loop.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.Game.reset_game_state">
+<span class="sig-name descname"><span class="pre">reset_game_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.Game.reset_game_state" title="Link to this definition"></a></dt>
+<dd><p>Resets the game state to the initial menu and clears the grid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.Game.show_rules">
+<span class="sig-name descname"><span class="pre">show_rules</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.Game.show_rules" title="Link to this definition"></a></dt>
+<dd><p>Displays the game rules screen.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.run_game.GridManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.run_game.</span></span><span class="sig-name descname"><span class="pre">GridManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.GridManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages the loading and coloring of grid files.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.GridManager.extract_difficulty" title="color_grid_game.run_game.GridManager.extract_difficulty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_difficulty</span></code></a>(filename)</p></td>
+<td><p>Extracts the difficulty level from the filename.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.GridManager.get_difficulty_color" title="color_grid_game.run_game.GridManager.get_difficulty_color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_difficulty_color</span></code></a>(difficulty)</p></td>
+<td><p>Returns a color based on the difficulty level.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.GridManager.load_grid" title="color_grid_game.run_game.GridManager.load_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_grid</span></code></a>(selected_grid)</p></td>
+<td><p>Loads a grid from a file.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.GridManager.extract_difficulty">
+<span class="sig-name descname"><span class="pre">extract_difficulty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#color_grid_game.run_game.GridManager.extract_difficulty" title="Link to this definition"></a></dt>
+<dd><p>Extracts the difficulty level from the filename.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.GridManager.get_difficulty_color">
+<span class="sig-name descname"><span class="pre">get_difficulty_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">difficulty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#color_grid_game.run_game.GridManager.get_difficulty_color" title="Link to this definition"></a></dt>
+<dd><p>Returns a color based on the difficulty level.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.GridManager.load_grid">
+<span class="sig-name descname"><span class="pre">load_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></span><a class="headerlink" href="#color_grid_game.run_game.GridManager.load_grid" title="Link to this definition"></a></dt>
+<dd><p>Loads a grid from a file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.run_game.SolverManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.run_game.</span></span><span class="sig-name descname"><span class="pre">SolverManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.SolverManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages the solver logic for the game.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.SolverManager.calculate_player_score" title="color_grid_game.run_game.SolverManager.calculate_player_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_player_score</span></code></a>(player_pairs, grid)</p></td>
+<td><p>Calculates the score for a player considering their pairs and unpaired cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.SolverManager.calculate_two_player_score" title="color_grid_game.run_game.SolverManager.calculate_two_player_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_two_player_score</span></code></a>(player_pairs, grid)</p></td>
+<td><p>Calculates the score for a player considering their pairs and unpaired cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.SolverManager.can_pair" title="color_grid_game.run_game.SolverManager.can_pair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">can_pair</span></code></a>(color1, color2)</p></td>
+<td><p>Checks if two colors can be paired.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.SolverManager.pair_is_valid" title="color_grid_game.run_game.SolverManager.pair_is_valid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pair_is_valid</span></code></a>(pair, existing_pairs, grid, ...)</p></td>
+<td><p>Checks if a pair is valid considering the pairs of both players.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.SolverManager.calculate_player_score">
+<span class="sig-name descname"><span class="pre">calculate_player_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#color_grid_game.run_game.SolverManager.calculate_player_score" title="Link to this definition"></a></dt>
+<dd><p>Calculates the score for a player considering their pairs and unpaired cells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.SolverManager.calculate_two_player_score">
+<span class="sig-name descname"><span class="pre">calculate_two_player_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#color_grid_game.run_game.SolverManager.calculate_two_player_score" title="Link to this definition"></a></dt>
+<dd><p>Calculates the score for a player considering their pairs and unpaired cells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.SolverManager.can_pair">
+<span class="sig-name descname"><span class="pre">can_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#color_grid_game.run_game.SolverManager.can_pair" title="Link to this definition"></a></dt>
+<dd><p>Checks if two colors can be paired.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.SolverManager.pair_is_valid">
+<span class="sig-name descname"><span class="pre">pair_is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">existing_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">player_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#color_grid_game.run_game.SolverManager.pair_is_valid" title="Link to this definition"></a></dt>
+<dd><p>Checks if a pair is valid considering the pairs of both players.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.run_game.</span></span><span class="sig-name descname"><span class="pre">UIManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Surface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages the UI elements and rendering for the game.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.darken_color" title="color_grid_game.run_game.UIManager.darken_color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">darken_color</span></code></a>(color[, factor])</p></td>
+<td><p>Darkens a color by a given factor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_end_screen" title="color_grid_game.run_game.UIManager.draw_end_screen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_end_screen</span></code></a>(message, color, window_size)</p></td>
+<td><p>Displays the end screen with a semi-transparent overlay and centered message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_error_message" title="color_grid_game.run_game.UIManager.draw_error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_error_message</span></code></a>(message, window_size, ...)</p></td>
+<td><p>Displays an error message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_grid" title="color_grid_game.run_game.UIManager.draw_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_grid</span></code></a>(grid, solver, cell_size[, ...])</p></td>
+<td><p>Draws the game grid with cells and pairs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_grid_options" title="color_grid_game.run_game.UIManager.draw_grid_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_grid_options</span></code></a>(window_size, scroll, ...)</p></td>
+<td><p>Draws the grid options with scrolling functionality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_menu_button" title="color_grid_game.run_game.UIManager.draw_menu_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_menu_button</span></code></a>(window_size, pressed)</p></td>
+<td><p>Draws the menu button.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_pair_frame" title="color_grid_game.run_game.UIManager.draw_pair_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_pair_frame</span></code></a>(pair, color, cell_size, ...)</p></td>
+<td><p>Draws a frame around a pair of cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_player_choice" title="color_grid_game.run_game.UIManager.draw_player_choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_player_choice</span></code></a>(window_size, pressed_button)</p></td>
+<td><p>Draws the player choice buttons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_restart_button" title="color_grid_game.run_game.UIManager.draw_restart_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_restart_button</span></code></a>(window_size, pressed, mode)</p></td>
+<td><p>Draws the restart button.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_rules" title="color_grid_game.run_game.UIManager.draw_rules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_rules</span></code></a>(window_size, scroll, ...)</p></td>
+<td><p>Draws the game rules with scrolling functionality and animated title.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_rules_button" title="color_grid_game.run_game.UIManager.draw_rules_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_rules_button</span></code></a>(window_size, pressed)</p></td>
+<td><p>Draws the rules button.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_score" title="color_grid_game.run_game.UIManager.draw_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_score</span></code></a>(solver, window_size, cell_size, ...)</p></td>
+<td><p>Draws the current score.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_solution_button" title="color_grid_game.run_game.UIManager.draw_solution_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_solution_button</span></code></a>(window_size, pressed)</p></td>
+<td><p>Draws the solution button.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_title" title="color_grid_game.run_game.UIManager.draw_title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_title</span></code></a>(window_size)</p></td>
+<td><p>Draws the title of the game with animated colors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_turn_indicator" title="color_grid_game.run_game.UIManager.draw_turn_indicator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_turn_indicator</span></code></a>(current_player, ...)</p></td>
+<td><p>Shows whose turn it is.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.draw_volume_button" title="color_grid_game.run_game.UIManager.draw_volume_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_volume_button</span></code></a>(window_size, pressed)</p></td>
+<td><p>Draws the volume toggle button.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.run_game.UIManager.toggle_volume" title="color_grid_game.run_game.UIManager.toggle_volume"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_volume</span></code></a>()</p></td>
+<td><p>Toggles the volume between muted and last volume.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.darken_color">
+<span class="sig-name descname"><span class="pre">darken_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#color_grid_game.run_game.UIManager.darken_color" title="Link to this definition"></a></dt>
+<dd><p>Darkens a color by a given factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_end_screen">
+<span class="sig-name descname"><span class="pre">draw_end_screen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_end_screen" title="Link to this definition"></a></dt>
+<dd><p>Displays the end screen with a semi-transparent overlay and centered message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_error_message">
+<span class="sig-name descname"><span class="pre">draw_error_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_error_message" title="Link to this definition"></a></dt>
+<dd><p>Displays an error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_grid">
+<span class="sig-name descname"><span class="pre">draw_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><span class="pre">Solver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'one'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">player_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_grid" title="Link to this definition"></a></dt>
+<dd><p>Draws the game grid with cells and pairs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_grid_options">
+<span class="sig-name descname"><span class="pre">draw_grid_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll_bar_rect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll_bar_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_grid_options" title="Link to this definition"></a></dt>
+<dd><p>Draws the grid options with scrolling functionality.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_menu_button">
+<span class="sig-name descname"><span class="pre">draw_menu_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_menu_button" title="Link to this definition"></a></dt>
+<dd><p>Draws the menu button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_pair_frame">
+<span class="sig-name descname"><span class="pre">draw_pair_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_pair_frame" title="Link to this definition"></a></dt>
+<dd><p>Draws a frame around a pair of cells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_player_choice">
+<span class="sig-name descname"><span class="pre">draw_player_choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_player_choice" title="Link to this definition"></a></dt>
+<dd><p>Draws the player choice buttons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_restart_button">
+<span class="sig-name descname"><span class="pre">draw_restart_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_restart_button" title="Link to this definition"></a></dt>
+<dd><p>Draws the restart button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_rules">
+<span class="sig-name descname"><span class="pre">draw_rules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll_bar_rect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scroll_bar_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_rules" title="Link to this definition"></a></dt>
+<dd><p>Draws the game rules with scrolling functionality and animated title.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_rules_button">
+<span class="sig-name descname"><span class="pre">draw_rules_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_rules_button" title="Link to this definition"></a></dt>
+<dd><p>Draws the rules button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_score">
+<span class="sig-name descname"><span class="pre">draw_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><span class="pre">Solver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">player1_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">player2_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'one'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_score" title="Link to this definition"></a></dt>
+<dd><p>Draws the current score.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_solution_button">
+<span class="sig-name descname"><span class="pre">draw_solution_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_solution_button" title="Link to this definition"></a></dt>
+<dd><p>Draws the solution button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_title">
+<span class="sig-name descname"><span class="pre">draw_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_title" title="Link to this definition"></a></dt>
+<dd><p>Draws the title of the game with animated colors.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_turn_indicator">
+<span class="sig-name descname"><span class="pre">draw_turn_indicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_turn_indicator" title="Link to this definition"></a></dt>
+<dd><p>Shows whose turn it is.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.draw_volume_button">
+<span class="sig-name descname"><span class="pre">draw_volume_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.draw_volume_button" title="Link to this definition"></a></dt>
+<dd><p>Draws the volume toggle button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.run_game.UIManager.toggle_volume">
+<span class="sig-name descname"><span class="pre">toggle_volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.run_game.UIManager.toggle_volume" title="Link to this definition"></a></dt>
+<dd><p>Toggles the volume between muted and last volume.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-color_grid_game.solver">
+<span id="color-grid-game-solver-module"></span><h2>color_grid_game.solver module<a class="headerlink" href="#module-color_grid_game.solver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solver.Solver">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solver.</span></span><span class="sig-name descname"><span class="pre">Solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solver.Solver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A solver class for finding optimal pairs in a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>grid</strong><span class="classifier">Grid</span></dt><dd><p>The grid to be solved.</p>
+</dd>
+<dt><strong>pairs</strong><span class="classifier">list[tuple[tuple[int, int], tuple[int, int]]]</span></dt><dd><p>A list of pairs, each being a tuple ((i1, j1), (i2, j2)) representing paired cells.</p>
+</dd>
+<dt><strong>rules</strong><span class="classifier">str</span></dt><dd><p>The rules to apply for solving the grid. Default is “original rules”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solver.Solver.score" title="color_grid_game.solver.Solver.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>()</p></td>
+<td><p>Computes the score of the list of pairs in self.pairs.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.solver.Solver.score">
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#color_grid_game.solver.Solver.score" title="Link to this definition"></a></dt>
+<dd><p>Computes the score of the list of pairs in self.pairs.</p>
+<p>The score is calculated as the sum of the values of unpaired cells
+excluding black cells, plus the sum of the cost of each pair of cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>int</dt><dd><p>The computed score.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If any cell in pairs is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-color_grid_game.sp_utils">
+<span id="color-grid-game-sp-utils-module"></span><h2>color_grid_game.sp_utils module<a class="headerlink" href="#module-color_grid_game.sp_utils" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.sp_utils.SPUtils">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.sp_utils.</span></span><span class="sig-name descname"><span class="pre">SPUtils</span></span><a class="headerlink" href="#color_grid_game.sp_utils.SPUtils" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Utility class for solving optimization problems using the Hungarian algorithm and maximum weight matching.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.hungarian_algorithm" title="color_grid_game.sp_utils.SPUtils.hungarian_algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hungarian_algorithm</span></code></a>(cost_matrix)</p></td>
+<td><p>Solve the assignment problem using the Hungarian algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.matching_dict_to_set" title="color_grid_game.sp_utils.SPUtils.matching_dict_to_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matching_dict_to_set</span></code></a>(matching)</p></td>
+<td><p>Converts matching dictionary format to matching set format.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.sp_utils.SPUtils.max_weight_matching" title="color_grid_game.sp_utils.SPUtils.max_weight_matching"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_weight_matching</span></code></a>(G[, maxcardinality, weight])</p></td>
+<td><p>Compute a maximum-weighted matching of the graph G.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.sp_utils.SPUtils.hungarian_algorithm">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hungarian_algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.sp_utils.SPUtils.hungarian_algorithm" title="Link to this definition"></a></dt>
+<dd><p>Solve the assignment problem using the Hungarian algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cost_matrix</strong><span class="classifier">array-like</span></dt><dd><p>A 2D array representing the cost matrix.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>A tuple of arrays representing the row and column indices of the optimal assignment.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the input is not a 2D array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.sp_utils.SPUtils.matching_dict_to_set">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matching_dict_to_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matching</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.sp_utils.SPUtils.matching_dict_to_set" title="Link to this definition"></a></dt>
+<dd><p>Converts matching dictionary format to matching set format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>matching</strong><span class="classifier">dict</span></dt><dd><p>A dictionary representing the matching where keys are nodes and values are their matched pairs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>set</dt><dd><p>A set of edges representing the matching.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If a self-loop is detected in the matching.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.sp_utils.SPUtils.max_weight_matching">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_weight_matching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcardinality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'weight'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.sp_utils.SPUtils.max_weight_matching" title="Link to this definition"></a></dt>
+<dd><p>Compute a maximum-weighted matching of the graph G.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>G</strong><span class="classifier">networkx.Graph</span></dt><dd><p>The input graph with edge weights.</p>
+</dd>
+<dt><strong>maxcardinality</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to compute a maximum cardinality matching.</p>
+</dd>
+<dt><strong>weight</strong><span class="classifier">str, optional</span></dt><dd><p>The attribute key for edge weights.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>set</dt><dd><p>A set of edges representing the maximum-weighted matching.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the input graph is not valid or if an error occurs during computation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-color_grid_game">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-color_grid_game" title="Link to this heading"></a></h2>
+<p>color_grid_game package initializer</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ENSAE Programming Project 2025 : Color Grid Game documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="color_grid_game.solvers.html" class="btn btn-neutral float-right" title="color_grid_game.solvers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, ABITBOL Dimitri &amp; DE ROUCK Arthur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

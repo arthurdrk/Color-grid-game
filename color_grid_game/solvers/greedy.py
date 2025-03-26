@@ -1,5 +1,6 @@
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
@@ -12,14 +13,15 @@ class SolverGreedy(Solver):
         """
         Runs the greedy algorithm to find pairs of cells.
 
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells.
-
-        Raises:
+        Returns
         -------
-        ValueError: If any cell in pairs is invalid.
+        list of tuple
+            A list of pairs of cells, each represented as a tuple of tuples.
+
+        Raises
+        ------
+        ValueError
+            If any cell in pairs is invalid.
         """
         used = set()  # Cells that have already been visited
         res = []
@@ -42,7 +44,7 @@ class SolverGreedy(Solver):
                             best_pair = min(
                                 (pair for pair in pair_dict[case] if pair[0] not in used or pair[1] not in used),
                                 key=lambda x: self.grid.cost(x))
-                            if best_pair[0] == case:  # indentify what is the index of the best cell in pair and what is the one of case
+                            if best_pair[0] == case:
                                 res.append((case, best_pair[1]))
                                 used.add(best_pair[1])
                             else:
