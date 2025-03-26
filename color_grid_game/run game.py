@@ -1,7 +1,7 @@
 
 import sys
 import os
-
+import pygame
 # Ajoutez le chemin du dossier parent au sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

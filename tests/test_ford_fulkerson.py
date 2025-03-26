@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from color_grid_game import *
 import unittest
 
@@ -17,8 +21,9 @@ class TestFordFulkerson(unittest.TestCase):
         graph = {}
         self.solver.even_cells = set()
         self.solver.odd_cells = set()
-        pairs = self.solver.ford_fulkerson(graph, self.solver.even_cells, self.solver.odd_cells)
-        self.assertEqual(pairs, [])
+        with self.assertRaises(ValueError) as context:
+            self.solver.ford_fulkerson(graph, self.solver.even_cells, self.solver.odd_cells)
+        self.assertEqual(str(context.exception), "Invalid graph or cell sets")
 
     def test_ford_fulkerson_multiple_flows(self):
         graph = {"s": ["a", "c"], "a": ["b"], "b": ["t"], "c": ["d"], "d": ["t"], "t": []}

@@ -70,9 +70,6 @@ class SolverFordFulkerson(Solver):
         -------
         ValueError: If the graph is empty or if s or t is not in the graph.
         """
-        if not graph or s not in graph or t not in graph:
-            raise ValueError("Invalid graph or source/sink nodes")
-
         queue = deque([s])
         parents = {s: None}
 

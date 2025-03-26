@@ -27,8 +27,6 @@ class Solver:
         -------
         TypeError: If grid is not an instance of Grid.
         """
-        if not isinstance(grid, Grid):
-            raise TypeError("grid must be an instance of Grid")
         self.grid = grid
         self.pairs = []
         self.rules = rules
@@ -56,14 +54,3 @@ class Solver:
                      for j in range(self.grid.m)
                      if (i, j) not in taken and not self.grid.is_forbidden(i, j))
         return score
-
-class SolverEmpty(Solver):
-    """
-    A subclass of Solver that does not implement any solving logic.
-    """
-
-    def run(self):
-        """
-        Placeholder method for running the solver. Does nothing.
-        """
-        pass

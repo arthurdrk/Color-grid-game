@@ -1,7 +1,9 @@
 import sys
-sys.path.append("./ensae-prog25/code/")
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from color_grid_game import *
 import unittest
-from grid import Grid
 
 class TestVois(unittest.TestCase):
     
