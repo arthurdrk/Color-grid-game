@@ -1,5 +1,3 @@
-import numpy as np
-
 def hungarian_algorithm(cost_matrix):
     cost_matrix = np.asarray(cost_matrix)
     if len(cost_matrix.shape) != 2:

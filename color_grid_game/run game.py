@@ -1,6 +1,3 @@
-import pygame
-import sys
-import os
 from grid import Grid
 from solver import Solver, SolverHungarian
 from min_max_bot import move_to_play

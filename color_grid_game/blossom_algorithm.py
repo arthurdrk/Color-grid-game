@@ -1,5 +1,3 @@
-from itertools import repeat
-
 def matching_dict_to_set(matching):
     """
     Converts matching dictionary format to matching set format.
