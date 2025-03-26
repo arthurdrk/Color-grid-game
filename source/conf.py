@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join('../../..', '..', 'color grid game')))
+sys.path.insert(0, os.path.abspath(os.path.join('../..', '..', 'color_grid_game')))
 
 project = 'ENSAE Programming Project 2025 (Color Grid Game)'
 copyright = '2025, ABITBOL Dimitri & DE ROUCK Arthur'
