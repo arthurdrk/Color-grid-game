@@ -5,10 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
 if __name__ == '__main__':
-    g: Grid = Grid(2, 3)
-    print(g)
-
-    data_path: str = "../input/"
+    data_path: str = "./input/"
     grid_files = [f for f in os.listdir(data_path) if f.endswith(".in")]
 
     print("Solving all grids \n")
