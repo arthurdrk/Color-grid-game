@@ -2,7 +2,9 @@ from collections import deque, defaultdict
 from grid import Grid
 import numpy as np
 import math
-from max_weight_matching import max_weight_matching
+from blossom_algorithm import max_weight_matching
+from hungarian_algorithm import hungarian_algorithm
+import numpy as np
 
 class Solver:
     """
@@ -333,7 +335,6 @@ class SolverFordFulkerson(Solver):
 import networkx as nx
 from collections import defaultdict
 
-from max_weight_matching import max_weight_matching
 
 class SolverBlossom(Solver):
     """
@@ -367,9 +368,6 @@ class SolverBlossom(Solver):
         self.pairs = list(matching)
 
         return self.pairs
-
-from hungarian_algorithm import linear_sum_assignment
-import numpy as np
 
 class SolverHungarian(Solver):
     """
@@ -418,7 +416,7 @@ class SolverHungarian(Solver):
                     cost_matrix[even_to_idx[u], odd_to_idx[v]] = weight
 
             # Apply Hungarian algorithm
-            row_ind, col_ind = linear_sum_assignment(cost_matrix)
+            row_ind, col_ind = hungarian_algorithm(cost_matrix)
 
             # Rebuild pairs from matrix indices
             self.pairs = []
@@ -432,7 +430,7 @@ class SolverHungarian(Solver):
 
         return self.pairs
 
-class SolverHungarian2(Solver):
+class SolverHungarian_general(Solver):
     """
     An alternative implementation of the Hungarian algorithm solver.
     """
@@ -477,7 +475,7 @@ class SolverHungarian2(Solver):
                 cost_matrix[even_to_idx[u], odd_to_idx[v]] = weight
 
         # Apply Hungarian algorithm on the bipartite matrix
-        row_ind, col_ind = linear_sum_assignment(cost_matrix)
+        row_ind, col_ind = hungarian_algorithm(cost_matrix)
 
         # Rebuild valid pairs from the result
         self.pairs = []

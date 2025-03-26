@@ -1,6 +1,6 @@
 import numpy as np
 
-def linear_sum_assignment(cost_matrix):
+def hungarian_algorithm(cost_matrix):
     cost_matrix = np.asarray(cost_matrix)
     if len(cost_matrix.shape) != 2:
         raise ValueError("expected a matrix (2-d array), got a %r array"

@@ -1,22 +1,44 @@
-"""Functions for computing and verifying matchings in a graph (adjacency dict version)."""
 from itertools import repeat
 
-
 def matching_dict_to_set(matching):
-    """Converts matching dict format to matching set format."""
+    """
+    Converts matching dictionary format to matching set format.
+
+    Parameters:
+    matching (dict): A dictionary representing the matching where keys are nodes and values are their matched pairs.
+
+    Returns:
+    set: A set of edges representing the matching.
+
+    Raises:
+    ValueError: If a self-loop is detected in the matching.
+    """
     edges = set()
     for edge in matching.items():
         u, v = edge
         if (v, u) in edges or edge in edges:
             continue
         if u == v:
-            raise ValueError(f"Selfloops cannot appear in matchings {edge}")
+            raise ValueError(f"Self-loops cannot appear in matchings {edge}")
         edges.add(edge)
     return edges
 
-
 def max_weight_matching(G, maxcardinality=False, weight="weight"):
-    """Compute a maximum-weighted matching of G."""
+    """
+    Compute a maximum-weighted matching of the graph G.
+
+    Parameters:
+    G (networkx.Graph): The input graph with edge weights.
+    maxcardinality (bool): Whether to compute a maximum cardinality matching.
+    weight (str): The attribute key for edge weights.
+
+    Returns:
+    set: A set of edges representing the maximum-weighted matching.
+
+    Raises:
+    ValueError: If the input graph is not valid or if an error occurs during computation.
+    """
+
     class NoNode:
         pass
 
@@ -29,6 +51,12 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
             self.mybestedges = None
 
         def leaves(self):
+            """
+            Yield all leaf nodes in the blossom.
+
+            Yields:
+            node: The next leaf node in the blossom.
+            """
             stack = [*self.childs]
             while stack:
                 t = stack.pop()
@@ -62,9 +90,27 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
     queue = []
 
     def slack(v, w):
+        """
+        Calculate the slack for the edge (v, w).
+
+        Parameters:
+        v (node): The first node.
+        w (node): The second node.
+
+        Returns:
+        float: The slack value for the edge (v, w).
+        """
         return dualvar[v] + dualvar[w] - 2 * G[v][w].get(weight, 1)
 
     def assignLabel(w, t, v):
+        """
+        Assign a label to a node or blossom.
+
+        Parameters:
+        w (node): The node to label.
+        t (int): The label type (1 or 2).
+        v (node): The node connected to w, or None.
+        """
         b = inblossom[w]
         assert label.get(w) is None and label.get(b) is None
         label[w] = label[b] = t
@@ -83,6 +129,16 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
             assignLabel(mate[base], 1, base)
 
     def scanBlossom(v, w):
+        """
+        Scan the blossom to find the base node.
+
+        Parameters:
+        v (node): The first node.
+        w (node): The second node.
+
+        Returns:
+        node: The base node of the blossom.
+        """
         path = []
         base = NoNode
         while v is not NoNode:
@@ -107,6 +163,14 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
         return base
 
     def addBlossom(base, v, w):
+        """
+        Add a new blossom to the structure.
+
+        Parameters:
+        base (node): The base node of the blossom.
+        v (node): The first node in the blossom.
+        w (node): The second node in the blossom.
+        """
         bb = inblossom[base]
         bv = inblossom[v]
         bw = inblossom[w]
@@ -173,6 +237,13 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
         bestedge[b] = mybestedge
 
     def expandBlossom(b, endstage):
+        """
+        Expand a blossom and update the structure.
+
+        Parameters:
+        b (Blossom): The blossom to expand.
+        endstage (bool): Whether it is the end stage of the algorithm.
+        """
         def _recurse(b, endstage):
             for s in b.childs:
                 blossomparent[s] = None
@@ -249,6 +320,13 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
                 stack.pop()
 
     def augmentBlossom(b, v):
+        """
+        Augment the matching within a blossom.
+
+        Parameters:
+        b (Blossom): The blossom to augment.
+        v (node): The node to start augmentation from.
+        """
         def _recurse(b, v):
             t = v
             while blossomparent[t] != b:
@@ -289,6 +367,13 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
                 stack.pop()
 
     def augmentMatching(v, w):
+        """
+        Augment the matching by alternating paths.
+
+        Parameters:
+        v (node): The first node in the augmenting path.
+        w (node): The second node in the augmenting path.
+        """
         for s, j in ((v, w), (w, v)):
             while 1:
                 bs = inblossom[s]
@@ -311,6 +396,9 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
                 mate[j] = s
 
     def verifyOptimum():
+        """
+        Verify that the computed matching is optimal.
+        """
         if maxcardinality:
             vdualoffset = max(0, -min(dualvar.values()))
         else:
