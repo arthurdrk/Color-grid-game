@@ -24,10 +24,15 @@ class Solver:
         -----------
         grid : Grid
             The grid to be solved.
+        rules : str, optional
+            The rules to apply for solving the grid. Default is "original rules".
 
-        Time Complexity: O(1)
-        Space Complexity: O(1)
+        Raises:
+        -------
+        TypeError: If grid is not an instance of Grid.
         """
+        if not isinstance(grid, Grid):
+            raise TypeError("grid must be an instance of Grid")
         self.grid = grid
         self.pairs = []
         self.rules = rules
@@ -44,20 +49,18 @@ class Solver:
         int
             The computed score.
 
-        Time Complexity: O(n * m)
-        Space Complexity: O(p) where p is the number of pairs
+        Raises:
+        -------
+        ValueError: If any cell in pairs is invalid.
         """
-
         # Add all paired cells to the set and calculate the cost of each pair
         score = sum(self.grid.cost(pair) for pair in self.pairs)
         taken = set([cell for pair in self.pairs for cell in pair])
-        score += sum(self.grid.value[i][j] for i in range(self.grid.n) 
-                     for j in range(self.grid.m) 
+        score += sum(self.grid.value[i][j] for i in range(self.grid.n)
+                     for j in range(self.grid.m)
                      if (i, j) not in taken and not self.grid.is_forbidden(i, j))
         return score
-    
-    
-    
+
 class SolverEmpty(Solver):
     """
     A subclass of Solver that does not implement any solving logic.
@@ -68,49 +71,6 @@ class SolverEmpty(Solver):
         Placeholder method for running the solver. Does nothing.
         """
         pass
-    
-"""
-Question 4, SolverGreedy:
-
-Complexity of SolverGreedy:
-   - Time Complexity: O(n * m)
-     The `run` method iterates over each cell in the grid, checking its neighbors to find the best pair.
-     The dominant term is iterating over all cells, which is O(n * m).
-   - Space Complexity: O(n * m)
-     The space complexity is O(n * m) due to storing the pairs and the results.
-
-Optimality:
-    The greedy algorithm pairs cells based on minimizing the immediate cost without considering the global optimum.
-    This approach can lead to suboptimal solutions, especially in grids where local decisions affect the overall outcome significantly.
-    Consider the following 2x3 grid (grid00.in):
-
-    Colors:
-    [
-    [0, 0, 0],  # Row 1
-    [0, 0, 0]   # Row 2
-    ]
-
-    Values:
-    [
-    [5, 8, 4],  # Row 3
-    [11, 1, 3]  # Row 4
-    ]
-
-    The greedy algorithm pairs (0, 0) with (0, 1) due to immediate cost minimization, missing the optimal global configuration.
-    Optimal Solution: Pair (0, 0) with (1, 0), (0, 1) with (0, 2) and (1, 1) with (1, 2), achieving a lower score (score = 12 instead of 14 with the greedy algorithm).
-
-Possible solution (brute force) and complexity:
-   - A possible solution (brute force) would be to consider all possible pairings and selecting the one with the minimum score.
-     - Time Complexity: O(2^(n * m))
-       -> In the worst case, each cell could potentially be paired with any of its neighbors, leading to an exponential number of configurations.
-     - Space Complexity: O(2^(n * m))
-       Due to the need to store all possible configurations of pairs.
-
-Other possible solutions:
-   - Bipartite Matching (e.g., Ford-Fulkerson) in the case of a grid with a unique value:
-     This approach can find an optimal matching in polynomial time, specifically O(E * V), where E is the number of edges and V is the number of vertices in the bipartite graph representation of the grid.
-   - Consider it as a maximum weight matching problem, can be solved using the Hungarian algorithm in O(n^3) time complexity.
-"""
 
 class SolverGreedy(Solver):
     """
@@ -126,8 +86,9 @@ class SolverGreedy(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
 
-        Time Complexity: O((n * m) * log(n * m)
-        Space Complexity: O((n * m) * log(n * m))
+        Raises:
+        -------
+        ValueError: If any cell in pairs is invalid.
         """
         used = set()  # Cells that have already been visited
         res = []
@@ -172,6 +133,10 @@ class SolverGreedy_upgraded(Solver):
 
         Returns:
             list[tuple[tuple[int, int], tuple[int, int]]: List of pairs with the lowest score.
+
+        Raises:
+        -------
+        ValueError: If any cell in pairs is invalid.
         """
         pairs = self.grid.all_pairs()
         pair_dict = defaultdict(list)
@@ -215,12 +180,12 @@ class SolverGreedy_upgraded(Solver):
                     best_pairs = current_pairs.copy()
         self.pairs = best_pairs
         return best_pairs
- 
+
 class SolverFordFulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.
     """
-    
+
     def run(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
         Runs the bipartite matching algorithm to find pairs of cells.
@@ -230,8 +195,9 @@ class SolverFordFulkerson(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of cells.
 
-        Time Complexity: O(E * V) where E is the number of edges and V is the number of vertices
-        Space Complexity: O(E + V)
+        Raises:
+        -------
+        ValueError: If any cell in pairs is invalid.
         """
         graph = defaultdict(list)
         even_cells = set()
@@ -278,9 +244,13 @@ class SolverFordFulkerson(Solver):
         list[int]
             The path from 's' to 't' if found, otherwise None.
 
-        Time Complexity: O(V + E)
-        Space Complexity: O(V)
+        Raises:
+        -------
+        ValueError: If the graph is empty or if s or t is not in the graph.
         """
+        if not graph or s not in graph or t not in graph:
+            raise ValueError("Invalid graph or source/sink nodes")
+
         queue = deque([s])
         parents = {s: None}
 
@@ -314,9 +284,13 @@ class SolverFordFulkerson(Solver):
         list[int]
             The reconstructed path from 's' to 't'.
 
-        Time Complexity: O(V)
-        Space Complexity: O(V)
+        Raises:
+        -------
+        ValueError: If the path cannot be reconstructed.
         """
+        if s not in parents or t not in parents:
+            raise ValueError("Invalid source or sink nodes")
+
         path = []
         current = t
         while current is not None:
@@ -339,9 +313,13 @@ class SolverFordFulkerson(Solver):
         list[tuple[tuple[int, int], tuple[int, int]]]
             The maximum matching as a list of pairs of cells.
 
-        Time Complexity: O(E * V)
-        Space Complexity: O(E + V)
+        Raises:
+        -------
+        ValueError: If the graph is empty or if even_cells or odd_cells is empty.
         """
+        if not graph or not even_cells or not odd_cells:
+            raise ValueError("Invalid graph or cell sets")
+
         while True:
             path = cls.bfs(graph, "s", "t")
             if path is None:
@@ -352,11 +330,6 @@ class SolverFordFulkerson(Solver):
 
         return [(u, odd) for odd in odd_cells for u in graph[odd] if u in even_cells]
 
-
-################################################################################
-#                               WORK IN PROGRESS                               #
-################################################################################
-
 import networkx as nx
 from collections import defaultdict
 
@@ -364,41 +337,58 @@ from max_weight_matching import max_weight_matching
 
 class SolverBlossom(Solver):
     """
-    Un solveur qui utilise un appariement pondéré pour minimiser le score dans une grille.
-    Adapté pour utiliser un graphe NetworkX au lieu d'un dictionnaire d'adjacence.
+    A solver that uses weighted matching to minimize the score in a grid.
+    Adapted to use a NetworkX graph instead of an adjacency dictionary.
     """
 
     def run(self):
         """
-        Construit un graphe NetworkX et utilise l'algorithme max_weight_matching de NetworkX.
+        Builds a NetworkX graph and uses the max_weight_matching algorithm from NetworkX.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        Raises:
+        -------
+        ValueError: If the graph is empty or if pairs are invalid.
         """
-        if self.rules == "original rules":
-            pairs = self.grid.all_pairs()
-        elif self.rules == "new rules":
-            pairs = self.grid.all_pairs_new_rules()
-         
+        pairs = self.pairs(self.rules)
         G = nx.Graph()
-        for u,v in pairs:
-                cost = self.grid.cost((u, v))
-                value_u = self.grid.value[u[0]][u[1]]
-                value_v = self.grid.value[v[0]][v[1]]
-                weight = cost - value_u - value_v
-                G.add_edge(u, v, weight=-weight)
+        for u, v in pairs:
+            cost = self.grid.cost((u, v))
+            value_u = self.grid.value[u[0]][u[1]]
+            value_v = self.grid.value[v[0]][v[1]]
+            weight = cost - value_u - value_v
+            G.add_edge(u, v, weight=-weight)
 
         matching = nx.max_weight_matching(G, maxcardinality=False)
         self.pairs = list(matching)
-        
+
         return self.pairs
 
 from hungarian_algorithm import linear_sum_assignment
 import numpy as np
 
 class SolverHungarian(Solver):
+    """
+    A solver that uses the Hungarian algorithm to find optimal pairs in a grid.
+    """
 
     def run(self):
         """
         Builds a bipartite cost matrix using only cells present in valid pairs.
         Applies the Hungarian algorithm to find optimal pairs.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        Raises:
+        -------
+        ValueError: If the cost matrix is empty or if pairs are invalid.
         """
         if self.rules == "original rules":
             # Collect all unique cells from valid pairs
@@ -407,15 +397,15 @@ class SolverHungarian(Solver):
             for u, v in valid_pairs:
                 all_cells.add(u)
                 all_cells.add(v)
-            
+
             # Split into even/odd based on coordinate parity
             even_cells = [cell for cell in all_cells if (cell[0] + cell[1]) % 2 == 0]
             odd_cells = [cell for cell in all_cells if (cell[0] + cell[1]) % 2 == 1]
-            
+
             # Create mappings for matrix indices
             even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
             odd_to_idx = {cell: j for j, cell in enumerate(odd_cells)}
-            
+
             # Build cost matrix with valid pairs only
             cost_matrix = np.full((len(even_cells), len(odd_cells)), 0)
             for u, v in valid_pairs:
@@ -425,34 +415,47 @@ class SolverHungarian(Solver):
                 if u in even_to_idx and v in odd_to_idx:
                     cost = self.grid.cost((u, v))
                     weight = cost - self.grid.value[u[0]][u[1]] - self.grid.value[v[0]][v[1]]
-                    cost_matrix[even_to_idx[u], odd_to_idx[v]] =  weight
-            
+                    cost_matrix[even_to_idx[u], odd_to_idx[v]] = weight
+
             # Apply Hungarian algorithm
             row_ind, col_ind = linear_sum_assignment(cost_matrix)
-            
+
             # Rebuild pairs from matrix indices
             self.pairs = []
             for i, j in zip(row_ind, col_ind):
-                if cost_matrix[i][j] !=0:
+                if cost_matrix[i][j] != 0:
                     self.pairs.append((even_cells[i], odd_cells[j]))
-                    
+
         elif self.rules == "new rules":
             # Handle new rules (implementation omitted)
             pass
-            
+
         return self.pairs
 
 class SolverHungarian2(Solver):
-    def run(self):
-        if self.rules == "original rules":
-            valid_pairs = self.grid.all_pairs()
-        elif self.rules == "new rules":
-            valid_pairs = self.grid.all_pairs_new_rules()
+    """
+    An alternative implementation of the Hungarian algorithm solver.
+    """
 
+    def run(self):
+        """
+        Builds a bipartite cost matrix using only cells present in valid pairs.
+        Applies the Hungarian algorithm to find optimal pairs.
+
+        Returns:
+        --------
+        list[tuple[tuple[int, int], tuple[int, int]]]
+            A list of pairs of cells.
+
+        Raises:
+        -------
+        ValueError: If the cost matrix is empty or if pairs are invalid.
+        """
+        pairs = self.grid.all_pairs(self.rules)
         # Split cells into even and odd partitions based on coordinates
         even_cells = []
         odd_cells = []
-        for cell in {cell for pair in valid_pairs for cell in pair}:
+        for cell in {cell for pair in pairs for cell in pair}:
             if (cell[0] + cell[1]) % 2 == 0:
                 even_cells.append(cell)
             else:
@@ -463,7 +466,7 @@ class SolverHungarian2(Solver):
         even_to_idx = {cell: i for i, cell in enumerate(even_cells)}
         odd_to_idx = {cell: j for j, cell in enumerate(odd_cells)}
 
-        for u, v in valid_pairs:
+        for u, v in pairs:
             if (u[0] + u[1]) % 2 != 0:
                 u, v = v, u  # Ensure u is even, v is odd
             if u in even_to_idx and v in odd_to_idx:
@@ -475,16 +478,13 @@ class SolverHungarian2(Solver):
 
         # Apply Hungarian algorithm on the bipartite matrix
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
+
         # Rebuild valid pairs from the result
         self.pairs = []
         for i, j in zip(row_ind, col_ind):
             if cost_matrix[i, j] < 0:
                 u = even_cells[i]
                 v = odd_cells[j]
-                if ((u, v) in valid_pairs) or ((v, u) in valid_pairs):
+                if ((u, v) in pairs) or ((v, u) in pairs):
                     self.pairs.append((u, v))
-
         return self.pairs
-
-

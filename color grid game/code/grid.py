@@ -33,14 +33,22 @@ class Grid:
             Number of rows in the grid.
         m : int
             Number of columns in the grid.
-        color : list[list[int]]
+        color : list[list[int]], optional
             The grid cells colors. Default is empty, which initializes each cell with color 0 (white).
-        value : list[list[int]]
+        value : list[list[int]], optional
             The grid cells values. Default is empty, which initializes each cell with value 1.
+
+        Raises:
+        -------
+        ValueError
+            If `n` or `m` is not a positive integer.
 
         Time Complexity: O(n * m)
         Space Complexity: O(n * m)
         """
+        if n <= 0 or m <= 0:
+            raise ValueError("Number of rows and columns must be positive integers.")
+
         self.n = n
         self.m = m
         if color is None or len(color) == 0:
@@ -50,6 +58,27 @@ class Grid:
             value = [[1 for _ in range(m)] for _ in range(n)]
         self.value = value
         self.colors_list = ['w', 'r', 'b', 'g', 'k']
+
+    def _is_within_bounds(self, i: int, j: int) -> bool:
+        """
+        Checks if a cell index is within the grid boundaries.
+
+        Parameters:
+        -----------
+        i : int
+            Row index of the cell.
+        j : int
+            Column index of the cell.
+
+        Returns:
+        --------
+        bool
+            True if the cell (i, j) is within the grid boundaries, False otherwise.
+
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
+        return 0 <= i < self.n and 0 <= j < self.m
 
     def __str__(self) -> str:
         """
@@ -89,6 +118,11 @@ class Grid:
         """
         Plots a visual representation of the grid using matplotlib.
 
+        Raises:
+        -------
+        ImportError
+            If matplotlib is not installed.
+
         Time Complexity: O(n * m)
         Space Complexity: O(n * m)
         """
@@ -119,9 +153,16 @@ class Grid:
         bool
             True if the cell (i, j) is black, False otherwise.
 
+        Raises:
+        -------
+        IndexError
+            If the cell (i, j) is out of the grid boundaries.
+
         Time Complexity: O(1)
         Space Complexity: O(1)
         """
+        if not self._is_within_bounds(i, j):
+            raise IndexError("Cell index out of grid boundaries.")
         return self.color[i][j] == 4
 
     def cost(self, pair: tuple[tuple[int, int], tuple[int, int]]) -> int:
@@ -138,10 +179,18 @@ class Grid:
         int
             The cost of the pair, defined as the absolute value of the difference between their values.
 
+        Raises:
+        -------
+        ValueError
+            If the pair does not contain valid cell indices.
+
         Time Complexity: O(1)
         Space Complexity: O(1)
         """
-        return abs(self.value[pair[0][0]][pair[0][1]] - self.value[pair[1][0]][pair[1][1]])
+        (i1, j1), (i2, j2) = pair
+        if not (self._is_within_bounds(i1, j1) and self._is_within_bounds(i2, j2)):
+            raise ValueError("Pair contains invalid cell indices.")
+        return abs(self.value[i1][j1] - self.value[i2][j2])
 
     def all_pairs(self, rules="original rules") -> list[tuple[tuple[int, int], tuple[int, int]]]:
         """
@@ -152,9 +201,17 @@ class Grid:
         list[tuple[tuple[int, int], tuple[int, int]]]
             A list of pairs of neighboring cells that are allowed to be paired.
 
+        Raises:
+        -------
+        ValueError
+            If the rules parameter is not recognized.
+
         Time Complexity: O(n * m)
         Space Complexity: O(n * m)
         """
+        if rules not in ["original rules", "new rules"]:
+            raise ValueError("Unrecognized rules parameter.")
+
         res = []
         allowed = {
             0: {0, 1, 2, 3},  # white can pair with all except black
@@ -163,65 +220,45 @@ class Grid:
             3: {0, 3}         # green can pair with white, green
         }
         directions = [(0, 1), (1, 0)]
-
-        for i in range(self.n):
-            for j in range(self.m):
-                if self.is_forbidden(i, j):
-                    continue
-                c1 = self.color[i][j]
-                for dx, dy in directions:
-                    k, l = i + dx, j + dy
-                    if 0 <= k < self.n and 0 <= l < self.m: # Check grid boundaries
-                        if self.is_forbidden(k, l):
-                            continue
-                        c2 = self.color[k][l]
-                        if c2 in allowed[c1] and c1 in allowed[c2]:
-                            res.append(((i, j), (k, l)))
-        return sorted(res)
-    
-    def all_pairs_new_rules(self) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-        """
-        Returns all allowed pairs of cells, where white cells can pair with any non-forbidden cell.
-
-        Returns:
-        --------
-        list[tuple[tuple[int, int], tuple[int, int]]]
-            A list of pairs of cells that are allowed to be paired.
-
-        Time Complexity: O((n*m)^2) in the worst case where all cells are white.
-        Space Complexity: O((n*m)^2) in the worst case.
-        """
-        res = []
-        allowed = {
-            0: {0, 1, 2, 3},  # white can pair with all except forbidden (black)
-            1: {0, 1, 2},     # red can pair with white, red, blue
-            2: {0, 1, 2},     # blue can pair with white, red, blue
-            3: {0, 3}         # green can pair with white, green
-        }
-        directions = [(0, 1), (1, 0)]
-
-        for i in range(self.n):
-            for j in range(self.m):
-                if self.is_forbidden(i, j):
-                    continue
-                c1 = self.color[i][j]
-                if c1 == 0:  # White cell can pair with any non-forbidden cell
-                    for k in range(self.n):
-                        for l in range(self.m):
-                            if (i == k and j == l) or self.is_forbidden(k, l):
-                                continue
-                            if (i, j) < (k, l):
-                                res.append(((i, j), (k, l)))
-                else:  # Non-white cells follow original adjacency rules
+        if rules == "original rules":
+            for i in range(self.n):
+                for j in range(self.m):
+                    if self.is_forbidden(i, j):
+                        continue
+                    c1 = self.color[i][j]
                     for dx, dy in directions:
                         k, l = i + dx, j + dy
-                        if 0 <= k < self.n and 0 <= l < self.m:
+                        if self._is_within_bounds(k, l):  # Check grid boundaries
                             if self.is_forbidden(k, l):
                                 continue
                             c2 = self.color[k][l]
                             if c2 in allowed[c1] and c1 in allowed[c2]:
                                 res.append(((i, j), (k, l)))
-        return sorted(res)
+            return sorted(res)
+
+        elif rules == "new rules":
+            for i in range(self.n):
+                for j in range(self.m):
+                    if self.is_forbidden(i, j):
+                        continue
+                    c1 = self.color[i][j]
+                    if c1 == 0:  # White cell can pair with any non-forbidden cell
+                        for k in range(self.n):
+                            for l in range(self.m):
+                                if (i == k and j == l) or self.is_forbidden(k, l):
+                                    continue
+                                if (i, j) < (k, l):
+                                    res.append(((i, j), (k, l)))
+                    else:  # Non-white cells follow original adjacency rules
+                        for dx, dy in directions:
+                            k, l = i + dx, j + dy
+                            if self._is_within_bounds(k, l):
+                                if self.is_forbidden(k, l):
+                                    continue
+                                c2 = self.color[k][l]
+                                if c2 in allowed[c1] and c1 in allowed[c2]:
+                                    res.append(((i, j), (k, l)))
+            return sorted(res)
 
     def vois(self, i: int, j: int) -> list[tuple[int, int]]:
         """
@@ -239,14 +276,22 @@ class Grid:
         list[tuple[int, int]]
             A list of neighboring cell coordinates.
 
+        Raises:
+        -------
+        IndexError
+            If the cell (i, j) is out of the grid boundaries.
+
         Time Complexity: O(1)
         Space Complexity: O(1)
         """
+        if not self._is_within_bounds(i, j):
+            raise IndexError("Cell index out of grid boundaries.")
+
         res = []
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dx, dy in directions:
             k, l = i + dx, j + dy
-            if 0 <= k < self.n and 0 <= l < self.m:  # Check grid boundaries
+            if self._is_within_bounds(k, l):  # Check grid boundaries
                 res.append((k, l))
         return res
 
@@ -270,67 +315,91 @@ class Grid:
         Grid
             The initialized Grid object.
 
+        Raises:
+        -------
+        FileNotFoundError
+            If the file does not exist.
+        ValueError
+            If the file format is incorrect or contains invalid color values.
+
         Time Complexity: O(n * m)
         Space Complexity: O(n * m)
         """
-        with open(file_name, "r") as file:
-            n, m = map(int, file.readline().split())
-            color = [[] for _ in range(n)]
-            for i_line in range(n):
-                line_color = list(map(int, file.readline().split()))
-                if len(line_color) != m:
-                    raise Exception("Incorrect format")
-                for j in range(m):
-                    if line_color[j] not in range(5):
-                        raise Exception("Invalid color")
-                color[i_line] = line_color
-
-            if read_values:
-                value = [[] for _ in range(n)]
+        try:
+            with open(file_name, "r") as file:
+                n, m = map(int, file.readline().split())
+                color = [[] for _ in range(n)]
                 for i_line in range(n):
-                    line_value = list(map(int, file.readline().split()))
-                    if len(line_value) != m:
-                        raise Exception("Incorrect format")
-                    value[i_line] = line_value
-            else:
-                value = []
+                    line_color = list(map(int, file.readline().split()))
+                    if len(line_color) != m:
+                        raise ValueError("Incorrect format")
+                    for j in range(m):
+                        if line_color[j] not in range(5):
+                            raise ValueError("Invalid color")
+                    color[i_line] = line_color
 
-            grid = Grid(n, m, color, value)
+                if read_values:
+                    value = [[] for _ in range(n)]
+                    for i_line in range(n):
+                        line_value = list(map(int, file.readline().split()))
+                        if len(line_value) != m:
+                            raise ValueError("Incorrect format")
+                        value[i_line] = line_value
+                else:
+                    value = []
+
+                grid = Grid(n, m, color, value)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {file_name} does not exist.")
+
         return grid
 
-    def bipartite_graph(self)->dict:
+    def bipartite_graph(self) -> dict:
         """
         Returns a bipartite graph version of the grid, i.e., creates a graph of the grid with two sets of even cells, odd cells.
         The graph already contains the valid pairs as edges.
-        Parameters: None
-        Result: A graph G stored as a dict type with two underdict even and odd edges.
+
+        Returns:
+        --------
+        dict
+            A graph G stored as a dict type with two underdicts 'even' and 'odd' edges.
+
+        Raises:
+        -------
+        ValueError
+            If the grid contains no valid pairs.
+
+        Time Complexity: O(n * m)
+        Space Complexity: O(n * m)
         """
         G = {
             'even': {},
             'odd': {}
-        } # Preparing the two sets of edges.
+        }  # Preparing the two sets of edges.
         pairs = self.all_pairs()
 
-    # Adding edges with color and adjacency constraints
+        if not pairs:
+            raise ValueError("The grid contains no valid pairs.")
+
+        # Adding edges with color and adjacency constraints
         for i in range(self.n):
             for j in range(self.m):
                 if self.color[i][j] != 4:  # Ignoring black cells
                     cell = (i, j)
-                    if (i + j)% 2 == 0 :
+                    if (i + j) % 2 == 0:
                         cell_parity = "even"
-                    else : 
+                    else:
                         cell_parity = "odd"  # Needed to access the Graph set
                     neighbor_parity = "even" if cell_parity == "odd" else "odd"
-                    for i2, j2 in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]: # Checking all the valid neighbors
-                            if 0 <= i2 < self.n and 0 <= j2 < self.m and not self.is_forbidden(i2, j2): # In the grid and not black
-                                if (cell, (i2, j2)) in pairs or ((i2, j2), cell) in pairs:
-                                    if cell not in G[cell_parity]: # If the cell is not already in the dictionnary
-                                        G[cell_parity][cell] = []
-                                    if (i2, j2) not in G[neighbor_parity]:
-                                        G[neighbor_parity][(i2, j2)] = []
-                                    if (i2, j2) not in G[cell_parity][cell]: # To avoid redundance
-                                        G[cell_parity][cell].append((i2, j2))
-                                        G[neighbor_parity][(i2, j2)].append(cell)
-                    
+                    for i2, j2 in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:  # Checking all the valid neighbors
+                        if self._is_within_bounds(i2, j2) and not self.is_forbidden(i2, j2):  # In the grid and not black
+                            if (cell, (i2, j2)) in pairs or ((i2, j2), cell) in pairs:
+                                if cell not in G[cell_parity]:  # If the cell is not already in the dictionary
+                                    G[cell_parity][cell] = []
+                                if (i2, j2) not in G[neighbor_parity]:
+                                    G[neighbor_parity][(i2, j2)] = []
+                                if (i2, j2) not in G[cell_parity][cell]:  # To avoid redundancy
+                                    G[cell_parity][cell].append((i2, j2))
+                                    G[neighbor_parity][(i2, j2)].append(cell)
+
         return G
-    

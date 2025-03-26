@@ -3,7 +3,7 @@ import sys
 import os
 from grid import Grid
 from solver import Solver, SolverBlossom, SolverHungarian
-from bot_2_players import move_to_play
+from min_max_bot import move_to_play
 
 pygame.init()
 
