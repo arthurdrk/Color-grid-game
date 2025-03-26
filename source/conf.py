@@ -23,13 +23,6 @@ extensions = []
 templates_path = ['_templates']
 exclude_patterns = []
 
-extensions = [
-    'sphinx.ext.duration',
-    'sphinx.ext.doctest',
-    'sphinx.ext.autodoc',
-    'numpydoc',
-    'sphinx.ext.napoleon'
-]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
