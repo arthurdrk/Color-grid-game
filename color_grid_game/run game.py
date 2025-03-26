@@ -1,6 +1,4 @@
-from grid import Grid
-from solver import Solver, SolverHungarian
-from min_max_bot import move_to_play
+from color_grid_game import *
 
 pygame.init()
 

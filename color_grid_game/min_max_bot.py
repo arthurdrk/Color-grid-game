@@ -1,4 +1,4 @@
-from grid import Grid
+from color_grid_game import *
 
 def move_to_play(grid: Grid):
     """

@@ -7,19 +7,19 @@ import os
 import numpy as np
 import time
 import pygame
+import matplotlib.pyplot as plt
+import matplotlib.colors
 from collections import deque
 from itertools import repeat
-
 
 # type-hinting typedefs
 cell = tuple[int, int]
 state = list[list[int]]
 
 # modules
-from swap_puzzle.exception import *
+
 from sp_utils import SPUtils
-from graph import Graph
 from grid import Grid
 
 from solver import Solver
-from swap_puzzle.solvers import *
+from color_grid_game.solvers import *

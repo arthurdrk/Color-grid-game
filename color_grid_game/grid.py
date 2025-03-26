@@ -1,7 +1,4 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.colors
-from collections import defaultdict
+from color_grid_game import *
 
 class Grid:
     """
