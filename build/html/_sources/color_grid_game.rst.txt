@@ -1,0 +1,7 @@
+Color Grid Game
+================
+
+.. automodule:: color_grid_game
+   :members:
+   :undoc-members:
+   :show-inheritance:

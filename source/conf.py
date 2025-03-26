@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join('../..', '../../code')))
+sys.path.insert(0, os.path.abspath('/color_grid_game/code/'))
 
 project = 'ENSAE Programming Project 2025 (Color Grid Game)'
 copyright = '2025, ABITBOL Dimitri & DE ROUCK Arthur'
@@ -20,6 +20,8 @@ author = 'ABITBOL Dimitri & DE ROUCK Arthur'
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',   # Ajoute des liens vers le code source
+    'sphinx.ext.napoleon',   # Support des docstrings Google et NumPy
 ]
 
 templates_path = ['_templates']
