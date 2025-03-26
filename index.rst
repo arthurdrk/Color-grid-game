@@ -1,10 +1,10 @@
-.. Color grid game documentation master file, created by
-   sphinx-quickstart on Wed Mar 26 01:08:14 2025.
+.. ENSAE - Programming Project 2024 : Color Grid Game documentation master file, created by
+   sphinx-quickstart on Wed Mar 26 02:27:38 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Color grid game documentation
-=============================
+ENSAE - Programming Project 2024 : Color Grid Game documentation
+================================================================
 
 Add your content using ``reStructuredText`` syntax. See the
 `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_

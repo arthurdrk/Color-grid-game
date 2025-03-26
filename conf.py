@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Color grid game'
+project = 'ENSAE - Programming Project 2024 : Color Grid Game'
 copyright = '2025, ABITBOL Dimitri and DE ROUCK Arthur'
 author = 'ABITBOL Dimitri and DE ROUCK Arthur'
 
@@ -16,7 +16,7 @@ author = 'ABITBOL Dimitri and DE ROUCK Arthur'
 extensions = []
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 
