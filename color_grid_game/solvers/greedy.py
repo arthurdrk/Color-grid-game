@@ -1,3 +1,4 @@
+from color_grid_game import *
 
 class SolverGreedy(Solver):
     """

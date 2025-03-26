@@ -1,3 +1,5 @@
+from color_grid_game import *
+
 class SolverHungarian(Solver):
     """
     A solver that uses the Hungarian algorithm to find optimal pairs in a grid.

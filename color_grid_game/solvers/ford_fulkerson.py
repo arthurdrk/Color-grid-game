@@ -1,3 +1,5 @@
+from color_grid_game import *
+
 class SolverFordFulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.

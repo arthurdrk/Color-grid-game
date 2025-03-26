@@ -1,3 +1,5 @@
+from color_grid_game import *
+
 class SolverHungarian_general(Solver):
     """
     An alternative implementation of the Hungarian algorithm solver.

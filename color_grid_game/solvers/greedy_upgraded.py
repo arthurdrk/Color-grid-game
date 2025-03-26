@@ -1,3 +1,5 @@
+from color_grid_game import *
+
 class SolverGreedy_upgraded(Solver):
     """
     Improvement of SolverGreedy that tries all possible starting points and keeps the pairing with the minimum score.

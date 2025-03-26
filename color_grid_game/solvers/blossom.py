@@ -1,7 +1,4 @@
-
-import networkx as nx
-from collections import defaultdict
-
+from color_grid_game import *
 
 class SolverBlossom(Solver):
     """
