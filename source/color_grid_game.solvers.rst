@@ -52,14 +52,6 @@ color\_grid\_game.solvers.hungarian module
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.hungarian\_general module
----------------------------------------------------
-
-.. automodule:: color_grid_game.solvers.hungarian_general
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
