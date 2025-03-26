@@ -10,7 +10,7 @@ Documentation of ENSAE Programming Project 2025 (Color Grid Game)
    :maxdepth: 4
    :caption: ABITBOL Dimitri & DE ROUCK Arthur
 
-   color grid game
+   color_grid_game
 
 
 
