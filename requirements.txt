@@ -3,4 +3,7 @@ matplotlib
 numpy
 scipy
 networkx
+collections
+itertools
+time
 sphinx_rtd_theme==1.3.0
