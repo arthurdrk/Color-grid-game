@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join('../..', '..', 'color_grid_game')))
+sys.path.insert(0, os.path.abspath(os.path.join('../..', '../../code')))
 
 project = 'ENSAE Programming Project 2025 (Color Grid Game)'
 copyright = '2025, ABITBOL Dimitri & DE ROUCK Arthur'
@@ -18,7 +18,9 @@ author = 'ABITBOL Dimitri & DE ROUCK Arthur'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+    'sphinx.ext.autodoc',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
