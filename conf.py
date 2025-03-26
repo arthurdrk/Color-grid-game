@@ -16,6 +16,7 @@ author = 'ABITBOL Dimitri and DE ROUCK Arthur'
 extensions = []
 
 templates_path = ['_templates']
+html_theme = "sphinx_rtd_theme"
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
