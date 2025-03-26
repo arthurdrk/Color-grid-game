@@ -1,12 +1,10 @@
-import sys
-sys.path.append("./ensae-prog25/code/")
+from color_grid_game import *
 import unittest
-from grid import Grid
 
 class Test_String_Repr(unittest.TestCase):
     
     def test_str_representation00(self):
-        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
+        grid = Grid.grid_from_file("../input/grid00.in", read_values=True)
         expected_str = (
             "The grid is 2 x 3. It has the following colors:\n"
             "['w', 'w', 'w']\n"
@@ -18,7 +16,7 @@ class Test_String_Repr(unittest.TestCase):
         self.assertEqual(str(grid), expected_str)
         
     def test_str_representation01(self):
-        grid = Grid.grid_from_file("input/grid01.in", read_values=True)
+        grid = Grid.grid_from_file("../input/grid01.in", read_values=True)
         expected_str = (
             "The grid is 2 x 3. It has the following colors:\n"
             "['w', 'k', 'g']\n"
@@ -30,7 +28,7 @@ class Test_String_Repr(unittest.TestCase):
         self.assertEqual(str(grid), expected_str)
             
     def test_str_representation02(self):
-        grid = Grid.grid_from_file("input/grid02.in", read_values=True)
+        grid = Grid.grid_from_file("../input/grid02.in", read_values=True)
         expected_str = (
             "The grid is 2 x 3. It has the following colors:\n"
             "['w', 'k', 'g']\n"
@@ -42,7 +40,7 @@ class Test_String_Repr(unittest.TestCase):
         self.assertEqual(str(grid), expected_str)
 
     def test_str_representation03(self):
-        grid = Grid.grid_from_file("input/grid03.in", read_values=True)
+        grid = Grid.grid_from_file("../input/grid03.in", read_values=True)
         expected_str = (
             "The grid is 4 x 8. It has the following colors:\n"
             "['k', 'k', 'w', 'k', 'k', 'k', 'k', 'w']\n"

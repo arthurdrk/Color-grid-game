@@ -1,9 +1,5 @@
-import sys 
-sys.path.append("./ensae-prog25/code/")
-import unittest 
-from grid import Grid
-import numpy as np
-import matplotlib.pyplot as plt
+from color_grid_game import *
+import unittest
 
 class Test_Constructor(unittest.TestCase):
     

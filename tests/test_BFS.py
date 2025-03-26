@@ -1,7 +1,5 @@
-import sys 
-sys.path.append("./ensae-prog25/code/")
+from color_grid_game import *
 import unittest
-from solver import SolverFordFulkerson
 
 class TestBFS(unittest.TestCase):
 
