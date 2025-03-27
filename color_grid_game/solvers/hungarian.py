@@ -25,14 +25,9 @@ class SolverHungarian(Solver):
         ValueError
             If the cost matrix is empty or if pairs are invalid.
         """
+        pairs = self.grid.all_pairs(self.rules)
+        all_cells = list(set(cell for pair in pairs for cell in pair))
         if self.rules == "original rules":
-            # Collect all unique cells from valid pairs
-            pairs = self.grid.all_pairs()
-            all_cells = set()
-            for u, v in pairs:
-                all_cells.add(u)
-                all_cells.add(v)
-
             # Split into even/odd based on coordinate parity
             even_cells = []
             odd_cells = []
@@ -69,11 +64,7 @@ class SolverHungarian(Solver):
                 if i < even_count and j < odd_count and cost_matrix[i][j] != 0:
                     self.pairs.append((even_cells[i], odd_cells[j]))
 
-        elif rules == "new rules":
-            # Collect all unique cells from valid pairs
-            pairs = self.grid.all_pairs()
-            all_cells = list(set(cell for pair in pairs for cell in pair))
-
+        elif self.rules == "new rules":
             # Create a square cost matrix
             num_cells = len(all_cells)
             cost_matrix = np.zeros((num_cells, num_cells))

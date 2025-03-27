@@ -15,17 +15,17 @@ if __name__ == '__main__':
 
         grid = Grid.grid_from_file(full_file_path, read_values=True)
         #solver_blossom_original_rules = SolverBlossom(grid, "original rules")
-        #solver_blossom_new_rules = SolverBlossom(grid, "new rules")
-        solver_hungarian1 = SolverHungarian_general(grid, "original rules")
+        solver_blossom_new_rules = SolverBlossom(grid, "new rules")
+        solver_hungarian1 = SolverHungarian(grid, "new rules")
 
         # Start the timer
         # start_blossom_original = time.time()
         # solver_blossom_original_rules.run()
         # end_blossom_original = time.time()
         
-        # start_blossom_new = time.time()
-        # #solver_blossom_new_rules.run()
-        # end_blossom_new = time.time()
+        start_blossom_new = time.time()
+        solver_blossom_new_rules.run()
+        end_blossom_new = time.time()
 
         # start_greedy = time.time()
         # solver_greedy.run()
@@ -44,21 +44,21 @@ if __name__ == '__main__':
         # end_mincost = time.time()
 
         #blossom_original_score = solver_blossom_original_rules.score()
-        #blossom_new_score = solver_blossom_new_rules.score()
+        blossom_new_score = solver_blossom_new_rules.score()
         # greedy_score = solver_greedy.score()
         # greedy_upgraded_score = solver_greedy_upgraded.score()
         hungarian1_score = solver_hungarian1.score()
         # mincost_score = solver_mincost.score()
 
         #time_blossom_original = end_blossom_original - start_blossom_original
-        #time_blossom_new = end_blossom_new - start_blossom_new
+        time_blossom_new = end_blossom_new - start_blossom_new
         #time_greedy = end_greedy - start_greedy
         #time_greedy_upgraded = end_greedy_upgraded - start_greedy_upgraded
         time_hungarian1 = end_hungarian1 - start_hungarian1
         # time_mincost = end_mincost - start_mincost
         
         #print(f"  SolverBlossom Original score: {blossom_original_score},  Time : {time_blossom_original:.4f} seconds")
-        #print(f"  SolverBlossom New score: {blossom_new_score},  Time : {time_blossom_new:.4f} seconds")
+        print(f"  SolverBlossom New score: {blossom_new_score},  Time : {time_blossom_new:.4f} seconds")
         #print(f"  SolverGreedy score: {greedy_score},  Time : {time_greedy:.4f} seconds")
         #print(f"  SolverGreedyUpgraded score: {greedy_upgraded_score},  Time : {time_greedy_upgraded:.4f} seconds")
         # print(f"  SolverMinCost score: {mincost_score},  Time : {time_mincost:.4f} seconds\n")
