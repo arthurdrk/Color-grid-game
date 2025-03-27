@@ -10,7 +10,7 @@ class SolverHungarian(Solver):
     An alternative implementation of the Hungarian algorithm solver.
     """
 
-    def run(self, rules="original rules"):
+    def run(self):
         """
         Builds a bipartite cost matrix using only cells present in valid pairs.
         Applies the Hungarian algorithm to find optimal pairs.

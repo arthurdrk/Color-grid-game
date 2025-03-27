@@ -24,7 +24,7 @@ class SolverGreedy_upgraded(Solver):
         ValueError
             If any cell in pairs is invalid.
         """
-        pairs = self.grid.all_pairs()
+        pairs = self.grid.all_pairs(self.rules)
         pair_dict = defaultdict(list)
         for pair in pairs:
             pair_dict[pair[0]].append(pair)

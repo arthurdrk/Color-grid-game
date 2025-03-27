@@ -29,7 +29,7 @@ class SolverFordFulkerson(Solver):
         odd_cells = set()
 
         # Add edges between cells (direction: from even to odd)
-        for cell1, cell2 in self.grid.all_pairs():
+        for cell1, cell2 in self.grid.all_pairs(self.rules):
             even, odd = (cell1, cell2) if sum(cell1) % 2 == 0 else (cell2, cell1)
             even_cells.add(even)
             odd_cells.add(odd)

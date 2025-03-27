@@ -13,10 +13,9 @@ from collections.abc import Callable
 from collections import deque 
 from collections import defaultdict
 from itertools import repeat
+
 # modules
 from .grid import Grid
 from .min_max_bot import Bot
-from .sp_utils import SPUtils
-
 from .solver import Solver
 from .solvers import *

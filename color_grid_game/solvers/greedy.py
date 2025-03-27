@@ -25,7 +25,7 @@ class SolverGreedy(Solver):
         """
         used = set()  # Cells that have already been visited
         res = []
-        pairs = self.grid.all_pairs()
+        pairs = self.grid.all_pairs(self.rules)
 
         # Create a dictionary to quickly access pairs by cell
         pair_dict = defaultdict(list)
