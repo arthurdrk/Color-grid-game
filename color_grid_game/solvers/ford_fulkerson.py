@@ -1,6 +1,5 @@
 import sys
 import os
-from collections import defaultdict, deque
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
