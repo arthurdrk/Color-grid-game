@@ -52,14 +52,6 @@ color\_grid\_game.solver module
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.sp\_utils module
-----------------------------------
-
-.. automodule:: color_grid_game.sp_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
