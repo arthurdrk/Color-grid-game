@@ -1199,7 +1199,7 @@ class Game:
             if not self.game_over:
                 if remaining_p1 <= 0:
                     self.game_over = True
-                    self.ui_manager.lose_sound.play()
+                    self.ui_manager.win_sound.play()
                     self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                 elif remaining_p2 <= 0:
                     self.game_over = True
@@ -1266,7 +1266,7 @@ class Game:
                             self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
                             # Joueur 2 gagne par score
-                            self.ui_manager.lose_sound.play()
+                            self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
                             # Égalité de score, vérifier le temps restant
@@ -1276,7 +1276,7 @@ class Game:
                                 self.ui_manager.win_sound.play()
                                 self.ui_manager.draw_end_screen("Player 1 Wins (Time)!", self.colors[5], window_size)
                             elif remaining_p2 > remaining_p1:
-                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.win_sound.play()
                                 self.ui_manager.draw_end_screen("Player 2 Wins (Time)!", (148, 0, 211), window_size)
                             else:
                                 self.ui_manager.lose_sound.play()
@@ -1292,11 +1292,11 @@ class Game:
 
                     # Dans le bloc 'bot' mode
                     elif self.player_mode == 'bot':
-                        if self.player_scores[0] < self.player_scores[1]:
+                        if self.player_scores[0] > self.player_scores[1]:
                             # Le bot gagne par score
                             self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
-                        elif self.player_scores[1] < self.player_scores[0]:
+                        elif self.player_scores[1] > self.player_scores[0]:
                             # Le joueur gagne par score
                             self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("You Won!", self.colors[5], window_size)
