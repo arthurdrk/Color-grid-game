@@ -134,9 +134,9 @@ class Bot:
             
             if choice_adversaire is None:
                 # The opponent does not play
-                score = 0 - grid.cost(pair)
+                score = grid.cost(pair)
             else:
-                score = - grid.cost(pair) - grid.cost(choice_adversaire)
+                score =  grid.cost(pair) - grid.cost(choice_adversaire)
     
             # We take the pair that minimizes the score
             if score < best_score:
