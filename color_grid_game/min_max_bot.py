@@ -16,7 +16,7 @@ class Bot:
     """
 
     @staticmethod
-    def move_to_play(grid: Grid, rules) -> tuple[tuple[int, int], tuple[int, int]] | None:
+    def move_to_play2(grid: Grid, rules: str) -> tuple[tuple[int, int], tuple[int, int]] | None:
         """
         Choose the best pair by:
         1. Minimizing the current move's cost for the bot.
@@ -86,7 +86,7 @@ class Bot:
         return best_pair if best_pair is not None else pairs[0]
 
 
-    def calcul_coup_fast(grid: Grid):
+    def move_to_play(grid: Grid, rules: str):
         """
         Choose the best pair considering that the opponent is playing greedy and
         will choose the best possible pair with a one-turn prediction.
@@ -105,7 +105,7 @@ class Bot:
         Complexity : O(n*m * log(n*m))
         """ 
     
-        pairs = grid.all_pairs()  # O(n*m)
+        pairs = grid.all_pairs(rules)  # O(n*m)
         if not pairs:
             return None
     

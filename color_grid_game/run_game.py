@@ -160,6 +160,43 @@ class UIManager:
 
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect.inflate(0, scroll_bar_height - scroll_bar_rect.height))
 
+    def draw_rule_choice(self, window_size: tuple, pressed_button: str):
+        """
+        Dessine les boutons de choix des règles.
+        """
+        font = pygame.font.Font(None, 50)
+        
+        classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+        color_choice = (30, 30, 30) if pressed_button == 'classic' else (50, 50, 50)
+        pygame.draw.rect(self.screen, color_choice, classic_rect)
+        text = font.render("Classic Rules", True, (255, 255, 255))
+        text_rect = text.get_rect(center=classic_rect.center)
+        self.screen.blit(text, text_rect)
+
+        new_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+        color_choice = (30, 30, 30) if pressed_button == 'new' else (50, 50, 50)
+        pygame.draw.rect(self.screen, color_choice, new_rect)
+        text = font.render("No Adjacency", True, (255, 255, 255))
+        text_rect = text.get_rect(center=new_rect.center)
+        self.screen.blit(text, text_rect)
+
+        # Animation du titre
+        current_time = pygame.time.get_ticks()
+        if current_time - self.color_timer > self.color_interval:
+            self.color_index = (self.color_index + 1) % len(self.colors_title)
+            self.color_timer = current_time
+        
+        title_colors = [self.colors_title[(self.color_index + i) % len(self.colors_title)] for i in range(11)]
+        title_font = pygame.font.Font(None, 72)
+        title = "Rules Choice"
+        total_width = sum(title_font.size(char)[0] for char in title)
+        start_x = (window_size[0] - total_width) // 2
+        current_x = start_x
+        for i, char in enumerate(title):
+            text = title_font.render(char, True, title_colors[i])
+            self.screen.blit(text, (current_x, 20))
+            current_x += text.get_width()
+        
     def darken_color(self, color: tuple, factor: float = 0.7) -> tuple:
         """
         Darkens a color by a given factor.
@@ -673,7 +710,7 @@ class GridManager:
 class SolverManager:
     """Manages the solver logic for the game."""
 
-    def __init__(self, grid: Grid):
+    def __init__(self, grid: Grid, rules: str):
         """
         Initialize the SolverManager with a grid.
 
@@ -682,8 +719,8 @@ class SolverManager:
         grid : Grid
             The game grid.
         """
-        self.solver = Solver(grid)
-        self.solver_general = SolverHungarian(grid)
+        self.solver = Solver(grid, rules)
+        self.solver_general = SolverHungarian(grid, rules)
         self.solver_general.run()
         self.general_score = self.solver_general.score()
 
@@ -970,8 +1007,42 @@ class Game:
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
+        self.selected_rules = "original rules"
+        rules_selected = False
+        while not rules_selected:
+            self.screen.fill((255, 255, 255))
+            window_size = self.screen.get_size()
+            self.ui_manager.draw_rule_choice(window_size, self.pressed_button)
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        x, y = event.pos
+                        classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+                        new_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        if classic_rect.collidepoint(x, y):
+                            self.pressed_button = 'classic'
+                        elif new_rect.collidepoint(x, y):
+                            self.pressed_button = 'new'
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1 and self.pressed_button:
+                        x, y = event.pos
+                        classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+                        new_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        if classic_rect.collidepoint(x, y) and self.pressed_button == 'classic':
+                            self.selected_rules = "original rules"
+                            rules_selected = True
+                        elif new_rect.collidepoint(x, y) and self.pressed_button == 'new':
+                            self.selected_rules = "new rules"
+                            rules_selected = True
+                        self.pressed_button = None
+
         grid = self.grid_manager.load_grid(self.selected_grid)
-        solver_manager = SolverManager(grid)
+        solver_manager = SolverManager(grid, self.selected_rules)
         general_score = solver_manager.general_score
 
         if self.selected_grid.startswith("grid0"):
@@ -1008,7 +1079,7 @@ class Game:
                         for (i, j) in pair:
                             grid_copy.color[i][j] = 4
 
-                bot_pair = Bot.move_to_play(grid_copy)
+                bot_pair = Bot.move_to_play(grid_copy, self.selected_rules)
                 if bot_pair is not None:
                     valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs)
                     if valid:
