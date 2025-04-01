@@ -1,4 +1,3 @@
-
 import sys
 import os
 import pygame
@@ -250,7 +249,9 @@ class UIManager:
 
         pygame.draw.rect(self.screen, color, (frame_x, frame_y, frame_width, frame_height), 4)
 
-    def draw_score(self, solver: Solver, window_size: tuple, cell_size: int, player1_score: int, player2_score: int, game_mode: str = 'one'):
+    def draw_score(self, solver: Solver, window_size: tuple, cell_size: int,
+               player1_score: int, player2_score: int, game_mode: str = 'one',
+               player_timers: list = None, current_player: int = 1):
         """
         Draws the current score.
 
@@ -271,19 +272,32 @@ class UIManager:
         """
         font = pygame.font.Font(None, 38)
 
+        def format_time(seconds):
+            if seconds < 0:
+                seconds = 0
+            minutes = int(seconds // 60)
+            seconds_part = int(seconds % 60)  # Integer seconds for display
+            return f"{minutes:02}:{seconds_part:02}"
+
         if game_mode == 'one':
-            text = font.render(f"Score: {solver.score()}", True, (0, 0, 0))
+            time_str = format_time(player_timers[0])
+            text = font.render(f"Score: {solver.score()} | Timer: {time_str}", True, (0, 0, 0))
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
-        elif game_mode == 'two':
-            text = font.render(f"Player 1: {player1_score}", True, self.colors[5])
-            self.screen.blit(text, (5, window_size[1] - cell_size - 45))
-            text = font.render(f"Player 2: {player2_score}", True, (148, 0, 211))
-            self.screen.blit(text, (5, window_size[1] - cell_size - 15))
         else:
-            text = font.render(f"Player 1: {player1_score}", True, self.colors[5])
+            time1 = format_time(player_timers[0]) 
+            time2 = format_time(player_timers[1]) 
+
+            # Joueur 1
+            color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
+            text = font.render(f"Player 1: {player1_score} | Timer: {time1}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
-            text = font.render(f"Stockfish: {player2_score}", True, (148, 0, 211))
+
+            # Joueur 2 ou Stockfish
+            opponent_text = "Player 2" if game_mode == 'two' else "Stockfish"
+            color = self.darken_color((148, 0, 211)) if current_player != 2 else (148, 0, 211)
+            text = font.render(f"{opponent_text}: {player2_score} | Timer: {time2}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 15))
+
 
     def draw_turn_indicator(self, current_player: int, window_size: tuple, top_margin: int, game_mode: str):
         """
@@ -554,6 +568,7 @@ class UIManager:
         self.draw_menu_button(window_size, False)
         pygame.display.flip()
 
+
 class GridManager:
     """Manages the loading and coloring of grid files."""
 
@@ -814,6 +829,10 @@ class Game:
         self.player_pairs = [[], []]
         self.player_scores = [0, 0]
         self.volume_button_pressed_time = None
+        self.player_initial_times = [0.0, 0.0]  # Initial time allocated (seconds)
+        self.player_time_used = [0.0, 0.0]      # Total time used (seconds)
+        self.start_times = [0, 0]               # When current turn started (milliseconds)
+        self.player_timers = [0.0, 0.0]         # Remaining time (seconds), to be set later
 
     def main(self):
         """Main game loop."""
@@ -953,6 +972,17 @@ class Game:
         solver_manager = SolverManager(grid)
         general_score = solver_manager.general_score
 
+        if self.selected_grid.startswith("grid0"):
+            self.player_initial_times = [3 * 60.0, 3 * 60.0]  # 3 minutes pour chaque joueur
+        elif self.selected_grid.startswith("grid1"):
+            self.player_initial_times = [5 * 60.0, 5 * 60.0]  # 5 minutes
+        elif self.selected_grid.startswith("grid2"):
+            self.player_initial_times = [10 * 60.0, 10 * 60.0] # 10 minutes
+
+        self.player_timers = self.player_initial_times.copy()
+        self.player_time_used = [0.0, 0.0]
+        self.start_times = [pygame.time.get_ticks(), 0]  # Joueur 1 commence
+
         cell_size = 60
         top_margin = 50 if self.player_mode in ['two', 'bot'] else 0
         window_height = grid.n * cell_size + 110 + top_margin
@@ -965,6 +995,7 @@ class Game:
         self.pressed_button = None
 
         while True:
+            current_time = pygame.time.get_ticks()
             if self.player_mode == 'bot' and self.current_player == 2 and not self.game_over:
                 grid_copy = Grid(grid.n, grid.m,
                                 [row.copy() for row in grid.color],
@@ -977,14 +1008,17 @@ class Game:
 
                 bot_pair = Bot.move_to_play(grid_copy)
                 if bot_pair is not None:
-                    valid = solver_manager.pair_is_valid(
-                        bot_pair, [], grid, self.player_pairs)
+                    valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs)
                     if valid:
-                        pygame.time.wait(1000)
+                        bot_start_time = pygame.time.get_ticks()
+                        pygame.time.wait(1000)  # Simulate bot thinking
+                        bot_end_time = pygame.time.get_ticks()
+                        elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
+                        self.player_time_used[1] += elapsed_bot
                         self.player_pairs[1].append(bot_pair)
-                        self.player_scores[1] = solver_manager.calculate_two_player_score(
-                            self.player_pairs[1], grid)
+                        self.player_scores[1] = solver_manager.calculate_two_player_score(self.player_pairs[1], grid)
                         self.current_player = 1
+                        self.start_times[0] = pygame.time.get_ticks()
                     else:
                         self.game_over = True
                 else:
@@ -1009,8 +1043,6 @@ class Game:
                         elif menu_rect.collidepoint(x, y):
                             self.pressed_button = 'menu'
                         elif y >= window_size[1] - 40 and x <= 220:
-                            self.ui_manager.update_volume((x - 20) / 200)
-                        else:
                             self.pressed_button = None
                     else:
                         i, j = (y - top_margin) // cell_size, x // cell_size
@@ -1037,16 +1069,29 @@ class Game:
                                                     (self.selected_cells[0], self.selected_cells[1]),
                                                     [], grid, self.player_pairs)
                                                 if valid:
+                                                    # Update time used for Player 1
+                                                    elapsed = (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
+                                                    self.player_time_used[0] += elapsed
+                                                    # Add the pair and update score
                                                     self.player_pairs[0].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[0] = solver_manager.calculate_two_player_score(self.player_pairs[0], grid)
+                                                    # Switch to bot
                                                     self.current_player = 2
+                                                    self.start_times[1] = pygame.time.get_ticks()
                                                 else:
                                                     self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
                                             else:
                                                 if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs):
+                                                    # Update time used for the current player
+                                                    elapsed = (pygame.time.get_ticks() - self.start_times[self.current_player - 1]) / 1000.0
+                                                    self.player_time_used[self.current_player - 1] += elapsed
+                                                    # Add the pair and update score
                                                     self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[self.current_player - 1] = solver_manager.calculate_two_player_score(self.player_pairs[self.current_player - 1], grid)
-                                                    self.current_player = 2 if self.current_player == 1 else 1
+                                                    # Switch player
+                                                    self.current_player = 3 - self.current_player  # 1 -> 2, 2 -> 1
+                                                    # Set start time for the new player
+                                                    self.start_times[self.current_player - 1] = pygame.time.get_ticks()
                                                 else:
                                                     self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
                                         else:
@@ -1081,6 +1126,16 @@ class Game:
                                 self.player_pairs = [[], []]
                                 self.current_player = 1
                                 self.player_scores = [0, 0]
+                                # Reset timers
+                                if self.selected_grid.startswith("grid0"):
+                                    self.player_initial_times = [3 * 60.0, 3 * 60.0]
+                                elif self.selected_grid.startswith("grid1"):
+                                    self.player_initial_times = [5 * 60.0, 5 * 60.0]
+                                elif self.selected_grid.startswith("grid2"):
+                                    self.player_initial_times = [10 * 60.0, 10 * 60.0]
+                                self.player_timers = self.player_initial_times.copy()
+                                self.player_time_used = [0.0, 0.0]
+                                self.start_times = [pygame.time.get_ticks(), 0]  # Player 1 starts
                             elif self.pressed_button == 'solution':
                                 solver_manager.solver.pairs = solver_manager.solver_general.pairs
                                 self.show_solution = True
@@ -1089,10 +1144,52 @@ class Game:
                                 pygame.time.wait(150)
 
                         self.pressed_button = None
+            # Update and draw the timer
+            def calculate_remaining(player_index):
+                """
+                Calculate the remaining time for a player dynamically.
+                """
+                if self.current_player != player_index + 1:
+                    # Not current player's turn: remaining time is initial time minus time used
+                    return max(0.0, self.player_initial_times[player_index] - self.player_time_used[player_index])
+                else:
+                    # Current player's turn: calculate remaining time considering current elapsed time
+                    if self.start_times[player_index] == 0:
+                        return max(0.0, self.player_initial_times[player_index] - self.player_time_used[player_index])
+                    current_time = pygame.time.get_ticks()
+                    elapsed = (current_time - self.start_times[player_index]) / 1000.0
+                    remaining = self.player_initial_times[player_index] - (self.player_time_used[player_index] + elapsed)
+                    return max(0.0, remaining)
+                
+            current_time = pygame.time.get_ticks()
+            current_time = pygame.time.get_ticks()
+            remaining_p1 = calculate_remaining(0)
+            remaining_p2 = calculate_remaining(1)
+
+
+            # Check for game over due to time
+            if not self.game_over:
+                if remaining_p1 <= 0:
+                    self.game_over = True
+                    self.ui_manager.lose_sound.play()
+                    self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
+                elif remaining_p2 <= 0:
+                    self.game_over = True
+                    self.ui_manager.win_sound.play()
+                    self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
 
             self.screen.fill((220, 220, 220))
             self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
-            self.ui_manager.draw_score(solver_manager.solver, window_size, cell_size, self.player_scores[0], self.player_scores[1], self.player_mode)
+            self.ui_manager.draw_score(
+                solver_manager.solver, 
+                window_size, 
+                cell_size, 
+                self.player_scores[0], 
+                self.player_scores[1], 
+                self.player_mode,
+                [remaining_p1, remaining_p2],  # Pass dynamically calculated remaining times
+                self.current_player
+            )
 
             if self.player_mode == 'two':
                 self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two')
@@ -1108,10 +1205,15 @@ class Game:
             pygame.display.flip()
 
             if not self.show_solution and not any(
-                solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs)
-                for pair in grid.all_pairs()
-            ):
+            solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs)
+            for pair in grid.all_pairs()):
                 if not self.game_over:
+                    # Capture le temps écoulé pour le joueur actuel et met à jour le temps utilisé
+                    current_time = pygame.time.get_ticks()
+                    elapsed = (current_time - self.start_times[self.current_player - 1]) / 1000.0
+                    self.player_time_used[self.current_player - 1] += elapsed
+                    self.start_times[self.current_player - 1] = 0  # Arrête le timer
+
                     self.game_over = True
                     if self.player_mode == 'one':
                         if solver_manager.solver.score() <= general_score:
@@ -1120,33 +1222,72 @@ class Game:
                         else:
                             self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("You lost!", (200, 0, 0), window_size)
+                        # Réinitialisation des timers
+                        self.player_timers = self.player_initial_times.copy()
+                        self.player_time_used = [0.0, 0.0]
+                        self.start_times = [pygame.time.get_ticks(), 0]
                         solver_manager.solver.pairs = []
                         self.selected_cells = []
                         self.game_over = False
+
+                    # Dans le bloc 'two' player mode
                     elif self.player_mode == 'two':
                         if self.player_scores[0] < self.player_scores[1]:
+                            # Joueur 2 gagne par score
                             self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
+                            # Joueur 2 gagne par score
                             self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
-                            self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("It's a tie!", (0, 255, 255), window_size)
+                            # Égalité de score, vérifier le temps restant
+                            remaining_p1 = self.player_initial_times[0] - self.player_time_used[0]
+                            remaining_p2 = self.player_initial_times[1] - self.player_time_used[1]
+                            if remaining_p1 > remaining_p2:
+                                self.ui_manager.win_sound.play()
+                                self.ui_manager.draw_end_screen("Player 1 Wins (Time)!", self.colors[5], window_size)
+                            elif remaining_p2 > remaining_p1:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("Player 2 Wins (Time)!", (148, 0, 211), window_size)
+                            else:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
+                        # Réinitialisation des timers
+                        self.player_timers = self.player_initial_times.copy()
+                        self.player_time_used = [0.0, 0.0]
+                        self.start_times = [pygame.time.get_ticks(), 0]
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
                         self.current_player = 1
                         self.game_over = False
+
+                    # Dans le bloc 'bot' mode
                     elif self.player_mode == 'bot':
                         if self.player_scores[0] < self.player_scores[1]:
-                            self.ui_manager.win_sound.play()
-                            self.ui_manager.draw_end_screen("You won!", self.colors[5], window_size)
+                            # Le bot gagne par score
+                            self.ui_manager.lose_sound.play()
+                            self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
-                            self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("Stockfish wins!", (148, 0, 211), window_size)
+                            # Le joueur gagne par score
+                            self.ui_manager.win_sound.play()
+                            self.ui_manager.draw_end_screen("You Won!", self.colors[5], window_size)
                         else:
-                            self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("It's a tie!", (0, 255, 255), window_size)
+                            # Égalité de score, vérifier le temps restant
+                            remaining_player = self.player_initial_times[0] - self.player_time_used[0]
+                            remaining_bot = self.player_initial_times[1] - self.player_time_used[1]
+                            if remaining_player > remaining_bot:
+                                self.ui_manager.win_sound.play()
+                                self.ui_manager.draw_end_screen("You Win (Time)!", self.colors[5], window_size)
+                            elif remaining_bot > remaining_player:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("Stockfish Wins (Time)!", (148, 0, 211), window_size)
+                            else:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
+                        self.player_timers = self.player_initial_times.copy()
+                        self.player_time_used = [0.0, 0.0]
+                        self.start_times = [pygame.time.get_ticks(), 0]
                         self.player_pairs = [[], []]
                         self.player_scores = [0, 0]
                         self.current_player = 1
@@ -1163,6 +1304,7 @@ class Game:
         scroll_bar_height = max(20, int((visible_height / total_content_height) * visible_height)) if max_scroll > 0 else visible_height
 
         while True:
+            current_time = pygame.time.get_ticks()
             scroll_percentage = self.rules_scroll / max_scroll if max_scroll > 0 else 0
             scroll_bar_y = 100 + (scroll_percentage * (visible_height - scroll_bar_height))
             scroll_bar_rect = pygame.Rect(780, int(scroll_bar_y), 20, scroll_bar_height)
@@ -1231,7 +1373,22 @@ class Game:
         self.player_pairs = [[], []]
         self.current_player = 1
         self.screen = pygame.display.set_mode((600, 600))
+
+        # Réinitialiser les timers et le temps utilisé
+        if self.selected_grid:
+            if self.selected_grid.startswith("grid0"):
+                self.player_initial_times = [3 * 60.0, 3 * 60.0]
+            elif self.selected_grid.startswith("grid1"):
+                self.player_initial_times = [5 * 60.0, 5 * 60.0]
+            elif self.selected_grid.startswith("grid2"):
+                self.player_initial_times = [10 * 60.0, 10 * 60.0]
+
+        self.player_timers = self.player_initial_times.copy()
+        self.player_time_used = [0.0, 0.0]
+        self.start_times = [0, 0]  # Reset start times
+
         self.main()
+
 
 if __name__ == "__main__":
     game = Game()
