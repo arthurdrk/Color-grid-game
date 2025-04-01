@@ -186,9 +186,10 @@ class UIManager:
             self.color_index = (self.color_index + 1) % len(self.colors_title)
             self.color_timer = current_time
         
-        title_colors = [self.colors_title[(self.color_index + i) % len(self.colors_title)] for i in range(11)]
+        
         title_font = pygame.font.Font(None, 72)
         title = "Rules Choice"
+        title_colors = [self.colors_title[(self.color_index + i) % len(self.colors_title)] for i in range(len(title))]
         total_width = sum(title_font.size(char)[0] for char in title)
         start_x = (window_size[0] - total_width) // 2
         current_x = start_x
