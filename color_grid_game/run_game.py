@@ -284,8 +284,8 @@ class UIManager:
             text = font.render(f"Score: {solver.score()} | Timer: {time_str}", True, (0, 0, 0))
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
         else:
-            time1 = format_time(player_timers[0]) 
-            time2 = format_time(player_timers[1]) 
+            time1 = format_time(player_timers[0])
+            time2 = format_time(player_timers[1])
 
             # Joueur 1
             color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
@@ -297,7 +297,6 @@ class UIManager:
             color = self.darken_color((148, 0, 211)) if current_player != 2 else (148, 0, 211)
             text = font.render(f"{opponent_text}: {player2_score} | Timer: {time2}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 15))
-
 
     def draw_turn_indicator(self, current_player: int, window_size: tuple, top_margin: int, game_mode: str):
         """
@@ -568,7 +567,6 @@ class UIManager:
         self.draw_menu_button(window_size, False)
         pygame.display.flip()
 
-
 class GridManager:
     """Manages the loading and coloring of grid files."""
 
@@ -808,7 +806,7 @@ class Game:
             2: (0, 0, 200),
             3: (0, 200, 0)
         }
-        self.screen = pygame.display.set_mode((600, 600))
+        self.screen = pygame.display.set_mode((600, 600), pygame.RESIZABLE)
         pygame.display.set_caption("ColorGrid")
         self.ui_manager = UIManager(self.screen, self.colors, self.colors_title)
         self.grid_manager = GridManager("./input/")
@@ -838,7 +836,7 @@ class Game:
         """Main game loop."""
         while self.selected_grid is None:
             self.screen.fill((255, 255, 255))
-            window_size = (600, 600)
+            window_size = self.screen.get_size()
             visible_height = window_size[1] - 170
             total_content_height = len(self.grid_manager.grid_files) * 50
             max_scroll = max(0, total_content_height - visible_height)
@@ -846,11 +844,11 @@ class Game:
             scroll_bar_height = max(20, int((visible_height / total_content_height) * visible_height)) if max_scroll > 0 else visible_height
             scroll_percentage = self.scroll / max_scroll if max_scroll > 0 else 0
             scroll_bar_y = 100 + (scroll_percentage * (visible_height - scroll_bar_height))
-            scroll_bar_rect = pygame.Rect(580, int(scroll_bar_y), 20, scroll_bar_height)
+            scroll_bar_rect = pygame.Rect(window_size[0] - 20, int(scroll_bar_y), 20, scroll_bar_height)
 
             self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, scroll_bar_height,
                                             self.grid_manager.grid_files, self.grid_manager.grid_colors, self.pressed_grid_index)
-            pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, 600, 100))
+            pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, window_size[0], 100))
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_rules_button(window_size, self.pressed_button == 'rules')
             self.ui_manager.draw_volume_button(window_size, self.pressed_button == 'volume')
@@ -867,7 +865,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
-                        volume_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
+                        volume_rect = pygame.Rect(window_size[0] - 20, window_size[1] - 70, 50, 40)
                         if volume_rect.collidepoint(x, y):
                             self.pressed_button = 'volume'
                             self.volume_button_pressed_time = pygame.time.get_ticks()
@@ -893,7 +891,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_grid_index != -1:
                         x, y = event.pos
-                        volume_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
+                        volume_rect = pygame.Rect(window_size[0] - 20, window_size[1] - 70, 50, 40)
                         if self.pressed_button == 'volume' and volume_rect.collidepoint(x, y):
                             self.ui_manager.toggle_volume()
                         visible_y = y + self.scroll - 100
@@ -924,11 +922,13 @@ class Game:
                 elif event.type == pygame.MOUSEWHEEL:
                     self.scroll -= event.y * 50
                     self.scroll = max(0, min(self.scroll, max_scroll))
+                elif event.type == pygame.VIDEORESIZE:
+                    self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
         self.player_mode = None
         while self.player_mode is None:
             self.screen.fill((255, 255, 255))
-            window_size = (600, 600)
+            window_size = self.screen.get_size()
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_player_choice(window_size, self.pressed_button)
             pygame.display.flip()
@@ -967,6 +967,8 @@ class Game:
                             pygame.time.wait(150)
                             self.player_mode = 'bot'
                         self.pressed_button = None
+                elif event.type == pygame.VIDEORESIZE:
+                    self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
         grid = self.grid_manager.load_grid(self.selected_grid)
         solver_manager = SolverManager(grid)
@@ -1144,6 +1146,34 @@ class Game:
                                 pygame.time.wait(150)
 
                         self.pressed_button = None
+                elif event.type == pygame.VIDEORESIZE:
+                    self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+                    window_size = (event.w, event.h)
+                    cell_size = min(window_size[0] // grid.m, window_size[1] // (grid.n + 2))
+                    top_margin = 50 if self.player_mode in ['two', 'bot'] else 0
+                    self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
+                    self.ui_manager.draw_score(
+                        solver_manager.solver,
+                        window_size,
+                        cell_size,
+                        self.player_scores[0],
+                        self.player_scores[1],
+                        self.player_mode,
+                        [remaining_p1, remaining_p2],  # Pass dynamically calculated remaining times
+                        self.current_player
+                    )
+
+                    if self.player_mode == 'two':
+                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two')
+                        self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+                    if self.player_mode == 'bot':
+                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot')
+                        self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+                    if self.player_mode == 'one':
+                        self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                        self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+                    self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
+
             # Update and draw the timer
             def calculate_remaining(player_index):
                 """
@@ -1160,12 +1190,10 @@ class Game:
                     elapsed = (current_time - self.start_times[player_index]) / 1000.0
                     remaining = self.player_initial_times[player_index] - (self.player_time_used[player_index] + elapsed)
                     return max(0.0, remaining)
-                
-            current_time = pygame.time.get_ticks()
+
             current_time = pygame.time.get_ticks()
             remaining_p1 = calculate_remaining(0)
             remaining_p2 = calculate_remaining(1)
-
 
             # Check for game over due to time
             if not self.game_over:
@@ -1181,11 +1209,11 @@ class Game:
             self.screen.fill((220, 220, 220))
             self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
             self.ui_manager.draw_score(
-                solver_manager.solver, 
-                window_size, 
-                cell_size, 
-                self.player_scores[0], 
-                self.player_scores[1], 
+                solver_manager.solver,
+                window_size,
+                cell_size,
+                self.player_scores[0],
+                self.player_scores[1],
                 self.player_mode,
                 [remaining_p1, remaining_p2],  # Pass dynamically calculated remaining times
                 self.current_player
@@ -1350,6 +1378,17 @@ class Game:
                     self.rules_scroll -= event.y * 30
                     self.rules_scroll = max(0, min(self.rules_scroll, max_scroll))
 
+                elif event.type == pygame.VIDEORESIZE:
+                    self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+                    window_size = (event.w, event.h)
+                    visible_height = window_size[1] - 170
+                    total_content_height = total_lines * line_height
+                    max_scroll = max(0, total_content_height - visible_height)
+                    scroll_bar_height = max(20, int((visible_height / total_content_height) * visible_height)) if max_scroll > 0 else visible_height
+                    scroll_percentage = self.rules_scroll / max_scroll if max_scroll > 0 else 0
+                    scroll_bar_y = 100 + (scroll_percentage * (visible_height - scroll_bar_height))
+                    scroll_bar_rect = pygame.Rect(780, int(scroll_bar_y), 20, scroll_bar_height)
+
             self.screen.fill((255, 255, 255))
             self.ui_manager.draw_rules(window_size, self.rules_scroll, scroll_bar_rect, scroll_bar_height)
             self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
@@ -1388,7 +1427,6 @@ class Game:
         self.start_times = [0, 0]  # Reset start times
 
         self.main()
-
 
 if __name__ == "__main__":
     game = Game()
