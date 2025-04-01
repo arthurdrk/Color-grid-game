@@ -16,7 +16,7 @@ class Bot:
     """
 
     @staticmethod
-    def move_to_play(grid: Grid) -> tuple[tuple[int, int], tuple[int, int]] | None:
+    def move_to_play(grid: Grid, rules) -> tuple[tuple[int, int], tuple[int, int]] | None:
         """
         Choose the best pair by:
         1. Minimizing the current move's cost for the bot.
@@ -36,7 +36,7 @@ class Bot:
         ----------
         O(n*m * log(n*m))
         """
-        pairs = grid.all_pairs()
+        pairs = grid.all_pairs(rules)
 
         # If no pairs are available, return None
         if not pairs:
@@ -58,7 +58,7 @@ class Bot:
             grid_copy.color[pair[1][0]][pair[1][1]] = 4
 
             # Get remaining pairs after this move
-            remaining_pairs = grid_copy.all_pairs()
+            remaining_pairs = grid_copy.all_pairs(rules)
 
             # If no pairs remain after this move, skip it
             if not remaining_pairs:
