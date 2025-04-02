@@ -544,8 +544,22 @@ class UIManager:
             The game mode ('one', 'two', or 'bot').
         """
         font = pygame.font.Font(None, 46)
-        color = self.colors[5] if current_player == 1 else (148, 0, 211)
-        text = font.render(f"{'Player 1' if current_player == 1 else 'Player 2' if current_player == 2 and game_mode == 'two' else 'Stockfish'} to play", True, color)
+        if game_mode == 'two':
+            color = self.colors[5] if current_player == 1 else (148, 0, 211)
+            text = font.render(f"Player {current_player} to play", True, color)
+        elif game_mode == 'bot':
+            color = self.colors[5] if current_player == 1 else (148, 0, 211)
+            text = font.render("Player to play" if current_player == 1 else "Stockfish to play", True, color)
+        elif game_mode == 'deepblue':
+            color = self.colors[5] if current_player == 1 else (148, 0, 211)
+            text = font.render("Player to play" if current_player == 1 else "Deep Blue to play", True, color)
+        elif game_mode == 'botvs':
+            bot_name1 = "Deep Blue" if self.game.player1_bot_type == 'mcts' else "Stockfish"
+            bot_name2 = "Stockfish" if self.game.player2_bot_type == 'minimax' else "Deep Blue"
+            color = self.colors[5] if current_player == 1 else (148, 0, 211)
+            text = font.render(f"{bot_name1 if current_player == 1 else bot_name2} to play", True, color)
+        else:  # one
+            text = font.render("Your turn", True, self.colors[5])
         x_position = (window_size[0] - text.get_width()) // 2
         self.screen.blit(text, (x_position, top_margin // 2 - 20))
 
@@ -710,6 +724,20 @@ class UIManager:
         pygame.draw.rect(self.screen, color_choice, bot_rect)
         text = font.render("Versus Stockfish", True, (255, 255, 255))
         text_rect = text.get_rect(center=bot_rect.center)
+        self.screen.blit(text, text_rect)
+
+        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
+        color_choice = (30, 30, 30) if pressed_button == 'deepblue' else (50, 50, 50)
+        pygame.draw.rect(self.screen, color_choice, deepblue_rect)
+        text = font.render("VS Deep Blue", True, (255, 255, 255))
+        text_rect = text.get_rect(center=deepblue_rect.center)
+        self.screen.blit(text, text_rect)
+
+        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
+        color_choice = (30, 30, 30) if pressed_button == 'botvs' else (50, 50, 50)
+        pygame.draw.rect(self.screen, color_choice, botvs_rect)
+        text = font.render("Deep Blue VS Stockfish", True, (255, 255, 255))
+        text_rect = text.get_rect(center=botvs_rect.center)
         self.screen.blit(text, text_rect)
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
@@ -1172,7 +1200,20 @@ class Game:
         self.start_times = [0, 0]
         self.player_timers = [0.0, 0.0]
         self.timer_paused = False
+        self.starting_bot = None
+        self.player1_bot_type = None
+        self.player2_bot_type = None
 
+    def create_grid_copy(self, grid, player_pairs):
+                grid_copy = Grid(grid.n, grid.m,
+                                [row.copy() for row in grid.color],
+                                [row.copy() for row in grid.value])
+                for pair_list in player_pairs:
+                    for pair in pair_list:
+                        for (i, j) in pair:
+                            grid_copy.color[i][j] = 4
+                return grid_copy
+    
     def main(self):
         """
         The main game loop.
@@ -1284,9 +1325,11 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0] // 2 - 100, 200, 220, 60)
-                        two_rect = pygame.Rect(window_size[0] // 2 - 100, 300, 220, 60)
-                        bot_rect = pygame.Rect(window_size[0] // 2 - 100, 400, 220, 60)
+                        one_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+                        two_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 400, 300, 60)
+                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
+                        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
                         return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y):
                             self.pressed_button = 'one'
@@ -1294,14 +1337,21 @@ class Game:
                             self.pressed_button = 'two'
                         elif bot_rect.collidepoint(x, y):
                             self.pressed_button = 'bot'
+                        elif deepblue_rect.collidepoint(x, y):
+                            self.pressed_button = 'deepblue'
+                        elif botvs_rect.collidepoint(x, y):
+                            self.pressed_button = 'botvs'
                         elif return_rect.collidepoint(x, y):
                             self.pressed_button = 'return'
+
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0] // 2 - 100, 200, 220, 60)
-                        two_rect = pygame.Rect(window_size[0] // 2 - 100, 300, 220, 60)
-                        bot_rect = pygame.Rect(window_size[0] // 2 - 100, 400, 220, 60)
+                        one_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+                        two_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 400, 300, 60)
+                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
+                        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
                         return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
                             pygame.time.wait(150)
@@ -1312,12 +1362,59 @@ class Game:
                         elif bot_rect.collidepoint(x, y) and self.pressed_button == 'bot':
                             pygame.time.wait(150)
                             self.player_mode = 'bot'
+                        elif deepblue_rect.collidepoint(x, y) and self.pressed_button == 'deepblue':
+                            pygame.time.wait(150)
+                            self.player_mode = 'deepblue'
+                        elif botvs_rect.collidepoint(x, y) and self.pressed_button == 'botvs':
+                            pygame.time.wait(150)
+                            self.player_mode = 'botvs'
                         elif return_rect.collidepoint(x, y) and self.pressed_button == 'return':
                             self.reset_game_state()
                             return
                         self.pressed_button = None
+                        
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+
+
+        if self.player_mode == 'botvs':
+            self.starting_bot = None
+            while self.starting_bot is None:
+                self.screen.fill((255, 255, 255))
+                window_size = self.screen.get_size()
+                font = pygame.font.Font(None, 50)
+                db_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+                sf_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                color_db = (30, 30, 30) if self.pressed_button == 'db' else (50, 50, 50)
+                color_sf = (30, 30, 30) if self.pressed_button == 'sf' else (50, 50, 50)
+                pygame.draw.rect(self.screen, color_db, db_rect)
+                text = font.render("Deep Blue starts", True, (255, 255, 255))
+                text_rect = text.get_rect(center=db_rect.center)
+                self.screen.blit(text, text_rect)
+                pygame.draw.rect(self.screen, color_sf, sf_rect)
+                text = font.render("Stockfish starts", True, (255, 255, 255))
+                text_rect = text.get_rect(center=sf_rect.center)
+                self.screen.blit(text, text_rect)
+                pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            x, y = event.pos
+                            if db_rect.collidepoint(x, y):
+                                self.pressed_button = 'db'
+                            elif sf_rect.collidepoint(x, y):
+                                self.pressed_button = 'sf'
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        if event.button == 1 and self.pressed_button:
+                            x, y = event.pos
+                            if db_rect.collidepoint(x, y) and self.pressed_button == 'db':
+                                self.starting_bot = 'deepblue'
+                            elif sf_rect.collidepoint(x, y) and self.pressed_button == 'sf':
+                                self.starting_bot = 'stockfish'
+                            self.pressed_button = None
 
         self.selected_rules = "original rules"
         rules_selected = False
@@ -1365,6 +1462,26 @@ class Game:
         solver_manager = SolverManager(grid, self.selected_rules)
         general_score = solver_manager.general_score
 
+        if self.player_mode == 'one':
+            self.player1_bot_type = None
+            self.player2_bot_type = None
+        elif self.player_mode == 'two':
+            self.player1_bot_type = None
+            self.player2_bot_type = None
+        elif self.player_mode == 'bot':
+            self.player1_bot_type = None
+            self.player2_bot_type = 'minimax'
+        elif self.player_mode == 'deepblue':
+            self.player1_bot_type = None
+            self.player2_bot_type = 'mcts'
+        elif self.player_mode == 'botvs':
+            if self.starting_bot == 'deepblue':
+                self.player1_bot_type = 'mcts'
+                self.player2_bot_type = 'minimax'
+            else:
+                self.player1_bot_type = 'minimax'
+                self.player2_bot_type = 'mcts'
+                
         if self.selected_grid.startswith("grid0"):
             self.player_initial_times = [60.0, 60.0]
         elif self.selected_grid.startswith("grid1"):
@@ -1389,33 +1506,53 @@ class Game:
 
         while True:
             current_time = pygame.time.get_ticks()
-            if self.player_mode == 'bot' and self.current_player == 2 and not self.game_over:
-                grid_copy = Grid(grid.n, grid.m,
-                                [row.copy() for row in grid.color],
-                                [row.copy() for row in grid.value])
-
-                for pair_list in self.player_pairs:
-                    for pair in pair_list:
-                        for (i, j) in pair:
-                            grid_copy.color[i][j] = 4
-
-                bot_pair = Bot.move_to_play(grid_copy, self.selected_rules)
-                if bot_pair is not None:
-                    valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
-                    if valid:
-                        bot_start_time = pygame.time.get_ticks()
-                        pygame.time.wait(1000)
-                        bot_end_time = pygame.time.get_ticks()
-                        elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
-                        self.player_time_used[1] += elapsed_bot
-                        self.player_pairs[1].append(bot_pair)
-                        self.player_scores[1] = solver_manager.calculate_two_player_score(self.player_pairs[1], grid)
-                        self.current_player = 1
-                        self.start_times[0] = pygame.time.get_ticks()
+            if not self.game_over:
+                if self.current_player == 1 and self.player1_bot_type is not None:
+                    grid_copy = self.create_grid_copy(grid, self.player_pairs)
+                    if self.player1_bot_type == 'mcts':
+                        bot = MCTS_Bot(grid_copy, simulations_per_move=20, epsilon=0.1)
+                        bot_pair = bot.mcts_move()
+                    elif self.player1_bot_type == 'minimax':
+                        bot_pair = Minimax_Bot.move_to_play(grid_copy, self.selected_rules)
+                    if bot_pair is not None:
+                        valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
+                        if valid:
+                            bot_start_time = pygame.time.get_ticks()
+                            pygame.time.wait(1000)  # Délai pour voir le coup
+                            bot_end_time = pygame.time.get_ticks()
+                            elapsed_bot = (bot_end_time - self.start_times[0]) / 1000.0
+                            self.player_time_used[0] += elapsed_bot
+                            self.player_pairs[0].append(bot_pair)
+                            self.player_scores[0] = solver_manager.calculate_two_player_score(self.player_pairs[0], grid)
+                            self.current_player = 2
+                            self.start_times[1] = pygame.time.get_ticks()
+                        else:
+                            self.game_over = True
                     else:
                         self.game_over = True
-                else:
-                    self.game_over = True
+                elif self.current_player == 2 and self.player2_bot_type is not None:
+                    grid_copy = self.create_grid_copy(grid, self.player_pairs)
+                    if self.player2_bot_type == 'mcts':
+                        bot = MCTS_Bot(grid_copy, simulations_per_move=20, epsilon=0.1)
+                        bot_pair = bot.mcts_move()
+                    elif self.player2_bot_type == 'minimax':
+                        bot_pair = Minimax_Bot.move_to_play(grid_copy, self.selected_rules)
+                    if bot_pair is not None:
+                        valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
+                        if valid:
+                            bot_start_time = pygame.time.get_ticks()
+                            pygame.time.wait(1000)  # Délai pour voir le coup
+                            bot_end_time = pygame.time.get_ticks()
+                            elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
+                            self.player_time_used[1] += elapsed_bot
+                            self.player_pairs[1].append(bot_pair)
+                            self.player_scores[1] = solver_manager.calculate_two_player_score(self.player_pairs[1], grid)
+                            self.current_player = 1
+                            self.start_times[0] = pygame.time.get_ticks()
+                        else:
+                            self.game_over = True
+                    else:
+                        self.game_over = True
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

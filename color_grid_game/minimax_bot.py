@@ -21,12 +21,14 @@ class Minimax_Bot:
         Choose the best pair considering that the opponent is playing greedy and
         will choose the best possible pair with a one-turn prediction.
     
-        Parameters:
+        Parameters
         -----------
         grid : Grid
             The grid of the turn to be solved.
-    
-        Returns:
+        rules : str
+            The game rules chosen by the player.
+            
+        Returns
         --------
         pair : tuple[tuple[int, int], tuple[int, int]]
             The pair of cells to be played,
@@ -86,6 +88,8 @@ class Minimax_Bot:
         ----------
         grid : Grid
             The grid of the turn to be solved.
+        rules : str
+            The game rules chosen by the player.
 
         Returns
         -------

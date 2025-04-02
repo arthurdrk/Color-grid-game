@@ -18,5 +18,6 @@ from itertools import repeat
 # modules
 from .grid import Grid
 from .minimax_bot import Minimax_Bot
+from .mcts_bot import MCTS_Bot
 from .solver import Solver
 from .solvers import *

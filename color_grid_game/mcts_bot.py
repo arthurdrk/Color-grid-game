@@ -6,14 +6,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from color_grid_game import *
 
-class MCTS:
+class MCTS_Bot:
     """
     A bot that chooses a pair using Monte Carlo Tree Search (MCTS).
     """
 
     def __init__(self, grid : Grid, simulations_per_move: int = 20, epsilon: float = 0.1):
         """
-        Initializes the MCTS player.
+        Initializes the MCTS Bot.
 
         Parameters
         ----------
