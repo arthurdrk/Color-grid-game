@@ -20,8 +20,8 @@ def main():
         grid = Grid.grid_from_file(full_file_path, read_values=True)
         rules = "original rules" if args.rules == 'original' else "new rules"
 
-        solver_blossom = SolverBlossom(grid, rules)
-        solver_hungarian = SolverHungarian(grid, rules)
+        solver_blossom = Solver_Blossom(grid, rules)
+        solver_hungarian = Solver_Hungarian(grid, rules)
 
         start_blossom = time.time()
         solver_blossom.run()

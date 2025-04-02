@@ -119,7 +119,7 @@ class Solver_Ford_Fulkerson(Solver):
         while current is not None:
             path.append(current)
             current = parents[current]
-        return path[::-1]
+        return path.reverse()
 
     @classmethod
     def ford_fulkerson(cls, graph: dict, even_cells: set, odd_cells: set) -> list[tuple[tuple[int, int], tuple[int, int]]]:

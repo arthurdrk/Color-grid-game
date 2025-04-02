@@ -1208,7 +1208,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
-                        volume_rect = pygame.Rect(window_size[0] - 20, window_size[1] - 70, 50, 40)
+                        volume_rect = pygame.Rect(window_size[0] - 95, window_size[1] - 70, 50, 40)
                         if volume_rect.collidepoint(x, y):
                             self.pressed_button = 'volume'
                             self.volume_button_pressed_time = pygame.time.get_ticks()
@@ -1233,7 +1233,9 @@ class Game:
                     if event.button == 1 and self.pressed_grid_index != -1:
                         x, y = event.pos
                         volume_rect = pygame.Rect(window_size[0] - 20, window_size[1] - 70, 50, 40)
-                        if self.pressed_button == 'volume' and volume_rect.collidepoint(x, y):
+                        if volume_rect.collidepoint(x, y):
+                            self.pressed_button = 'volume'
+                            self.volume_button_pressed_time = pygame.time.get_ticks()
                             self.ui_manager.toggle_volume()
                         visible_y = y + self.scroll - 100
                         released_index = visible_y // 50
