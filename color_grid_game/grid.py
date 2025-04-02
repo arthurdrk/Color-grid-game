@@ -205,6 +205,7 @@ class Grid:
             3: {0, 3}         # green can pair with white, green
         }
         directions = [(0, 1), (1, 0)]
+
         if rules == "original rules":
             for i in range(self.n):
                 for j in range(self.m):
@@ -232,8 +233,7 @@ class Grid:
                             for l in range(self.m):
                                 if (i == k and j == l) or self.is_forbidden(k, l):
                                     continue
-                                if (i, j) < (k, l):
-                                    res.append(((i, j), (k, l)))
+                                res.append(((i, j), (k, l)))
                     else:  # Non-white cells follow original adjacency rules
                         for dx, dy in directions:
                             k, l = i + dx, j + dy

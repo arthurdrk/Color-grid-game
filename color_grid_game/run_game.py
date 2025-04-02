@@ -1,6 +1,7 @@
 import sys
 import os
 import pygame
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from color_grid_game import *
@@ -8,20 +9,51 @@ from color_grid_game import *
 pygame.init()
 
 class UIManager:
-    """Manages the UI elements and rendering for the game."""
+    """
+    Manages the user interface elements and interactions for the game.
 
-    def __init__(self, screen: pygame.Surface, colors: dict, colors_title: dict):
+    Attributes
+    ----------
+    screen : pygame.Surface
+        The screen surface where the game is rendered.
+    colors : dict
+        Dictionary mapping color indices to RGB tuples.
+    colors_title : dict
+        Dictionary mapping title color indices to RGB tuples.
+    volume_theme : float
+        Volume level for the theme music.
+    volume : float
+        Volume level for sound effects.
+    game_theme : pygame.mixer.Sound
+        Sound object for the game theme music.
+    win_sound : pygame.mixer.Sound
+        Sound object for the win sound effect.
+    lose_sound : pygame.mixer.Sound
+        Sound object for the lose sound effect.
+    sound_on_img : pygame.Surface
+        Image surface for the sound on icon.
+    sound_off_img : pygame.Surface
+        Image surface for the sound off icon.
+    color_index : int
+        Index for cycling through title colors.
+    color_timer : int
+        Timer for changing title colors.
+    color_interval : int
+        Interval for changing title colors.
+    """
+
+    def __init__(self, screen, colors, colors_title):
         """
-        Initialize the UIManager with screen, colors, and title colors.
+        Initializes the UIManager with screen and color settings.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         screen : pygame.Surface
-            The game screen.
+            The screen surface where the game is rendered.
         colors : dict
-            Dictionary of colors for the game.
+            Dictionary mapping color indices to RGB tuples.
         colors_title : dict
-            Dictionary of colors for the title.
+            Dictionary mapping title color indices to RGB tuples.
         """
         self.screen = screen
         self.colors = colors
@@ -29,7 +61,6 @@ class UIManager:
         self.volume_theme = 0.01
         self.volume = 0.02
 
-        # Load sound effects and images
         self.game_theme = pygame.mixer.Sound("./medias/game theme.mp3")
         self.win_sound = pygame.mixer.Sound("./medias/win.mp3")
         self.lose_sound = pygame.mixer.Sound("./medias/lose.mp3")
@@ -47,19 +78,18 @@ class UIManager:
         self.lose_sound.set_volume(self.volume)
         self.game_theme.play(loops=-1)
 
-        # Animation variables
         self.color_index = 0
         self.color_timer = 0
         self.color_interval = 500
 
-    def draw_volume_button(self, window_size: tuple, pressed: bool):
+    def draw_volume_button(self, window_size, pressed):
         """
-        Draws the volume toggle button.
+        Draws the volume button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed : bool
             Whether the button is pressed.
         """
@@ -72,7 +102,9 @@ class UIManager:
         self.screen.blit(img, img_rect)
 
     def toggle_volume(self):
-        """Toggles the volume between muted and last volume."""
+        """
+        Toggles the volume between on and off.
+        """
         if self.volume == 0:
             self.volume = 0.02
             self.volume_theme = 0.01
@@ -85,14 +117,33 @@ class UIManager:
             self.win_sound.set_volume(self.volume)
             self.lose_sound.set_volume(self.volume)
 
-    def draw_title(self, window_size: tuple):
+    def draw_return_button(self, window_size, pressed):
         """
-        Draws the title of the game with animated colors.
+        Draws the return button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
+        pressed : bool
+            Whether the button is pressed.
+        """
+        font = pygame.font.Font(None, 36)
+        text = font.render("Return", True, (255, 255, 255))
+        button_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
+        text_rect = text.get_rect(center=button_rect.center)
+        color = (30, 30, 30) if pressed else (50, 50, 50)
+        pygame.draw.rect(self.screen, color, button_rect)
+        self.screen.blit(text, text_rect.topleft)
+
+    def draw_title(self, window_size):
+        """
+        Draws the title on the screen with cycling colors.
+
+        Parameters
+        ----------
+        window_size : tuple
+            The size of the window (width, height).
         """
         font = pygame.font.Font(None, 72)
         title = "ColorGrid"
@@ -113,14 +164,14 @@ class UIManager:
             self.screen.blit(text, (current_x, 20))
             current_x += text.get_width()
 
-    def draw_grid_options(self, window_size: tuple, scroll: int, scroll_bar_rect: pygame.Rect, scroll_bar_height: int, grid_files: list, grid_colors: list, pressed_index: int = -1):
+    def draw_grid_options(self, window_size, scroll, scroll_bar_rect, scroll_bar_height, grid_files, grid_colors, pressed_index):
         """
-        Draws the grid options with scrolling functionality.
+        Draws the grid options on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         scroll : int
             The current scroll position.
         scroll_bar_rect : pygame.Rect
@@ -131,8 +182,8 @@ class UIManager:
             List of grid files.
         grid_colors : list
             List of colors for the grid files.
-        pressed_index : int, optional
-            The index of the pressed grid option. Default is -1.
+        pressed_index : int
+            The index of the pressed grid option.
         """
         font = pygame.font.Font(None, 36)
         y_offset = 100
@@ -160,12 +211,19 @@ class UIManager:
 
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect.inflate(0, scroll_bar_height - scroll_bar_rect.height))
 
-    def draw_rule_choice(self, window_size: tuple, pressed_button: str):
+    def draw_rule_choice(self, window_size, pressed_button):
         """
-        Dessine les boutons de choix des règles.
+        Draws the rule choice options on the screen.
+
+        Parameters
+        ----------
+        window_size : tuple
+            The size of the window (width, height).
+        pressed_button : str
+            The currently pressed button ('classic' or 'new').
         """
         font = pygame.font.Font(None, 50)
-        
+
         classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
         color_choice = (30, 30, 30) if pressed_button == 'classic' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, classic_rect)
@@ -180,13 +238,11 @@ class UIManager:
         text_rect = text.get_rect(center=new_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Animation du titre
         current_time = pygame.time.get_ticks()
         if current_time - self.color_timer > self.color_interval:
             self.color_index = (self.color_index + 1) % len(self.colors_title)
             self.color_timer = current_time
-        
-        
+
         title_font = pygame.font.Font(None, 72)
         title = "Rules Choice"
         title_colors = [self.colors_title[(self.color_index + i) % len(self.colors_title)] for i in range(len(title))]
@@ -197,45 +253,47 @@ class UIManager:
             text = title_font.render(char, True, title_colors[i])
             self.screen.blit(text, (current_x, 20))
             current_x += text.get_width()
-        
-    def darken_color(self, color: tuple, factor: float = 0.7) -> tuple:
+
+    def darken_color(self, color, factor=0.7):
         """
         Darkens a color by a given factor.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         color : tuple
-            The color to darken.
+            The RGB color to darken.
         factor : float, optional
-            The factor by which to darken the color. Default is 0.7.
+            The factor by which to darken the color.
 
-        Returns:
-        --------
+        Returns
+        -------
         tuple
-            The darkened color.
+            The darkened RGB color.
         """
         return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor))
 
-    def draw_grid(self, grid: Grid, solver: Solver, cell_size: int, selected_cells: list = [], game_mode: str = 'one', player_pairs: list = None, top_margin: int = 0):
+    def draw_grid(self, grid, solver, cell_size, selected_cells, game_mode, player_pairs, top_margin, new_rules):
         """
-        Draws the game grid with cells and pairs.
+        Draws the game grid on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         grid : Grid
             The game grid.
         solver : Solver
             The solver for the game.
         cell_size : int
             The size of each cell.
-        selected_cells : list, optional
-            List of selected cells. Default is [].
-        game_mode : str, optional
-            The game mode. Default is 'one'.
-        player_pairs : list, optional
-            List of player pairs. Default is None.
-        top_margin : int, optional
-            The top margin for the grid. Default is 0.
+        selected_cells : list
+            List of selected cells.
+        game_mode : str
+            The game mode ('one', 'two', or 'bot').
+        player_pairs : list
+            List of player pairs.
+        top_margin : int
+            The top margin for the grid.
+        new_rules : bool
+            Whether the new rules are being used.
         """
         for i in range(grid.n):
             for j in range(grid.m):
@@ -246,28 +304,118 @@ class UIManager:
                 pygame.draw.rect(self.screen, (0, 0, 0), (j * cell_size, i * cell_size + top_margin, cell_size, cell_size), 1)
                 font = pygame.font.Font(None, 36)
                 text = font.render(str(grid.value[i][j]), True, (0, 0, 0))
-                self.screen.blit(text, (j * cell_size + cell_size // 2 - text.get_width() // 2, i * cell_size + top_margin + cell_size // 2 - text.get_height() // 2))
-
-        if game_mode == 'one':
-            for pair in solver.pairs:
-                self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
-        else:
-            if player_pairs:
+                self.screen.blit(text, (j * cell_size + cell_size//2 - text.get_width()//2, i * cell_size + top_margin + cell_size//2 - text.get_height()//2))
+        if new_rules:
+            if game_mode == 'one':
+                for pair in solver.pairs:
+                    self.darken_pair_cells(pair, grid, cell_size, top_margin)
+            else:
                 for pair in player_pairs[0]:
-                    self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
+                    self.darken_pair_cells(pair, grid, cell_size, top_margin)
                 for pair in player_pairs[1]:
-                    self.draw_pair_frame(pair, (148, 0, 211), cell_size, top_margin)
+                    self.darken_pair_cells(pair, grid, cell_size, top_margin)
+        if new_rules:
+            if game_mode == 'one':
+                for pair in solver.pairs:
+                    self.draw_pair_line(pair, self.colors[5], cell_size, top_margin)
+            else:
+                for pair in player_pairs[0]:
+                    self.draw_pair_line(pair, self.colors[5], cell_size, top_margin)
+                for pair in player_pairs[1]:
+                    self.draw_pair_line(pair, (148, 0, 211), cell_size, top_margin)
+                
+        else:
+            if game_mode == 'one':
+                for pair in solver.pairs:
+                    self.darken_pair_cells(pair, grid, cell_size, top_margin)
+                    self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
+            else:
+                if player_pairs:
+                    for pair in player_pairs[0]:
+                        self.darken_pair_cells(pair, grid, cell_size, top_margin)
+                        self.draw_pair_frame(pair, self.colors[5], cell_size, top_margin)
+                    for pair in player_pairs[1]:
+                        self.darken_pair_cells(pair, grid, cell_size, top_margin)
+                        self.draw_pair_frame(pair, (148, 0, 211), cell_size, top_margin)
 
-    def draw_pair_frame(self, pair: tuple, color: tuple, cell_size: int, top_margin: int):
+    def darken_pair_cells(self, pair, grid, cell_size, top_margin):
+        """
+        Assombrit les cellules d'une paire sans dessiner le trait.
+        
+        Parameters
+        ----------
+        pair : tuple
+            La paire de cellules à assombrir.
+        grid : Grid
+            La grille du jeu.
+        cell_size : int
+            Taille d'une cellule.
+        top_margin : int
+            Marge supérieure pour la grille.
+        """
+        (i1, j1), (i2, j2) = pair
+
+        # Couleurs originales
+        original_color1 = self.colors[grid.color[i1][j1]]
+        original_color2 = self.colors[grid.color[i2][j2]]
+
+        # Assombrissement des couleurs
+        darkened_color1 = (
+            int(original_color1[0] * 0.3),
+            int(original_color1[1] * 0.3),
+            int(original_color1[2] * 0.3)
+        )
+        darkened_color2 = (
+            int(original_color2[0] * 0.3),
+            int(original_color2[1] * 0.3),
+            int(original_color2[2] * 0.3)
+        )
+
+        # Dessin des cellules assombries
+        pygame.draw.rect(self.screen, darkened_color1, (j1 * cell_size, i1 * cell_size + top_margin, cell_size, cell_size))
+        pygame.draw.rect(self.screen, darkened_color2, (j2 * cell_size, i2 * cell_size + top_margin, cell_size, cell_size))
+
+        # Bordures des cellules
+        pygame.draw.rect(self.screen, (0, 0, 0), (j1 * cell_size, i1 * cell_size + top_margin, cell_size, cell_size), 1)
+        pygame.draw.rect(self.screen, (0, 0, 0), (j2 * cell_size, i2 * cell_size + top_margin, cell_size, cell_size), 1)
+
+        # Affichage des valeurs
+        font = pygame.font.Font(None, 36)
+        text1 = font.render(str(grid.value[i1][j1]), True, (0, 0, 0))
+        text2 = font.render(str(grid.value[i2][j2]), True, (0, 0, 0))
+        self.screen.blit(text1, (j1 * cell_size + cell_size//2 - text1.get_width()//2, i1 * cell_size + top_margin + cell_size//2 - text1.get_height()//2))
+        self.screen.blit(text2, (j2 * cell_size + cell_size//2 - text2.get_width()//2, i2 * cell_size + top_margin + cell_size//2 - text2.get_height()//2))
+
+    def draw_pair_line(self, pair, color, cell_size, top_margin):
+        """
+        Dessine le trait entre les centres de deux cellules.
+        
+        Parameters
+        ----------
+        pair : tuple
+            La paire de cellules à relier.
+        color : tuple
+            Couleur du trait.
+        cell_size : int
+            Taille d'une cellule.
+        top_margin : int
+            Marge supérieure pour la grille.
+        """
+        (i1, j1), (i2, j2) = pair
+        center1 = (j1 * cell_size + cell_size//2, i1 * cell_size + top_margin + cell_size//2)
+        center2 = (j2 * cell_size + cell_size//2, i2 * cell_size + top_margin + cell_size//2)
+        pygame.draw.line(self.screen, color, center1, center2, 4)
+
+    def draw_pair_frame(self, pair, color, cell_size, top_margin):
         """
         Draws a frame around a pair of cells.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         pair : tuple
-            The pair of cells.
+            The pair of cells to frame.
         color : tuple
-            The color of the frame.
+            The color to use for the frame.
         cell_size : int
             The size of each cell.
         top_margin : int
@@ -287,26 +435,28 @@ class UIManager:
 
         pygame.draw.rect(self.screen, color, (frame_x, frame_y, frame_width, frame_height), 4)
 
-    def draw_score(self, solver: Solver, window_size: tuple, cell_size: int,
-               player1_score: int, player2_score: int, game_mode: str = 'one',
-               player_timers: list = None, current_player: int = 1):
+    def draw_score(self, solver, window_size, cell_size, player1_score, player2_score, game_mode, player_timers, current_player):
         """
-        Draws the current score.
+        Draws the score on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         solver : Solver
             The solver for the game.
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         cell_size : int
             The size of each cell.
         player1_score : int
             The score of player 1.
         player2_score : int
             The score of player 2.
-        game_mode : str, optional
-            The game mode. Default is 'one'.
+        game_mode : str
+            The game mode ('one', 'two', or 'bot').
+        player_timers : list
+            List of player timers.
+        current_player : int
+            The current player (1 or 2).
         """
         font = pygame.font.Font(None, 38)
 
@@ -314,7 +464,7 @@ class UIManager:
             if seconds < 0:
                 seconds = 0
             minutes = int(seconds // 60)
-            seconds_part = int(seconds % 60)  # Integer seconds for display
+            seconds_part = int(seconds % 60)
             return f"{minutes:02}:{seconds_part:02}"
 
         if game_mode == 'one':
@@ -325,31 +475,28 @@ class UIManager:
             time1 = format_time(player_timers[0])
             time2 = format_time(player_timers[1])
 
-            # Joueur 1
             color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
             text = font.render(f"Player 1: {player1_score} | Timer: {time1}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
 
-            # Joueur 2 ou Stockfish
-            opponent_text = "Player 2" if game_mode == 'two' else "Stockfish"
             color = self.darken_color((148, 0, 211)) if current_player != 2 else (148, 0, 211)
-            text = font.render(f"{opponent_text}: {player2_score} | Timer: {time2}", True, color)
+            text = font.render(f"Player 2: {player2_score} | Timer: {time2}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 15))
 
-    def draw_turn_indicator(self, current_player: int, window_size: tuple, top_margin: int, game_mode: str):
+    def draw_turn_indicator(self, current_player, window_size, top_margin, game_mode):
         """
-        Shows whose turn it is.
+        Draws the turn indicator on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         current_player : int
-            The current player.
+            The current player (1 or 2).
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         top_margin : int
             The top margin for the grid.
         game_mode : str
-            The game mode.
+            The game mode ('one', 'two', or 'bot').
         """
         font = pygame.font.Font(None, 46)
         color = self.colors[5] if current_player == 1 else (148, 0, 211)
@@ -357,18 +504,18 @@ class UIManager:
         x_position = (window_size[0] - text.get_width()) // 2
         self.screen.blit(text, (x_position, top_margin // 2 - 20))
 
-    def draw_end_screen(self, message: str, color: tuple, window_size: tuple):
+    def draw_end_screen(self, message, color, window_size):
         """
-        Displays the end screen with a semi-transparent overlay and centered message.
+        Draws the end screen on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         message : str
             The message to display.
         color : tuple
-            The color of the message.
+            The color to use for the message.
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         """
         pygame.time.delay(200)
         overlay = pygame.Surface(window_size, pygame.SRCALPHA)
@@ -386,18 +533,18 @@ class UIManager:
         pygame.display.flip()
         pygame.time.wait(4000)
 
-    def draw_error_message(self, message: str, window_size: tuple, mode: str, cell_size: int):
+    def draw_error_message(self, message, window_size, mode, cell_size):
         """
-        Displays an error message.
+        Draws an error message on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         message : str
-            The error message.
+            The error message to display.
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         mode : str
-            The game mode.
+            The game mode ('one', 'two', or 'bot').
         cell_size : int
             The size of each cell.
         """
@@ -408,18 +555,18 @@ class UIManager:
         pygame.display.flip()
         pygame.time.wait(700)
 
-    def draw_restart_button(self, window_size: tuple, pressed: bool, mode: str):
+    def draw_restart_button(self, window_size, pressed, mode):
         """
-        Draws the restart button.
+        Draws the restart button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed : bool
             Whether the button is pressed.
         mode : str
-            The game mode.
+            The game mode ('one', 'two', or 'bot').
         """
         font = pygame.font.Font(None, 36)
         text = font.render("Restart", True, (255, 255, 255))
@@ -429,14 +576,14 @@ class UIManager:
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
 
-    def draw_solution_button(self, window_size: tuple, pressed: bool):
+    def draw_solution_button(self, window_size, pressed):
         """
-        Draws the solution button.
+        Draws the solution button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed : bool
             Whether the button is pressed.
         """
@@ -448,14 +595,14 @@ class UIManager:
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
 
-    def draw_menu_button(self, window_size: tuple, pressed: bool):
+    def draw_menu_button(self, window_size, pressed):
         """
-        Draws the menu button.
+        Draws the menu button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed : bool
             Whether the button is pressed.
         """
@@ -467,14 +614,14 @@ class UIManager:
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
 
-    def draw_rules_button(self, window_size: tuple, pressed: bool):
+    def draw_rules_button(self, window_size, pressed):
         """
-        Draws the rules button.
+        Draws the rules button on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed : bool
             Whether the button is pressed.
         """
@@ -486,16 +633,16 @@ class UIManager:
         pygame.draw.rect(self.screen, color, button_rect)
         self.screen.blit(text, text_rect.topleft)
 
-    def draw_player_choice(self, window_size: tuple, pressed_button: str):
+    def draw_player_choice(self, window_size, pressed_button):
         """
-        Draws the player choice buttons.
+        Draws the player choice options on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         pressed_button : str
-            The pressed button.
+            The currently pressed button ('one', 'two', or 'bot').
         """
         font = pygame.font.Font(None, 50)
 
@@ -520,14 +667,14 @@ class UIManager:
         text_rect = text.get_rect(center=bot_rect.center)
         self.screen.blit(text, text_rect)
 
-    def draw_rules(self, window_size: tuple, scroll: int, scroll_bar_rect: pygame.Rect, scroll_bar_height: int):
+    def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
         """
-        Draws the game rules with scrolling functionality and animated title.
+        Draws the rules on the screen.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         window_size : tuple
-            The size of the window.
+            The size of the window (width, height).
         scroll : int
             The current scroll position.
         scroll_bar_rect : pygame.Rect
@@ -606,16 +753,35 @@ class UIManager:
         pygame.display.flip()
 
 class GridManager:
-    """Manages the loading and coloring of grid files."""
+    """
+    Manages the grid files and their difficulties.
 
-    def __init__(self, data_path: str):
+    Attributes
+    ----------
+    data_path : str
+        The path to the directory containing the grid files.
+    grid_files : list
+        List of grid files.
+    difficulties : list
+        List of difficulties for the grid files.
+    min_d : int
+        The minimum difficulty.
+    max_d : int
+        The maximum difficulty.
+    range_d : int
+        The range of difficulties.
+    grid_colors : list
+        List of colors for the grid files.
+    """
+
+    def __init__(self, data_path):
         """
-        Initialize the GridManager with the data path.
+        Initializes the GridManager with the data path.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         data_path : str
-            The path to the data directory.
+            The path to the directory containing the grid files.
         """
         self.data_path = data_path
         self.grid_files = []
@@ -633,19 +799,19 @@ class GridManager:
         self.range_d = self.max_d - self.min_d if self.max_d != self.min_d else 1
         self.grid_colors = [self.get_difficulty_color(d) for d in self.difficulties]
 
-    def extract_difficulty(self, filename: str) -> int:
+    def extract_difficulty(self, filename):
         """
-        Extracts the difficulty level from the filename.
+        Extracts the difficulty from the filename.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         filename : str
-            The name of the file.
+            The filename to extract the difficulty from.
 
-        Returns:
-        --------
+        Returns
+        -------
         int
-            The difficulty level.
+            The extracted difficulty.
         """
         base = filename[4:-3]
         parts = base.split('_')
@@ -654,19 +820,19 @@ class GridManager:
         except (IndexError, ValueError):
             return 0
 
-    def get_difficulty_color(self, difficulty: int) -> tuple:
+    def get_difficulty_color(self, difficulty):
         """
-        Returns a color based on the difficulty level.
+        Gets the color for a given difficulty.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         difficulty : int
-            The difficulty level.
+            The difficulty to get the color for.
 
-        Returns:
-        --------
+        Returns
+        -------
         tuple
-            The color corresponding to the difficulty level.
+            The RGB color for the difficulty.
         """
         normalized = (difficulty - self.min_d) / self.range_d if self.range_d != 0 else 0.5
         normalized = max(0.0, min(normalized, 1.0))
@@ -692,54 +858,73 @@ class GridManager:
                 )
         return stops[-1][1]
 
-    def load_grid(self, selected_grid: str) -> Grid:
+    def load_grid(self, selected_grid):
         """
         Loads a grid from a file.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         selected_grid : str
-            The name of the selected grid file.
+            The filename of the grid to load.
 
-        Returns:
-        --------
+        Returns
+        -------
         Grid
             The loaded grid.
         """
         return Grid.grid_from_file(os.path.join(self.data_path, selected_grid), read_values=True)
 
 class SolverManager:
-    """Manages the solver logic for the game."""
+    """
+    Manages the solver for the game.
 
-    def __init__(self, grid: Grid, rules: str):
+    Attributes
+    ----------
+    solver : Solver
+        The solver for the game.
+    solver_general : SolverHungarian or SolverBlossom
+        The general solver for the game.
+    general_score : int
+        The score of the general solver.
+    """
+
+    def __init__(self, grid, rules):
         """
-        Initialize the SolverManager with a grid.
+        Initializes the SolverManager with the grid and rules.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         grid : Grid
             The game grid.
+        rules : str
+            The rules to use for the solver.
         """
-        self.solver = Solver(grid, rules)
-        self.solver_general = SolverHungarian(grid, rules)
+        self.solver = Solver(grid)
+        if rules == "original rules":
+            self.solver_general = SolverHungarian(grid, rules)
+        elif rules == "new rules":
+            self.solver_general = SolverBlossom(grid, rules)
+        else:
+            raise ValueError("Unknown rules specified")
+
         self.solver_general.run()
         self.general_score = self.solver_general.score()
 
-    def can_pair(self, color1: int, color2: int) -> bool:
+    def can_pair(self, color1, color2):
         """
         Checks if two colors can be paired.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         color1 : int
             The first color.
         color2 : int
             The second color.
 
-        Returns:
-        --------
+        Returns
+        -------
         bool
-            True if the colors can be paired, False otherwise.
+            Whether the colors can be paired.
         """
         allowed = {
             0: {0, 1, 2, 3},
@@ -749,12 +934,12 @@ class SolverManager:
         }
         return color2 in allowed.get(color1, set()) and color1 in allowed.get(color2, set())
 
-    def pair_is_valid(self, pair: tuple, existing_pairs: list, grid: Grid, player_pairs: list) -> bool:
+    def pair_is_valid(self, pair, existing_pairs, grid, player_pairs, rules):
         """
-        Checks if a pair is valid considering the pairs of both players.
+        Checks if a pair is valid.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         pair : tuple
             The pair to check.
         existing_pairs : list
@@ -763,14 +948,18 @@ class SolverManager:
             The game grid.
         player_pairs : list
             List of player pairs.
+        rules : str
+            The rules to use for the solver.
 
-        Returns:
-        --------
+        Returns
+        -------
         bool
-            True if the pair is valid, False otherwise.
+            Whether the pair is valid.
         """
         (i1, j1), (i2, j2) = pair
         if grid.is_forbidden(i1, j1) or grid.is_forbidden(i2, j2):
+            return False
+        if (i1, j1) == (i2, j2):
             return False
         if (i1, j1) in [cell for pair in existing_pairs for cell in pair]:
             return False
@@ -780,23 +969,31 @@ class SolverManager:
             return False
         if (i1, j1) in [cell for pair in player_pairs[1] for cell in pair] or (i2, j2) in [cell for pair in player_pairs[1] for cell in pair]:
             return False
-        if self.can_pair(grid.color[i1][j1], grid.color[i2][j2]):
-            return True
+
+        if rules == "original rules":
+            if self.can_pair(grid.color[i1][j1], grid.color[i2][j2]):
+                return True
+        elif rules == "new rules":
+            if grid.color[i1][j1] == 0 or grid.color[i2][j2] == 0:
+                return True
+            elif self.can_pair(grid.color[i1][j1], grid.color[i2][j2]):
+                return True
+
         return False
 
-    def calculate_player_score(self, player_pairs: list, grid: Grid) -> int:
+    def calculate_player_score(self, player_pairs, grid):
         """
-        Calculates the score for a player considering their pairs and unpaired cells.
+        Calculates the score for a player.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         player_pairs : list
             List of player pairs.
         grid : Grid
             The game grid.
 
-        Returns:
-        --------
+        Returns
+        -------
         int
             The calculated score.
         """
@@ -805,31 +1002,91 @@ class SolverManager:
         score += sum(grid.value[i][j] for i in range(grid.n) for j in range(grid.m) if (i, j) not in paired_cells and grid.color[i][j] != 4)
         return score
 
-    def calculate_two_player_score(self, player_pairs: list, grid: Grid) -> int:
+    def calculate_two_player_score(self, player_pairs, grid):
         """
-        Calculates the score for a player considering their pairs and unpaired cells.
+        Calculates the score for two players.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         player_pairs : list
             List of player pairs.
         grid : Grid
             The game grid.
 
-        Returns:
-        --------
+        Returns
+        -------
         int
             The calculated score.
         """
-        paired_cells = set(cell for pair in player_pairs for cell in pair)
         score = sum(grid.cost((u,v)) for u, v in player_pairs)
         return score
 
 class Game:
-    """Main game class that handles the game loop and user interactions."""
+    """
+    Manages the game state and flow.
+
+    Attributes
+    ----------
+    colors : dict
+        Dictionary mapping color indices to RGB tuples.
+    colors_title : dict
+        Dictionary mapping title color indices to RGB tuples.
+    screen : pygame.Surface
+        The screen surface where the game is rendered.
+    ui_manager : UIManager
+        The UI manager for the game.
+    grid_manager : GridManager
+        The grid manager for the game.
+    selected_grid : str
+        The selected grid filename.
+    scroll : int
+        The current scroll position.
+    scroll_bar_dragging : bool
+        Whether the scroll bar is being dragged.
+    mouse_y_offset : int
+        The mouse y offset for scrolling.
+    selected_cells : list
+        List of selected cells.
+    game_over : bool
+        Whether the game is over.
+    show_solution : bool
+        Whether to show the solution.
+    pressed_button : str
+        The currently pressed button.
+    pressed_grid_index : int
+        The index of the pressed grid option.
+    rules_scroll : int
+        The current scroll position for the rules.
+    rules_scroll_bar_dragging : bool
+        Whether the rules scroll bar is being dragged.
+    rules_mouse_y_offset : int
+        The mouse y offset for rules scrolling.
+    player_mode : str
+        The game mode ('one', 'two', or 'bot').
+    current_player : int
+        The current player (1 or 2).
+    player_pairs : list
+        List of player pairs.
+    player_scores : list
+        List of player scores.
+    volume_button_pressed_time : int
+        The time the volume button was pressed.
+    player_initial_times : list
+        List of initial times for the players.
+    player_time_used : list
+        List of time used by the players.
+    start_times : list
+        List of start times for the players.
+    player_timers : list
+        List of player timers.
+    timer_paused : bool
+        Whether the timer is paused.
+    """
 
     def __init__(self):
-        """Initialize the game with colors and screen setup."""
+        """
+        Initializes the Game with default settings.
+        """
         self.colors = {
             0: (255, 255, 255),
             1: (199, 14, 14),
@@ -865,13 +1122,16 @@ class Game:
         self.player_pairs = [[], []]
         self.player_scores = [0, 0]
         self.volume_button_pressed_time = None
-        self.player_initial_times = [0.0, 0.0]  # Initial time allocated (seconds)
-        self.player_time_used = [0.0, 0.0]      # Total time used (seconds)
-        self.start_times = [0, 0]               # When current turn started (milliseconds)
-        self.player_timers = [0.0, 0.0]         # Remaining time (seconds), to be set later
+        self.player_initial_times = [0.0, 0.0]
+        self.player_time_used = [0.0, 0.0]
+        self.start_times = [0, 0]
+        self.player_timers = [0.0, 0.0]
+        self.timer_paused = False
 
     def main(self):
-        """Main game loop."""
+        """
+        The main game loop.
+        """
         while self.selected_grid is None:
             self.screen.fill((255, 255, 255))
             window_size = self.screen.get_size()
@@ -908,7 +1168,7 @@ class Game:
                             self.pressed_button = 'volume'
                             self.volume_button_pressed_time = pygame.time.get_ticks()
                             self.ui_manager.toggle_volume()
-                        if scroll_bar_rect.collidepoint(x, y) and max_scroll > 0:
+                        elif scroll_bar_rect.collidepoint(x, y) and max_scroll > 0:
                             self.scroll_bar_dragging = True
                             self.mouse_y_offset = y - scroll_bar_rect.y
                         else:
@@ -924,8 +1184,6 @@ class Game:
                             rules_rect = pygame.Rect(window_size[0] - 200, window_size[1] - 70, 100, 40)
                             if rules_rect.collidepoint(x, y):
                                 self.pressed_button = 'rules'
-                            elif y >= window_size[1] - 40 and x <= 220:
-                                self.ui_manager.update_volume((x - 20) / 200)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_grid_index != -1:
                         x, y = event.pos
@@ -969,6 +1227,7 @@ class Game:
             window_size = self.screen.get_size()
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_player_choice(window_size, self.pressed_button)
+            self.ui_manager.draw_return_button(window_size, self.pressed_button == 'return')
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -981,20 +1240,22 @@ class Game:
                         one_rect = pygame.Rect(window_size[0] // 2 - 100, 200, 220, 60)
                         two_rect = pygame.Rect(window_size[0] // 2 - 100, 300, 220, 60)
                         bot_rect = pygame.Rect(window_size[0] // 2 - 100, 400, 220, 60)
+                        return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y):
                             self.pressed_button = 'one'
                         elif two_rect.collidepoint(x, y):
                             self.pressed_button = 'two'
                         elif bot_rect.collidepoint(x, y):
                             self.pressed_button = 'bot'
-                        elif y >= window_size[1] - 40 and x <= 220:
-                            self.ui_manager.update_volume((x - 20) / 200)
+                        elif return_rect.collidepoint(x, y):
+                            self.pressed_button = 'return'
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
                         one_rect = pygame.Rect(window_size[0] // 2 - 100, 200, 220, 60)
                         two_rect = pygame.Rect(window_size[0] // 2 - 100, 300, 220, 60)
                         bot_rect = pygame.Rect(window_size[0] // 2 - 100, 400, 220, 60)
+                        return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
                             pygame.time.wait(150)
                             self.player_mode = 'one'
@@ -1004,6 +1265,9 @@ class Game:
                         elif bot_rect.collidepoint(x, y) and self.pressed_button == 'bot':
                             pygame.time.wait(150)
                             self.player_mode = 'bot'
+                        elif return_rect.collidepoint(x, y) and self.pressed_button == 'return':
+                            self.reset_game_state()
+                            return
                         self.pressed_button = None
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
@@ -1014,6 +1278,7 @@ class Game:
             self.screen.fill((255, 255, 255))
             window_size = self.screen.get_size()
             self.ui_manager.draw_rule_choice(window_size, self.pressed_button)
+            self.ui_manager.draw_return_button(window_size, self.pressed_button == 'return')
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -1025,21 +1290,28 @@ class Game:
                         x, y = event.pos
                         classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
                         new_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if classic_rect.collidepoint(x, y):
                             self.pressed_button = 'classic'
                         elif new_rect.collidepoint(x, y):
                             self.pressed_button = 'new'
+                        elif return_rect.collidepoint(x, y):
+                            self.pressed_button = 'return'
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
                         classic_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
                         new_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if classic_rect.collidepoint(x, y) and self.pressed_button == 'classic':
                             self.selected_rules = "original rules"
                             rules_selected = True
                         elif new_rect.collidepoint(x, y) and self.pressed_button == 'new':
                             self.selected_rules = "new rules"
                             rules_selected = True
+                        elif return_rect.collidepoint(x, y) and self.pressed_button == 'return':
+                            self.reset_game_state()
+                            return
                         self.pressed_button = None
 
         grid = self.grid_manager.load_grid(self.selected_grid)
@@ -1047,15 +1319,15 @@ class Game:
         general_score = solver_manager.general_score
 
         if self.selected_grid.startswith("grid0"):
-            self.player_initial_times = [3 * 60.0, 3 * 60.0]  # 3 minutes pour chaque joueur
+            self.player_initial_times = [60.0, 60.0]
         elif self.selected_grid.startswith("grid1"):
-            self.player_initial_times = [5 * 60.0, 5 * 60.0]  # 5 minutes
+            self.player_initial_times = [3 * 60.0, 3 * 60.0]
         elif self.selected_grid.startswith("grid2"):
-            self.player_initial_times = [10 * 60.0, 10 * 60.0] # 10 minutes
+            self.player_initial_times = [10 * 60.0, 10 * 60.0]
 
         self.player_timers = self.player_initial_times.copy()
         self.player_time_used = [0.0, 0.0]
-        self.start_times = [pygame.time.get_ticks(), 0]  # Joueur 1 commence
+        self.start_times = [pygame.time.get_ticks(), 0]
 
         cell_size = 60
         top_margin = 50 if self.player_mode in ['two', 'bot'] else 0
@@ -1082,10 +1354,10 @@ class Game:
 
                 bot_pair = Bot.move_to_play(grid_copy, self.selected_rules)
                 if bot_pair is not None:
-                    valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs)
+                    valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
                     if valid:
                         bot_start_time = pygame.time.get_ticks()
-                        pygame.time.wait(1000)  # Simulate bot thinking
+                        pygame.time.wait(1000)
                         bot_end_time = pygame.time.get_ticks()
                         elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
                         self.player_time_used[1] += elapsed_bot
@@ -1112,8 +1384,13 @@ class Game:
 
                         if reset_rect.collidepoint(x, y):
                             self.pressed_button = 'reset'
+                            self.timer_paused = False
                         elif solution_rect and solution_rect.collidepoint(x, y):
                             self.pressed_button = 'solution'
+                            if not self.timer_paused:
+                                elapsed = (current_time - self.start_times[0]) / 1000.0
+                                self.player_time_used[0] += elapsed
+                                self.timer_paused = True
                         elif menu_rect.collidepoint(x, y):
                             self.pressed_button = 'menu'
                         elif y >= window_size[1] - 40 and x <= 220:
@@ -1132,39 +1409,37 @@ class Game:
                             elif (i, j) not in [cell for pair in solver_manager.solver.pairs for cell in pair]:
                                 self.selected_cells.append((i, j))
                                 if len(self.selected_cells) == 2:
-                                    if self.selected_cells[1] in grid.vois(self.selected_cells[0][0], self.selected_cells[0][1]):
+                                    (i1, j1), (i2, j2) = self.selected_cells
+                                    color1 = grid.color[i1][j1]
+                                    color2 = grid.color[i2][j2]
+                                    are_adjacent = (i2, j2) in grid.vois(i1, j1)
+                                    valid_non_adjacent = (self.selected_rules == "new rules"
+                                                        and (color1 == 0 or color2 == 0)
+                                                        and color1 != 4 and color2 != 4)
+                                    if are_adjacent or valid_non_adjacent:
                                         color1 = grid.color[self.selected_cells[0][0]][self.selected_cells[0][1]]
                                         color2 = grid.color[self.selected_cells[1][0]][self.selected_cells[1][1]]
                                         if solver_manager.can_pair(color1, color2):
                                             if self.player_mode == 'one':
                                                 solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
                                             elif self.player_mode == 'bot':
-                                                valid = solver_manager.pair_is_valid(
-                                                    (self.selected_cells[0], self.selected_cells[1]),
-                                                    [], grid, self.player_pairs)
+                                                valid = solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), [], grid, self.player_pairs, self.selected_rules)
                                                 if valid:
-                                                    # Update time used for Player 1
                                                     elapsed = (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
                                                     self.player_time_used[0] += elapsed
-                                                    # Add the pair and update score
                                                     self.player_pairs[0].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[0] = solver_manager.calculate_two_player_score(self.player_pairs[0], grid)
-                                                    # Switch to bot
                                                     self.current_player = 2
                                                     self.start_times[1] = pygame.time.get_ticks()
                                                 else:
                                                     self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
                                             else:
-                                                if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs):
-                                                    # Update time used for the current player
+                                                if solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), solver_manager.solver.pairs, grid, self.player_pairs, self.selected_rules):
                                                     elapsed = (pygame.time.get_ticks() - self.start_times[self.current_player - 1]) / 1000.0
                                                     self.player_time_used[self.current_player - 1] += elapsed
-                                                    # Add the pair and update score
                                                     self.player_pairs[self.current_player - 1].append((self.selected_cells[0], self.selected_cells[1]))
                                                     self.player_scores[self.current_player - 1] = solver_manager.calculate_two_player_score(self.player_pairs[self.current_player - 1], grid)
-                                                    # Switch player
-                                                    self.current_player = 3 - self.current_player  # 1 -> 2, 2 -> 1
-                                                    # Set start time for the new player
+                                                    self.current_player = 3 - self.current_player
                                                     self.start_times[self.current_player - 1] = pygame.time.get_ticks()
                                                 else:
                                                     self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
@@ -1186,6 +1461,10 @@ class Game:
                             button_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
                             self.reset_game_state()
                             pygame.time.wait(150)
+                        elif self.pressed_button == 'return':
+                            button_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
+                            self.reset_game_state()
+                            return
 
                         if button_rect and button_rect.collidepoint(x, y):
                             if self.pressed_button == 'menu':
@@ -1200,22 +1479,24 @@ class Game:
                                 self.player_pairs = [[], []]
                                 self.current_player = 1
                                 self.player_scores = [0, 0]
-                                # Reset timers
                                 if self.selected_grid.startswith("grid0"):
-                                    self.player_initial_times = [3 * 60.0, 3 * 60.0]
+                                    self.player_initial_times = [60.0, 60.0]
                                 elif self.selected_grid.startswith("grid1"):
-                                    self.player_initial_times = [5 * 60.0, 5 * 60.0]
+                                    self.player_initial_times = [3 * 60.0, 3 * 60.0]
                                 elif self.selected_grid.startswith("grid2"):
                                     self.player_initial_times = [10 * 60.0, 10 * 60.0]
                                 self.player_timers = self.player_initial_times.copy()
                                 self.player_time_used = [0.0, 0.0]
-                                self.start_times = [pygame.time.get_ticks(), 0]  # Player 1 starts
+                                self.start_times = [pygame.time.get_ticks(), 0]
                             elif self.pressed_button == 'solution':
                                 solver_manager.solver.pairs = solver_manager.solver_general.pairs
                                 self.show_solution = True
                             elif self.pressed_button == 'menu':
                                 self.reset_game_state()
                                 pygame.time.wait(150)
+                            elif self.pressed_button == 'return':
+                                self.reset_game_state()
+                                return
 
                         self.pressed_button = None
                 elif event.type == pygame.VIDEORESIZE:
@@ -1231,7 +1512,7 @@ class Game:
                         self.player_scores[0],
                         self.player_scores[1],
                         self.player_mode,
-                        [remaining_p1, remaining_p2],  # Pass dynamically calculated remaining times
+                        [remaining_p1, remaining_p2],
                         self.current_player
                     )
 
@@ -1246,16 +1527,10 @@ class Game:
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
 
-            # Update and draw the timer
             def calculate_remaining(player_index):
-                """
-                Calculate the remaining time for a player dynamically.
-                """
-                if self.current_player != player_index + 1:
-                    # Not current player's turn: remaining time is initial time minus time used
+                if self.current_player != player_index + 1 or self.timer_paused:
                     return max(0.0, self.player_initial_times[player_index] - self.player_time_used[player_index])
                 else:
-                    # Current player's turn: calculate remaining time considering current elapsed time
                     if self.start_times[player_index] == 0:
                         return max(0.0, self.player_initial_times[player_index] - self.player_time_used[player_index])
                     current_time = pygame.time.get_ticks()
@@ -1267,7 +1542,6 @@ class Game:
             remaining_p1 = calculate_remaining(0)
             remaining_p2 = calculate_remaining(1)
 
-            # Check for game over due to time
             if not self.game_over:
                 if remaining_p1 <= 0:
                     self.game_over = True
@@ -1279,7 +1553,8 @@ class Game:
                     self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
 
             self.screen.fill((220, 220, 220))
-            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
+            new_rules = (self.selected_rules == "new rules")
+            self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin, new_rules)
             self.ui_manager.draw_score(
                 solver_manager.solver,
                 window_size,
@@ -1287,7 +1562,7 @@ class Game:
                 self.player_scores[0],
                 self.player_scores[1],
                 self.player_mode,
-                [remaining_p1, remaining_p2],  # Pass dynamically calculated remaining times
+                [remaining_p1, remaining_p2],
                 self.current_player
             )
 
@@ -1301,18 +1576,16 @@ class Game:
                 self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
-
             pygame.display.flip()
 
             if not self.show_solution and not any(
-            solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs)
-            for pair in grid.all_pairs()):
+            solver_manager.pair_is_valid(pair, solver_manager.solver.pairs, grid, self.player_pairs, self.selected_rules)
+            for pair in grid.all_pairs(self.selected_rules)):
                 if not self.game_over:
-                    # Capture le temps écoulé pour le joueur actuel et met à jour le temps utilisé
                     current_time = pygame.time.get_ticks()
                     elapsed = (current_time - self.start_times[self.current_player - 1]) / 1000.0
                     self.player_time_used[self.current_player - 1] += elapsed
-                    self.start_times[self.current_player - 1] = 0  # Arrête le timer
+                    self.start_times[self.current_player - 1] = 0
 
                     self.game_over = True
                     if self.player_mode == 'one':
@@ -1322,7 +1595,6 @@ class Game:
                         else:
                             self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("You lost!", (200, 0, 0), window_size)
-                        # Réinitialisation des timers
                         self.player_timers = self.player_initial_times.copy()
                         self.player_time_used = [0.0, 0.0]
                         self.start_times = [pygame.time.get_ticks(), 0]
@@ -1330,18 +1602,14 @@ class Game:
                         self.selected_cells = []
                         self.game_over = False
 
-                    # Dans le bloc 'two' player mode
-                    elif self.player_mode == 'two':
+                    if self.player_mode == 'two':
                         if self.player_scores[0] < self.player_scores[1]:
-                            # Joueur 2 gagne par score
                             self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
                         elif self.player_scores[1] < self.player_scores[0]:
-                            # Joueur 2 gagne par score
                             self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("Player 2 has won!", (148, 0, 211), window_size)
                         else:
-                            # Égalité de score, vérifier le temps restant
                             remaining_p1 = self.player_initial_times[0] - self.player_time_used[0]
                             remaining_p2 = self.player_initial_times[1] - self.player_time_used[1]
                             if remaining_p1 > remaining_p2:
@@ -1353,7 +1621,6 @@ class Game:
                             else:
                                 self.ui_manager.lose_sound.play()
                                 self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
-                        # Réinitialisation des timers
                         self.player_timers = self.player_initial_times.copy()
                         self.player_time_used = [0.0, 0.0]
                         self.start_times = [pygame.time.get_ticks(), 0]
@@ -1362,18 +1629,14 @@ class Game:
                         self.current_player = 1
                         self.game_over = False
 
-                    # Dans le bloc 'bot' mode
-                    elif self.player_mode == 'bot':
+                    if self.player_mode == 'bot':
                         if self.player_scores[0] > self.player_scores[1]:
-                            # Le bot gagne par score
                             self.ui_manager.lose_sound.play()
                             self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
                         elif self.player_scores[1] > self.player_scores[0]:
-                            # Le joueur gagne par score
                             self.ui_manager.win_sound.play()
                             self.ui_manager.draw_end_screen("You Won!", self.colors[5], window_size)
                         else:
-                            # Égalité de score, vérifier le temps restant
                             remaining_player = self.player_initial_times[0] - self.player_time_used[0]
                             remaining_bot = self.player_initial_times[1] - self.player_time_used[1]
                             if remaining_player > remaining_bot:
@@ -1394,7 +1657,9 @@ class Game:
                         self.game_over = False
 
     def show_rules(self):
-        """Displays the game rules screen."""
+        """
+        Displays the rules screen.
+        """
         window_size = (800, 600)
         visible_height = window_size[1] - 170
         line_height = 30
@@ -1435,7 +1700,6 @@ class Game:
                             pygame.display.update(menu_rect)
                             pygame.time.delay(100)
                             self.reset_game_state()
-                            return
                     self.pressed_button = None
                     self.rules_scroll_bar_dragging = False
 
@@ -1467,7 +1731,9 @@ class Game:
             pygame.display.flip()
 
     def reset_game_state(self):
-        """Resets the game state to the initial menu and clears the grid."""
+        """
+        Resets the game state to the initial settings.
+        """
         self.selected_grid = None
         self.scroll = 0
         self.scroll_bar_dragging = False
@@ -1485,19 +1751,18 @@ class Game:
         self.current_player = 1
         self.screen = pygame.display.set_mode((600, 600))
 
-        # Réinitialiser les timers et le temps utilisé
         if self.selected_grid:
             if self.selected_grid.startswith("grid0"):
-                self.player_initial_times = [3 * 60.0, 3 * 60.0]
+                self.player_initial_times = [60.0, 60.0]
             elif self.selected_grid.startswith("grid1"):
-                self.player_initial_times = [5 * 60.0, 5 * 60.0]
+                self.player_initial_times = [3 * 60.0, 3 * 60.0]
             elif self.selected_grid.startswith("grid2"):
                 self.player_initial_times = [10 * 60.0, 10 * 60.0]
 
         self.player_timers = self.player_initial_times.copy()
         self.player_time_used = [0.0, 0.0]
-        self.start_times = [0, 0]  # Reset start times
-
+        self.start_times = [0, 0]
+        self.timer_paused = False
         self.main()
 
 if __name__ == "__main__":
