@@ -98,7 +98,7 @@ class Minimax_Bot:
 
         Complexity
         ----------
-        O(n*m * log(n*m))
+        O((n*m)²)
         """
         pairs = grid.all_pairs(rules)
 
