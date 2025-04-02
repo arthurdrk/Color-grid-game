@@ -5,7 +5,7 @@ import networkx as nx
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
-class SolverBlossom(Solver):
+class solver_blossom(Solver):
     """
     A solver that uses weighted matching to minimize the score in a grid.
     Adapted to use a NetworkX graph instead of an adjacency dictionary.

@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
-class SolverGreedy(Solver):
+class solver_greedy(Solver):
     """
     A subclass of Solver that implements a greedy algorithm to find pairs.
     """
