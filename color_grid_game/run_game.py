@@ -40,6 +40,51 @@ class UIManager:
         Timer for changing title colors.
     color_interval : int
         Interval for changing title colors.
+
+    Methods
+    -------
+    draw_volume_button(window_size, pressed)
+        Draws the volume button on the screen.
+    toggle_volume()
+        Toggles the volume between on and off.
+    draw_return_button(window_size, pressed)
+        Draws the return button on the screen.
+    draw_title(window_size)
+        Draws the title on the screen with cycling colors.
+    draw_grid_options(window_size, scroll, scroll_bar_rect, scroll_bar_height, grid_files, grid_colors, pressed_index)
+        Draws the grid options on the screen.
+    draw_rule_choice(window_size, pressed_button)
+        Draws the rule choice options on the screen.
+    darken_color(color, factor=0.7)
+        Darkens a color by a given factor.
+    draw_grid(grid, solver, cell_size, selected_cells, game_mode, player_pairs, top_margin, new_rules)
+        Draws the game grid on the screen.
+    darken_pair_cells(pair, grid, cell_size, top_margin)
+        Darkens the cells of a pair without drawing the line.
+    draw_pair_line(pair, color, cell_size, top_margin)
+        Draws the line between the centers of two cells.
+    draw_pair_frame(pair, color, cell_size, top_margin)
+        Draws a frame around a pair of cells.
+    draw_score(solver, window_size, cell_size, player1_score, player2_score, game_mode, player_timers, current_player)
+        Draws the score on the screen.
+    draw_turn_indicator(current_player, window_size, top_margin, game_mode)
+        Draws the turn indicator on the screen.
+    draw_end_screen(message, color, window_size)
+        Draws the end screen on the screen.
+    draw_error_message(message, window_size, mode, cell_size)
+        Draws an error message on the screen.
+    draw_restart_button(window_size, pressed, mode)
+        Draws the restart button on the screen.
+    draw_solution_button(window_size, pressed)
+        Draws the solution button on the screen.
+    draw_menu_button(window_size, pressed)
+        Draws the menu button on the screen.
+    draw_rules_button(window_size, pressed)
+        Draws the rules button on the screen.
+    draw_player_choice(window_size, pressed_button)
+        Draws the player choice options on the screen.
+    draw_rules(window_size, scroll, scroll_bar_rect, scroll_bar_height)
+        Draws the rules on the screen.
     """
 
     def __init__(self, screen, colors, colors_title):
@@ -323,7 +368,7 @@ class UIManager:
                     self.draw_pair_line(pair, self.colors[5], cell_size, top_margin)
                 for pair in player_pairs[1]:
                     self.draw_pair_line(pair, (148, 0, 211), cell_size, top_margin)
-                
+
         else:
             if game_mode == 'one':
                 for pair in solver.pairs:
@@ -340,26 +385,26 @@ class UIManager:
 
     def darken_pair_cells(self, pair, grid, cell_size, top_margin):
         """
-        Assombrit les cellules d'une paire sans dessiner le trait.
-        
+        Darkens the cells of a pair without drawing the line.
+
         Parameters
         ----------
         pair : tuple
-            La paire de cellules à assombrir.
+            The pair of cells to darken.
         grid : Grid
-            La grille du jeu.
+            The game grid.
         cell_size : int
-            Taille d'une cellule.
+            The size of each cell.
         top_margin : int
-            Marge supérieure pour la grille.
+            The top margin for the grid.
         """
         (i1, j1), (i2, j2) = pair
 
-        # Couleurs originales
+        # Original colors
         original_color1 = self.colors[grid.color[i1][j1]]
         original_color2 = self.colors[grid.color[i2][j2]]
 
-        # Assombrissement des couleurs
+        # Darkened colors
         darkened_color1 = (
             int(original_color1[0] * 0.3),
             int(original_color1[1] * 0.3),
@@ -371,15 +416,15 @@ class UIManager:
             int(original_color2[2] * 0.3)
         )
 
-        # Dessin des cellules assombries
+        # Draw darkened cells
         pygame.draw.rect(self.screen, darkened_color1, (j1 * cell_size, i1 * cell_size + top_margin, cell_size, cell_size))
         pygame.draw.rect(self.screen, darkened_color2, (j2 * cell_size, i2 * cell_size + top_margin, cell_size, cell_size))
 
-        # Bordures des cellules
+        # Cell borders
         pygame.draw.rect(self.screen, (0, 0, 0), (j1 * cell_size, i1 * cell_size + top_margin, cell_size, cell_size), 1)
         pygame.draw.rect(self.screen, (0, 0, 0), (j2 * cell_size, i2 * cell_size + top_margin, cell_size, cell_size), 1)
 
-        # Affichage des valeurs
+        # Display values
         font = pygame.font.Font(None, 36)
         text1 = font.render(str(grid.value[i1][j1]), True, (0, 0, 0))
         text2 = font.render(str(grid.value[i2][j2]), True, (0, 0, 0))
@@ -388,18 +433,18 @@ class UIManager:
 
     def draw_pair_line(self, pair, color, cell_size, top_margin):
         """
-        Dessine le trait entre les centres de deux cellules.
-        
+        Draws the line between the centers of two cells.
+
         Parameters
         ----------
         pair : tuple
-            La paire de cellules à relier.
+            The pair of cells to connect.
         color : tuple
-            Couleur du trait.
+            The color of the line.
         cell_size : int
-            Taille d'une cellule.
+            The size of each cell.
         top_margin : int
-            Marge supérieure pour la grille.
+            The top margin for the grid.
         """
         (i1, j1), (i2, j2) = pair
         center1 = (j1 * cell_size + cell_size//2, i1 * cell_size + top_margin + cell_size//2)
@@ -751,7 +796,7 @@ class UIManager:
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect)
         self.draw_menu_button(window_size, False)
         pygame.display.flip()
-
+        
 class GridManager:
     """
     Manages the grid files and their difficulties.
