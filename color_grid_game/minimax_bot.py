@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from color_grid_game import *
 
-class minimax_bot:
+class Minimax_Bot:
     """
     A bot that plays using the min-max strategy.
 

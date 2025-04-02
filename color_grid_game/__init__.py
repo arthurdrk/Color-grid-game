@@ -17,6 +17,6 @@ from itertools import repeat
 
 # modules
 from .grid import Grid
-from .min_max_bot import Bot
+from .minimax_bot import Minimax_Bot
 from .solver import Solver
 from .solvers import *
