@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
-class SolverEmpty(Solver):
+class Solver_Empty(Solver):
     """
     A subclass of Solver that does not implement any solving logic.
     """

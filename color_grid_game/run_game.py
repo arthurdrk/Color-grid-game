@@ -796,7 +796,7 @@ class UIManager:
         pygame.draw.rect(self.screen, (150, 150, 150), scroll_bar_rect)
         self.draw_menu_button(window_size, False)
         pygame.display.flip()
-        
+
 class GridManager:
     """
     Manages the grid files and their difficulties.
@@ -927,7 +927,7 @@ class SolverManager:
     ----------
     solver : Solver
         The solver for the game.
-    solver_general : SolverHungarian or SolverBlossom
+    solver_general : Solver_Hungarian or Solver_Blossom
         The general solver for the game.
     general_score : int
         The score of the general solver.
@@ -946,9 +946,9 @@ class SolverManager:
         """
         self.solver = Solver(grid)
         if rules == "original rules":
-            self.solver_general = SolverHungarian(grid, rules)
+            self.solver_general = Solver_Hungarian(grid, rules)
         elif rules == "new rules":
-            self.solver_general = SolverBlossom(grid, rules)
+            self.solver_general = Solver_Blossom(grid, rules)
         else:
             raise ValueError("Unknown rules specified")
 

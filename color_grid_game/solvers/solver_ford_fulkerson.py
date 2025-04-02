@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
-class SolverFordFulkerson(Solver):
+class Solver_Ford_Fulkerson(Solver):
     """
     A subclass of Solver that implements a bipartite matching algorithm to find pairs.
     """

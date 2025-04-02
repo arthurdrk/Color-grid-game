@@ -5,7 +5,7 @@ import numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from color_grid_game import *
 
-class solver_hungarian(Solver):
+class Solver_Hungarian(Solver):
     """
     An alternative implementation of the Hungarian algorithm solver.
     """
