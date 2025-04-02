@@ -5,7 +5,7 @@ from collections import defaultdict
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from color_grid_game import *
 
-class SolverGreedy_Upgraded(Solver):
+class Solver_Greedy_Upgraded(Solver):
     """
     Improvement of SolverGreedy that tries all possible starting points and keeps the pairing with the minimum score.
     """

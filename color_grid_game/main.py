@@ -17,28 +17,29 @@ def main():
         full_file_path = os.path.join(data_path, file_name)
         print("Solving grid:", file_name)
 
-        grid = Grid.grid_from_file(full_file_path, read_values=True)
+        grid = Grid.grid_from_file(full_file_path, read_values=False)
         rules = "original rules" if args.rules == 'original' else "new rules"
-
-        solver_blossom = Solver_Blossom(grid, rules)
-        solver_hungarian = Solver_Hungarian(grid, rules)
+        if file_name == "grid01.in":
+            grid.plot()
+        solver_blossom = Solver_Ford_Fulkerson(grid, rules)
+        #solver_hungarian = Solver_Greedy_Upgraded(grid, rules)
 
         start_blossom = time.time()
         solver_blossom.run()
         end_blossom = time.time()
 
-        start_hungarian = time.time()
-        solver_hungarian.run()
-        end_hungarian = time.time()
+        # start_hungarian = time.time()
+        # solver_hungarian.run()
+        # end_hungarian = time.time()
 
         blossom_score = solver_blossom.score()
-        hungarian_score = solver_hungarian.score()
+        #hungarian_score = solver_hungarian.score()
 
         time_blossom = end_blossom - start_blossom
-        time_hungarian = end_hungarian - start_hungarian
+        # time_hungarian = end_hungarian - start_hungarian
 
-        print(f"  SolverBlossom {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
-        print(f"  SolverHungarian {rules.capitalize()} score: {hungarian_score},  Time : {time_hungarian:.4f} seconds\n")
+        print(f"  Solver_Ford_Fulkerson {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
+        #print(f"  Solver_Greedy_Upgraded {rules.capitalize()} score: {hungarian_score},  Time : {time_hungarian:.4f} seconds\n")
 
 if __name__ == '__main__':
     main()
