@@ -93,6 +93,10 @@ class Solver_Ford_Fulkerson(Solver):
         list of tuple
             The maximum matching as a list of pairs of cells.
         """
+        # Validate the input
+        if not graph or not even_cells or not odd_cells:
+            raise ValueError("Invalid graph or cell sets")
+
         residual_graph = defaultdict(list)
         for u in graph:
             residual_graph[u] = graph[u][:]

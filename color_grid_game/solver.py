@@ -34,8 +34,6 @@ class Solver:
         TypeError
             If grid is not an instance of Grid.
         """
-        if not isinstance(grid, Grid):
-            raise TypeError("grid must be an instance of Grid.")
 
         self.grid = grid
         self.pairs = []
