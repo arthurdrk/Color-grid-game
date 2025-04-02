@@ -645,4 +645,4 @@ class Solver_Blossom(Solver):
                     expandBlossom(b, True)
         if allinteger:
             verifyOptimum()
-        return SolverBlossom.matching_dict_to_set(mate)
+        return Solver_Blossom.matching_dict_to_set(mate)
