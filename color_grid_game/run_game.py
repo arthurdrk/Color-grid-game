@@ -1611,7 +1611,7 @@ class Game:
                         valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
                         if valid:
                             start_wait = pygame.time.get_ticks()
-                            while pygame.time.get_ticks() - start_wait < 2000:
+                            while pygame.time.get_ticks() - start_wait < 1500:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
                                         pygame.quit()
@@ -1640,7 +1640,7 @@ class Game:
                         valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
                         if valid:
                             start_wait = pygame.time.get_ticks()
-                            while pygame.time.get_ticks() - start_wait < 2000:
+                            while pygame.time.get_ticks() - start_wait < 1500:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
                                         pygame.quit()
