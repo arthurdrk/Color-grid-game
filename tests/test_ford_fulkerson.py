@@ -8,7 +8,7 @@ import unittest
 class TestFordFulkerson(unittest.TestCase):
 
     def setUp(self):
-        self.solver = Solver_Ford_Fulkerson(Grid)
+        self.solver = SolverFordFulkerson(None)
 
     def test_ford_fulkerson_max_flow(self):
         graph = {"s": ["a"], "a": ["b"], "b": ["t"], "t": []}

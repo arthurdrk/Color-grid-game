@@ -28,5 +28,6 @@ class TestSolverGreedyRun(unittest.TestCase):
         expected_pairs = [((0, 0), (1, 0)), ((0, 2), (1, 2))]
         self.assertEqual(sorted(pairs), sorted(expected_pairs))
 
+
 if __name__ == '__main__':
     unittest.main()
