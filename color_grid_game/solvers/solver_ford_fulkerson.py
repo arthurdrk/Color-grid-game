@@ -82,7 +82,7 @@ class Solver_Ford_Fulkerson(Solver):
                 if v not in parents:
                     parents[v] = u
                     if v == t:
-                        return SolverFordFulkerson.reconstruct_path(parents, s, t)
+                        return Solver_Ford_Fulkerson.reconstruct_path(parents, s, t)
                     queue.append(v)
 
         return None

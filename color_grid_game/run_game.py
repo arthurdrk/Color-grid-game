@@ -480,7 +480,7 @@ class UIManager:
 
         pygame.draw.rect(self.screen, color, (frame_x, frame_y, frame_width, frame_height), 4)
 
-    def draw_score(self, solver, window_size, cell_size, player1_score, player2_score, game_mode, player_timers, current_player):
+    def draw_score(self, solver, window_size, cell_size, player1_score, player2_score, game_mode, player_timers, current_player, player1_bot_type, player2_bot_type):
         """
         Draws the score on the screen.
 
@@ -520,15 +520,25 @@ class UIManager:
             time1 = format_time(player_timers[0])
             time2 = format_time(player_timers[1])
 
+            # Déterminer les noms des joueurs selon le mode de jeu
+            if game_mode == 'botvs':
+                bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
+                bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
+            else:
+                bot_name1 = "Player 1"
+                bot_name2 = "Player 2" if game_mode == 'two' else "Stockfish" if game_mode == 'bot' else "Deep Blue"
+
+            # Afficher le score du premier joueur/bot
             color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
-            text = font.render(f"Player 1: {player1_score} | Timer: {time1}", True, color)
+            text = font.render(f"{bot_name1}: {player1_score} | Timer: {time1}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
 
+            # Afficher le score du second joueur/bot
             color = self.darken_color((148, 0, 211)) if current_player != 2 else (148, 0, 211)
-            text = font.render(f"Player 2: {player2_score} | Timer: {time2}", True, color)
+            text = font.render(f"{bot_name2}: {player2_score} | Timer: {time2}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 15))
 
-    def draw_turn_indicator(self, current_player, window_size, top_margin, game_mode):
+    def draw_turn_indicator(self, current_player, window_size, top_margin, game_mode, player1_bot_type, player2_bot_type):
         """
         Draws the turn indicator on the screen.
 
@@ -554,8 +564,8 @@ class UIManager:
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
             text = font.render("Player to play" if current_player == 1 else "Deep Blue to play", True, color)
         elif game_mode == 'botvs':
-            bot_name1 = "Deep Blue" if self.game.player1_bot_type == 'mcts' else "Stockfish"
-            bot_name2 = "Stockfish" if self.game.player2_bot_type == 'minimax' else "Deep Blue"
+            bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
+            bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
             text = font.render(f"{bot_name1 if current_player == 1 else bot_name2} to play", True, color)
         else:  # one
@@ -701,44 +711,51 @@ class UIManager:
         window_size : tuple
             The size of the window (width, height).
         pressed_button : str
-            The currently pressed button ('one', 'two', or 'bot').
+            The currently pressed button.
         """
         font = pygame.font.Font(None, 50)
 
-        one_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
+        # Bouton "One Player"
+        one_rect = pygame.Rect(window_size[0] // 2 - 185, 150, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'one' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, one_rect)
         text = font.render("One Player", True, (255, 255, 255))
         text_rect = text.get_rect(center=one_rect.center)
         self.screen.blit(text, text_rect)
 
-        two_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+        # Bouton "Two Players"
+        two_rect = pygame.Rect(window_size[0] // 2 - 185, 225, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'two' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, two_rect)
         text = font.render("Two Players", True, (255, 255, 255))
         text_rect = text.get_rect(center=two_rect.center)
         self.screen.blit(text, text_rect)
 
-        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 400, 300, 60)
+        # Bouton "Versus Stockfish"
+        bot_rect = pygame.Rect(window_size[0] // 2 - 185, 300, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'bot' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, bot_rect)
         text = font.render("Versus Stockfish", True, (255, 255, 255))
         text_rect = text.get_rect(center=bot_rect.center)
         self.screen.blit(text, text_rect)
 
-        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
+        # Bouton "VS Deep Blue"
+        deepblue_rect = pygame.Rect(window_size[0] // 2 - 185, 375, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'deepblue' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, deepblue_rect)
-        text = font.render("VS Deep Blue", True, (255, 255, 255))
+        text = font.render("Versus DeepBlue", True, (255, 255, 255))
         text_rect = text.get_rect(center=deepblue_rect.center)
         self.screen.blit(text, text_rect)
 
-        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
+        # Bouton "Stockfish VS DeepBlue"
+        botvs_rect = pygame.Rect(window_size[0] // 2 - 185, 450, 390, 60)  # Taille ajustée pour centrer
         color_choice = (30, 30, 30) if pressed_button == 'botvs' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, botvs_rect)
-        text = font.render("Deep Blue VS Stockfish", True, (255, 255, 255))
+        text = font.render("Stockfish VS DeepBlue", True, (255, 255, 255))
         text_rect = text.get_rect(center=botvs_rect.center)
         self.screen.blit(text, text_rect)
+
+
 
     def draw_rules(self, window_size, scroll, scroll_bar_rect, scroll_bar_height):
         """
@@ -1214,6 +1231,47 @@ class Game:
                             grid_copy.color[i][j] = 4
                 return grid_copy
     
+    def update_timer_display(self, grid, solver_manager, cell_size, window_size, top_margin):
+        """Met à jour l'affichage du timer pendant le délai des bots."""
+        
+        self.screen.fill((220, 220, 220))
+        new_rules = (self.selected_rules == "new rules")
+        self.screen.fill((220, 220, 220))
+        new_rules = (self.selected_rules == "new rules")
+        
+        # Redessiner tous les éléments d'interface
+        self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, 
+                                self.player_mode, self.player_pairs, top_margin, new_rules)
+        
+        # Dessiner les boutons
+        if self.player_mode == 'botvs':
+            self.ui_manager.draw_restart_button(window_size, False, self.player_mode)
+        self.ui_manager.draw_menu_button(window_size, False)
+        
+        # Calcul des temps restants
+        remaining_p1 = self.player_initial_times[0] - self.player_time_used[0]
+        remaining_p2 = self.player_initial_times[1] - self.player_time_used[1]
+        if self.current_player == 1 and not self.timer_paused:
+            remaining_p1 -= (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
+        elif self.current_player == 2 and not self.timer_paused:
+            remaining_p2 -= (pygame.time.get_ticks() - self.start_times[1]) / 1000.0
+        
+        # Affichage des scores
+        self.ui_manager.draw_score(
+            solver_manager.solver,
+            window_size,
+            cell_size,
+            self.player_scores[0],
+            self.player_scores[1],
+            self.player_mode,
+            [max(0, remaining_p1), max(0, remaining_p2)],
+            self.current_player,
+            self.player1_bot_type,
+            self.player2_bot_type
+        )
+        
+        pygame.display.flip()
+    
     def main(self):
         """
         The main game loop.
@@ -1325,11 +1383,11 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
-                        two_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
-                        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 400, 300, 60)
-                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
-                        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
+                        one_rect = pygame.Rect(window_size[0] // 2 - 185, 150, 390, 60)
+                        two_rect = pygame.Rect(window_size[0] // 2 - 185, 225, 390, 60)
+                        bot_rect = pygame.Rect(window_size[0] // 2 - 185, 300, 390, 60)
+                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 185, 375, 390, 60)
+                        botvs_rect = pygame.Rect(window_size[0] // 2 - 185, 450, 390, 60)
                         return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y):
                             self.pressed_button = 'one'
@@ -1347,11 +1405,11 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1 and self.pressed_button:
                         x, y = event.pos
-                        one_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
-                        two_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
-                        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 400, 300, 60)
-                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 500, 300, 60)
-                        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 600, 300, 60)
+                        one_rect = pygame.Rect(window_size[0] // 2 - 140, 150, 300, 60)
+                        two_rect = pygame.Rect(window_size[0] // 2 - 140, 225, 300, 60)
+                        bot_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                        deepblue_rect = pygame.Rect(window_size[0] // 2 - 140, 375, 300, 60)
+                        botvs_rect = pygame.Rect(window_size[0] // 2 - 140, 450, 390, 60)
                         return_rect = pygame.Rect(50, window_size[1] - 70, 100, 40)
                         if one_rect.collidepoint(x, y) and self.pressed_button == 'one':
                             pygame.time.wait(150)
@@ -1372,7 +1430,7 @@ class Game:
                             self.reset_game_state()
                             return
                         self.pressed_button = None
-                        
+
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
@@ -1380,22 +1438,57 @@ class Game:
         if self.player_mode == 'botvs':
             self.starting_bot = None
             while self.starting_bot is None:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.VIDEORESIZE:
+                        # Mettre à jour la taille de la fenêtre
+                        self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            x, y = event.pos
+                            window_size = self.screen.get_size()
+                            db_rect = pygame.Rect(window_size[0]//2 - 150, 200, 300, 60)
+                            sf_rect = pygame.Rect(window_size[0]//2 - 150, 300, 300, 60)
+                            if db_rect.collidepoint(x, y):
+                                self.pressed_button = 'db'
+                            elif sf_rect.collidepoint(x, y):
+                                self.pressed_button = 'sf'
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        if event.button == 1 and self.pressed_button:
+                            x, y = event.pos
+                            window_size = self.screen.get_size()
+                            db_rect = pygame.Rect(window_size[0]//2 - 150, 200, 300, 60)
+                            sf_rect = pygame.Rect(window_size[0]//2 - 150, 300, 300, 60)
+                            if db_rect.collidepoint(x, y) and self.pressed_button == 'db':
+                                self.starting_bot = 'deepblue'
+                            elif sf_rect.collidepoint(x, y) and self.pressed_button == 'sf':
+                                self.starting_bot = 'stockfish'
+                            self.pressed_button = None
+
                 self.screen.fill((255, 255, 255))
                 window_size = self.screen.get_size()
                 font = pygame.font.Font(None, 50)
-                db_rect = pygame.Rect(window_size[0] // 2 - 140, 200, 300, 60)
-                sf_rect = pygame.Rect(window_size[0] // 2 - 140, 300, 300, 60)
+                
+                # Centrer les boutons horizontalement
+                db_rect = pygame.Rect(window_size[0]//2 - 150, 200, 300, 60)
+                sf_rect = pygame.Rect(window_size[0]//2 - 150, 300, 300, 60)
+                
                 color_db = (30, 30, 30) if self.pressed_button == 'db' else (50, 50, 50)
                 color_sf = (30, 30, 30) if self.pressed_button == 'sf' else (50, 50, 50)
+                
                 pygame.draw.rect(self.screen, color_db, db_rect)
                 text = font.render("Deep Blue starts", True, (255, 255, 255))
                 text_rect = text.get_rect(center=db_rect.center)
                 self.screen.blit(text, text_rect)
+                
                 pygame.draw.rect(self.screen, color_sf, sf_rect)
                 text = font.render("Stockfish starts", True, (255, 255, 255))
                 text_rect = text.get_rect(center=sf_rect.center)
                 self.screen.blit(text, text_rect)
                 pygame.display.flip()
+
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -1517,8 +1610,14 @@ class Game:
                     if bot_pair is not None:
                         valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
                         if valid:
-                            bot_start_time = pygame.time.get_ticks()
-                            pygame.time.wait(1000)  # Délai pour voir le coup
+                            start_wait = pygame.time.get_ticks()
+                            while pygame.time.get_ticks() - start_wait < 2000:
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        pygame.quit()
+                                        sys.exit()
+                                self.update_timer_display(grid, solver_manager, cell_size, window_size, top_margin)
+                                pygame.time.wait(10)
                             bot_end_time = pygame.time.get_ticks()
                             elapsed_bot = (bot_end_time - self.start_times[0]) / 1000.0
                             self.player_time_used[0] += elapsed_bot
@@ -1540,11 +1639,18 @@ class Game:
                     if bot_pair is not None:
                         valid = solver_manager.pair_is_valid(bot_pair, [], grid, self.player_pairs, self.selected_rules)
                         if valid:
-                            bot_start_time = pygame.time.get_ticks()
-                            pygame.time.wait(1000)  # Délai pour voir le coup
+                            start_wait = pygame.time.get_ticks()
+                            while pygame.time.get_ticks() - start_wait < 2000:
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        pygame.quit()
+                                        sys.exit()
+                                self.update_timer_display(grid, solver_manager, cell_size, window_size, top_margin)
+                                pygame.time.wait(10)
                             bot_end_time = pygame.time.get_ticks()
                             elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
                             self.player_time_used[1] += elapsed_bot
+
                             self.player_pairs[1].append(bot_pair)
                             self.player_scores[1] = solver_manager.calculate_two_player_score(self.player_pairs[1], grid)
                             self.current_player = 1
@@ -1562,7 +1668,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     if y >= grid.n * cell_size + top_margin:
-                        reset_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                        reset_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'one' else None
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
 
@@ -1638,7 +1744,7 @@ class Game:
                     if self.pressed_button:
                         button_rect = None
                         if self.pressed_button == 'reset':
-                            button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                            button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         elif self.pressed_button == 'solution' and self.player_mode == 'one':
                             button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         elif self.pressed_button == 'menu':
@@ -1687,7 +1793,7 @@ class Game:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                     window_size = (event.w, event.h)
                     cell_size = min(window_size[0] // grid.m, window_size[1] // (grid.n + 2))
-                    top_margin = 50 if self.player_mode in ['two', 'bot'] else 0
+                    top_margin = 50 if self.player_mode in ['two', 'bot', 'botvs'] else 0
                     self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
                     self.ui_manager.draw_score(
                         solver_manager.solver,
@@ -1697,17 +1803,21 @@ class Game:
                         self.player_scores[1],
                         self.player_mode,
                         [remaining_p1, remaining_p2],
-                        self.current_player
+                        self.current_player,
+                        self.player1_bot_type,
+                        self.player2_bot_type
                     )
 
                     if self.player_mode == 'two':
-                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two')
+                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two', self.player1_bot_type, self.player2_bot_type)
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     if self.player_mode == 'bot':
-                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot')
+                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot', self.player1_bot_type, self.player2_bot_type)
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     if self.player_mode == 'one':
                         self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                        self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+                    if self.player_mode == 'botvs':
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
 
@@ -1747,17 +1857,21 @@ class Game:
                 self.player_scores[1],
                 self.player_mode,
                 [remaining_p1, remaining_p2],
-                self.current_player
+                self.current_player,
+                self.player1_bot_type,
+                self.player2_bot_type
             )
 
             if self.player_mode == 'two':
-                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two')
+                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'two', self.player1_bot_type, self.player2_bot_type)
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             if self.player_mode == 'bot':
-                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot')
+                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot', self.player1_bot_type, self.player2_bot_type)
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             if self.player_mode == 'one':
                 self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+            if self.player_mode == 'botvs':
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             self.ui_manager.draw_menu_button(window_size, self.pressed_button == 'menu')
             pygame.display.flip()
@@ -1829,6 +1943,33 @@ class Game:
                             elif remaining_bot > remaining_player:
                                 self.ui_manager.lose_sound.play()
                                 self.ui_manager.draw_end_screen("Stockfish Wins (Time)!", (148, 0, 211), window_size)
+                            else:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
+                        self.player_timers = self.player_initial_times.copy()
+                        self.player_time_used = [0.0, 0.0]
+                        self.start_times = [pygame.time.get_ticks(), 0]
+                        self.player_pairs = [[], []]
+                        self.player_scores = [0, 0]
+                        self.current_player = 1
+                        self.game_over = False
+
+                    if self.player_mode == 'botvs':
+                        if self.player_scores[0] > self.player_scores[1]:
+                            self.ui_manager.lose_sound.play()
+                            self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
+                        elif self.player_scores[1] > self.player_scores[0]:
+                            self.ui_manager.win_sound.play()
+                            self.ui_manager.draw_end_screen("Deep Blue Wins!", self.colors[5], window_size)
+                        else:
+                            remaining_stockfish = self.player_initial_times[0] - self.player_time_used[0]
+                            remaining_deepblue = self.player_initial_times[1] - self.player_time_used[1]
+                            if remaining_stockfish < remaining_deepblue:
+                                self.ui_manager.win_sound.play()
+                                self.ui_manager.draw_end_screen("Stockfish Wins (Time)!", (148, 0, 211), window_size)
+                            elif remaining_deepblue < remaining_stockfish:
+                                self.ui_manager.win_sound.play()
+                                self.ui_manager.draw_end_screen("Deep Blue Wins (Time)!", self.colors[5], window_size)
                             else:
                                 self.ui_manager.lose_sound.play()
                                 self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
