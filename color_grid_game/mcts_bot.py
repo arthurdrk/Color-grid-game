@@ -136,7 +136,6 @@ class MCTS_Bot:
             top_k_pairs = heapq.nsmallest(k, pairs, key=lambda p: self.grid.cost(p))
             return random.choice(top_k_pairs)
 
-        # Glouton : meilleure paire
         return min(pairs, key=lambda p: self.grid.cost(p))
 
 
