@@ -10,34 +10,54 @@ class TestMinimaxBot(unittest.TestCase):
     def setUp(self):
         self.solver = Minimax_Bot()
     
-    def test_repr_grid00(self):
+    def test_move_to_play_grid00(self):
         grid = Grid.grid_from_file("input/grid00.in", read_values=True)
         pair = self.solver.move_to_play(grid, "original rules")
+        self.assertEqual(grid.cost(pair), 1)    
+        
+    def test_move_to_play2_grid00(self):
+        grid = Grid.grid_from_file("input/grid00.in", read_values=True)
+        pair = self.solver.move_to_play2(grid, "original rules")
         self.assertEqual(grid.cost(pair), 1)
 
-    def test_repr_grid01(self):
+    def test_move_to_play_grid01(self):
         grid = Grid.grid_from_file("input/grid01.in", read_values=True)
         pair = self.solver.move_to_play(grid, "original rules")
         self.assertEqual(grid.cost(pair), 1)
 
-    def test_repr_grid02(self):
+    def test_move_to_play2_grid01(self):
+        grid = Grid.grid_from_file("input/grid01.in", read_values=True)
+        pair = self.solver.move_to_play2(grid, "original rules")
+        self.assertEqual(grid.cost(pair), 1)
+
+    def test_move_to_play_grid02(self):
         grid = Grid.grid_from_file("input/grid02.in", read_values=True)
         pair = self.solver.move_to_play(grid, "original rules")
         self.assertEqual(grid.cost(pair), 0)
 
-    def test_repr_grid03(self):
+    def test_move_to_play2_grid02(self):
+        grid = Grid.grid_from_file("input/grid02.in", read_values=True)
+        pair = self.solver.move_to_play2(grid, "original rules")
+        self.assertEqual(grid.cost(pair), 0)
+
+    def test_move_to_play_grid03(self):
         grid = Grid.grid_from_file("input/grid03.in", read_values=True)
         pair = self.solver.move_to_play(grid, "original rules")
         self.assertEqual(grid.cost(pair), 0)   
     
-    def test_repr_grid03(self):
+    def test_move_to_play2_grid03(self):
         grid = Grid.grid_from_file("input/grid03.in", read_values=True)
-        pair = self.solver.move_to_play(grid, "original rules")
+        pair = self.solver.move_to_play2(grid, "original rules")
         self.assertEqual(grid.cost(pair), 0)
 
-    def test_repr_grid04(self):
+    def test_move_to_play_grid04(self):
         grid = Grid.grid_from_file("input/grid04.in", read_values=True)
         pair = self.solver.move_to_play(grid, "original rules")
+        self.assertEqual(grid.cost(pair), 0)    
+    
+    def test_move_to_play2_grid04(self):
+        grid = Grid.grid_from_file("input/grid04.in", read_values=True)
+        pair = self.solver.move_to_play2(grid, "original rules")
         self.assertEqual(grid.cost(pair), 0)
         
         
