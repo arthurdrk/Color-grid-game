@@ -3,6 +3,7 @@
 ## Description
 
 ColorGrid is a programming project developed as part of the first-year curriculum at ENSAE Paris. The game involves a grid-based matching problem with specific rules and constraints.
+Documentation can be found here : (https://arthurdrk.github.io/Color-grid-game/)
 
 ## Problem Description
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/4428a98a-1e09-4fa4-97fb-8e00bd2b01b0" />
@@ -32,35 +33,6 @@ The goal is to select pairs of adjacent cells with the following constraints:
 - Green cells can only be paired with green or white cells.
 
 Each cell can only be part of one pair. The objective is to minimize the score calculated as the sum of the absolute differences in values of the paired cells plus the sum of the values of unpaired cells (excluding black cells).
-
-## Directory Structure
-
-```
-Jeu-appariement-sur-une-grille/
-│
-├── README.md    # Project documentation
-│
-├──requirements.txt    # Required Python packages
-│
-└── ensae-prog25/
-    │
-    ├── code/
-    │   ├── main.py    # Main script to run the solvers of all grids
-    │   ├── grid.py    # Grid class and related functions
-    │   ├── solver.py    # Solvers classes : SolverGreedy, SolverFordFulkerson and SolverGeneral
-    │   └── game.py    # Run this script to play the game
-    │
-    ├── tests/
-    │   ├── test_grid_from_file.py    # Unit tests for grid functionality
-    │   ├── test_ford_fulkerson.py    # Unit tests for solver functionality
-    │   └── ...    # Additional unit tests
-    │
-    └── input/
-        ├── grid00.in    # Example grid data
-        ├── grid01.in     
-        └── ...     # Additional grids
-
-```
 
 ## How to play
 
