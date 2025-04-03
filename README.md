@@ -3,7 +3,7 @@
 ## Description
 
 ColorGrid is a programming project developed as part of the first-year curriculum at ENSAE Paris. The game involves a grid-based matching problem with specific rules and constraints.
-Documentation can be found here : (https://arthurdrk.github.io/Color-grid-game/)
+Documentation can be found here : https://arthurdrk.github.io/Color-grid-game/
 
 ## Problem Description
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/4428a98a-1e09-4fa4-97fb-8e00bd2b01b0" />
