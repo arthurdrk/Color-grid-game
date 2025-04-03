@@ -1,7 +1,0 @@
-pygame==2.6.1
-matplotlib
-numpy
-scipy
-networkx
-numpydoc
-sphinx_rtd_theme==1.3.0
