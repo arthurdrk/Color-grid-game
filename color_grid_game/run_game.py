@@ -522,11 +522,11 @@ class UIManager:
 
             # Déterminer les noms des joueurs selon le mode de jeu
             if game_mode == 'botvs':
-                bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
-                bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
+                bot_name1 = "DeepBlue" if player1_bot_type == 'mcts' else "Stockfish"
+                bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "DeepBlue"
             else:
                 bot_name1 = "Player 1"
-                bot_name2 = "Player 2" if game_mode == 'two' else "Stockfish" if game_mode == 'bot' else "Deep Blue"
+                bot_name2 = "Player 2" if game_mode == 'two' else "Stockfish" if game_mode == 'bot' else "DeepBlue"
 
             # Afficher le score du premier joueur/bot
             color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
@@ -564,8 +564,8 @@ class UIManager:
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
             text = font.render("Player to play" if current_player == 1 else "DeepBlue to play", True, color)
         elif game_mode == 'botvs':
-            bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
-            bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
+            bot_name1 = "DeepBlue" if player1_bot_type == 'mcts' else "Stockfish"
+            bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "DeepBlue"
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
             text = font.render(f"{bot_name1 if current_player == 1 else bot_name2} to play", True, color)
         else:  # one
@@ -739,7 +739,7 @@ class UIManager:
         text_rect = text.get_rect(center=bot_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Bouton "VS Deep Blue"
+        # Bouton "VS DeepBlue"
         deepblue_rect = pygame.Rect(window_size[0] // 2 - 185, 375, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'deepblue' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, deepblue_rect)
@@ -748,7 +748,7 @@ class UIManager:
         self.screen.blit(text, text_rect)
 
         # Bouton "Stockfish VS DeepBlue"
-        botvs_rect = pygame.Rect(window_size[0] // 2 - 185, 450, 390, 60)  # Taille ajustée pour centrer
+        botvs_rect = pygame.Rect(window_size[0] // 2 - 185, 450, 390, 60) 
         color_choice = (30, 30, 30) if pressed_button == 'botvs' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, botvs_rect)
         text = font.render("Stockfish VS DeepBlue", True, (255, 255, 255))
@@ -1430,9 +1430,8 @@ class Game:
                 window_size = self.screen.get_size()
                 font = pygame.font.Font(None, 50)
 
-                # Centrer les boutons horizontalement
-                db_rect = pygame.Rect(window_size[0]//2 - 150, 200, 300, 60)
-                sf_rect = pygame.Rect(window_size[0]//2 - 150, 300, 300, 60)
+                db_rect = pygame.Rect(window_size[0]//2 - 140, 200, 300, 60)
+                sf_rect = pygame.Rect(window_size[0]//2 - 140, 300, 300, 60)
 
                 color_db = (30, 30, 30) if self.pressed_button == 'db' else (50, 50, 50)
                 color_sf = (30, 30, 30) if self.pressed_button == 'sf' else (50, 50, 50)
@@ -1625,7 +1624,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     if y >= grid.n * cell_size + top_margin:
-                        reset_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot', 'deepblue'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                        reset_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot', 'deepblue', 'botvs'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'one' else None
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
 
