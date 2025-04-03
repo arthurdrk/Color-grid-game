@@ -17,11 +17,9 @@ def main():
         full_file_path = os.path.join(data_path, file_name)
         print("Solving grid:", file_name)
 
-        grid = Grid.grid_from_file(full_file_path, read_values=False)
-        rules = "original rules" if args.rules == 'original' else "new rules"
-        if file_name == "grid01.in":
-            grid.plot()
-        solver_blossom = Solver_Ford_Fulkerson(grid, rules)
+        grid = Grid.grid_from_file(full_file_path, read_values=True)
+        rules = "new rules" if args.rules == 'original' else "new rules"
+        solver_blossom = Solver_Blossom(grid, rules)
         #solver_hungarian = Solver_Greedy_Upgraded(grid, rules)
 
         start_blossom = time.time()
@@ -38,7 +36,7 @@ def main():
         time_blossom = end_blossom - start_blossom
         # time_hungarian = end_hungarian - start_hungarian
 
-        print(f"  Solver_Ford_Fulkerson {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
+        print(f"  Solver_Hungarian {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
         #print(f"  Solver_Greedy_Upgraded {rules.capitalize()} score: {hungarian_score},  Time : {time_hungarian:.4f} seconds\n")
 
 if __name__ == '__main__':
