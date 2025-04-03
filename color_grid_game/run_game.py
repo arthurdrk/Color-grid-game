@@ -520,7 +520,6 @@ class UIManager:
             time1 = format_time(player_timers[0])
             time2 = format_time(player_timers[1])
 
-            # Déterminer les noms des joueurs selon le mode de jeu
             if game_mode == 'botvs':
                 bot_name1 = "DeepBlue" if player1_bot_type == 'mcts' else "Stockfish"
                 bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "DeepBlue"
@@ -528,12 +527,10 @@ class UIManager:
                 bot_name1 = "Player 1"
                 bot_name2 = "Player 2" if game_mode == 'two' else "Stockfish" if game_mode == 'bot' else "DeepBlue"
 
-            # Afficher le score du premier joueur/bot
             color = self.darken_color(self.colors[5]) if current_player != 1 else self.colors[5]
             text = font.render(f"{bot_name1}: {player1_score} | Timer: {time1}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 45))
 
-            # Afficher le score du second joueur/bot
             color = self.darken_color((148, 0, 211)) if current_player != 2 else (148, 0, 211)
             text = font.render(f"{bot_name2}: {player2_score} | Timer: {time2}", True, color)
             self.screen.blit(text, (5, window_size[1] - cell_size - 15))
@@ -715,7 +712,6 @@ class UIManager:
         """
         font = pygame.font.Font(None, 50)
 
-        # Bouton "One Player"
         one_rect = pygame.Rect(window_size[0] // 2 - 185, 150, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'one' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, one_rect)
@@ -723,7 +719,6 @@ class UIManager:
         text_rect = text.get_rect(center=one_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Bouton "Two Players"
         two_rect = pygame.Rect(window_size[0] // 2 - 185, 225, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'two' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, two_rect)
@@ -731,7 +726,6 @@ class UIManager:
         text_rect = text.get_rect(center=two_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Bouton "Versus Stockfish"
         bot_rect = pygame.Rect(window_size[0] // 2 - 185, 300, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'bot' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, bot_rect)
@@ -739,7 +733,6 @@ class UIManager:
         text_rect = text.get_rect(center=bot_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Bouton "VS DeepBlue"
         deepblue_rect = pygame.Rect(window_size[0] // 2 - 185, 375, 390, 60)
         color_choice = (30, 30, 30) if pressed_button == 'deepblue' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, deepblue_rect)
@@ -747,7 +740,6 @@ class UIManager:
         text_rect = text.get_rect(center=deepblue_rect.center)
         self.screen.blit(text, text_rect)
 
-        # Bouton "Stockfish VS DeepBlue"
         botvs_rect = pygame.Rect(window_size[0] // 2 - 185, 450, 390, 60) 
         color_choice = (30, 30, 30) if pressed_button == 'botvs' else (50, 50, 50)
         pygame.draw.rect(self.screen, color_choice, botvs_rect)
