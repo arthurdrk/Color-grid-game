@@ -562,7 +562,7 @@ class UIManager:
             text = font.render("Player to play" if current_player == 1 else "Stockfish to play", True, color)
         elif game_mode == 'deepblue':
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
-            text = font.render("Player to play" if current_player == 1 else "DeepBlueto play", True, color)
+            text = font.render("Player to play" if current_player == 1 else "DeepBlue to play", True, color)
         elif game_mode == 'botvs':
             bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
             bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
@@ -1232,47 +1232,6 @@ class Game:
                     grid_copy.color[i][j] = 4
         return grid_copy
 
-    def update_timer_display(self, grid, solver_manager, cell_size, window_size, top_margin):
-        """Met à jour l'affichage du timer pendant le délai des bots."""
-
-        self.screen.fill((220, 220, 220))
-        new_rules = (self.selected_rules == "new rules")
-        self.screen.fill((220, 220, 220))
-        new_rules = (self.selected_rules == "new rules")
-
-        # Redessiner tous les éléments d'interface
-        self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells,
-                                  self.player_mode, self.player_pairs, top_margin, new_rules)
-
-        # Dessiner les boutons
-        if self.player_mode == 'botvs':
-            self.ui_manager.draw_restart_button(window_size, False, self.player_mode)
-        self.ui_manager.draw_menu_button(window_size, False)
-
-        # Calcul des temps restants
-        remaining_p1 = self.player_initial_times[0] - self.player_time_used[0]
-        remaining_p2 = self.player_initial_times[1] - self.player_time_used[1]
-        if self.current_player == 1 and not self.timer_paused:
-            remaining_p1 -= (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
-        elif self.current_player == 2 and not self.timer_paused:
-            remaining_p2 -= (pygame.time.get_ticks() - self.start_times[1]) / 1000.0
-
-        # Affichage des scores
-        self.ui_manager.draw_score(
-            solver_manager.solver,
-            window_size,
-            cell_size,
-            self.player_scores[0],
-            self.player_scores[1],
-            self.player_mode,
-            [max(0, remaining_p1), max(0, remaining_p2)],
-            self.current_player,
-            self.player1_bot_type,
-            self.player2_bot_type
-        )
-
-        pygame.display.flip()
-
     def main(self):
         """
         The main game loop.
@@ -1550,7 +1509,7 @@ class Game:
                             self.reset_game_state()
                             return
                         self.pressed_button = None
-
+        new_rules = (self.selected_rules == "new rules")
         grid = self.grid_manager.load_grid(self.selected_grid)
         solver_manager = SolverManager(grid, self.selected_rules)
         general_score = solver_manager.general_score
@@ -1587,7 +1546,7 @@ class Game:
         self.start_times = [pygame.time.get_ticks(), 0]
 
         cell_size = 60
-        top_margin = 50 if self.player_mode in ['two', 'bot'] else 0
+        top_margin = 50 if self.player_mode in ['two', 'bot', 'botvs', 'deepblue'] else 0
         window_height = grid.n * cell_size + 110 + top_margin
         window_width = max(600, grid.m * cell_size)
         window_size = (window_width, window_height)
@@ -1616,7 +1575,6 @@ class Game:
                                     if event.type == pygame.QUIT:
                                         pygame.quit()
                                         sys.exit()
-                                self.update_timer_display(grid, solver_manager, cell_size, window_size, top_margin)
                                 pygame.time.wait(10)
                             bot_end_time = pygame.time.get_ticks()
                             elapsed_bot = (bot_end_time - self.start_times[0]) / 1000.0
@@ -1645,7 +1603,6 @@ class Game:
                                     if event.type == pygame.QUIT:
                                         pygame.quit()
                                         sys.exit()
-                                self.update_timer_display(grid, solver_manager, cell_size, window_size, top_margin)
                                 pygame.time.wait(10)
                             bot_end_time = pygame.time.get_ticks()
                             elapsed_bot = (bot_end_time - self.start_times[1]) / 1000.0
@@ -1668,7 +1625,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     if y >= grid.n * cell_size + top_margin:
-                        reset_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                        reset_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot', 'deepblue'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         solution_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode == 'one' else None
                         menu_rect = pygame.Rect(window_size[0] - 110, window_size[1] - 70, 100, 40)
 
@@ -1712,7 +1669,7 @@ class Game:
                                         if solver_manager.can_pair(color1, color2):
                                             if self.player_mode == 'one':
                                                 solver_manager.solver.pairs.append((self.selected_cells[0], self.selected_cells[1]))
-                                            elif self.player_mode == 'bot':
+                                            elif self.player_mode in ['bot', 'deepblue']:
                                                 valid = solver_manager.pair_is_valid((self.selected_cells[0], self.selected_cells[1]), [], grid, self.player_pairs, self.selected_rules)
                                                 if valid:
                                                     elapsed = (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
@@ -1745,7 +1702,7 @@ class Game:
                     if self.pressed_button:
                         button_rect = None
                         if self.pressed_button == 'reset':
-                            button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
+                            button_rect = pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40) if self.player_mode == 'botvs' else pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40) if self.player_mode in ['two', 'bot', 'deepblue'] else pygame.Rect(window_size[0] - 330, window_size[1] - 70, 100, 40)
                         elif self.pressed_button == 'solution' and self.player_mode == 'one':
                             button_rect = pygame.Rect(window_size[0] - 225, window_size[1] - 70, 110, 40)
                         elif self.pressed_button == 'menu':
@@ -1795,8 +1752,8 @@ class Game:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                     window_size = (event.w, event.h)
                     cell_size = min(window_size[0] // grid.m, window_size[1] // (grid.n + 2))
-                    top_margin = 50 if self.player_mode in ['two', 'bot', 'botvs'] else 0
-                    self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin)
+                    top_margin = 50 if self.player_mode in ['two', 'bot', 'botvs', 'deepblue'] else 0
+                    self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin, new_rules)
                     self.ui_manager.draw_score(
                         solver_manager.solver,
                         window_size,
@@ -1818,6 +1775,9 @@ class Game:
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     if self.player_mode == 'one':
                         self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
+                        self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+                    if self.player_mode == 'deepblue':
+                        self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'deepblue', self.player1_bot_type, self.player2_bot_type)
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
                     if self.player_mode == 'botvs':
                         self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
@@ -1849,7 +1809,6 @@ class Game:
                     self.ui_manager.draw_end_screen("Player 1 has won!", self.colors[5], window_size)
 
             self.screen.fill((220, 220, 220))
-            new_rules = (self.selected_rules == "new rules")
             self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, self.player_mode, self.player_pairs, top_margin, new_rules)
             self.ui_manager.draw_score(
                 solver_manager.solver,
@@ -1869,6 +1828,9 @@ class Game:
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             if self.player_mode == 'bot':
                 self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'bot', self.player1_bot_type, self.player2_bot_type)
+                self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
+            if self.player_mode == 'deepblue':
+                self.ui_manager.draw_turn_indicator(self.current_player, window_size, top_margin, 'deepblue', self.player1_bot_type, self.player2_bot_type)
                 self.ui_manager.draw_restart_button(window_size, self.pressed_button == 'reset', self.player_mode)
             if self.player_mode == 'one':
                 self.ui_manager.draw_solution_button(window_size, self.pressed_button == 'solution')
@@ -1955,7 +1917,33 @@ class Game:
                         self.player_scores = [0, 0]
                         self.current_player = 1
                         self.game_over = False
-
+                    elif self.player_mode == 'deepblue':
+                        if self.player_scores[0] > self.player_scores[1]:
+                            self.ui_manager.lose_sound.play()
+                            self.ui_manager.draw_end_screen("DeepBlue Wins!", (148, 0, 211), window_size)
+                        elif self.player_scores[1] > self.player_scores[0]:
+                            self.ui_manager.win_sound.play()
+                            self.ui_manager.draw_end_screen("You Won!", self.colors[5], window_size)
+                        else:
+                            remaining_player = self.player_initial_times[0] - self.player_time_used[0]
+                            remaining_bot = self.player_initial_times[1] - self.player_time_used[1]
+                            if remaining_player > remaining_bot:
+                                self.ui_manager.win_sound.play()
+                                self.ui_manager.draw_end_screen("You Win (Time)!", self.colors[5], window_size)
+                            elif remaining_bot > remaining_player:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("DeepBlue Wins (Time)!", (148, 0, 211), window_size)
+                            else:
+                                self.ui_manager.lose_sound.play()
+                                self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
+                        self.player_timers = self.player_initial_times.copy()
+                        self.player_time_used = [0.0, 0.0]
+                        self.start_times = [pygame.time.get_ticks(), 0]
+                        self.player_pairs = [[], []]
+                        self.player_scores = [0, 0]
+                        self.current_player = 1
+                        self.game_over = False
+                        
                     if self.player_mode == 'botvs':
                         if self.player_scores[0] < self.player_scores[1]:
                             self.ui_manager.win_sound.play()
