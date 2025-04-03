@@ -4,58 +4,50 @@ color\_grid\_game.solvers package
 Submodules
 ----------
 
-color\_grid\_game.solvers.blossom module
+color\_grid\_game.solvers.solver\_blossom module
 ----------------------------------------
 
-.. automodule:: color_grid_game.solvers.blossom
+.. automodule:: color_grid_game.solvers.solver_blossom
    :members:
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.empty module
+color\_grid\_game.solvers.solver\_empty module
 --------------------------------------
 
-.. automodule:: color_grid_game.solvers.empty
+.. automodule:: color_grid_game.solvers.solver_empty
    :members:
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.ford\_fulkerson module
+color\_grid\_game.solvers.solver\_ford\_fulkerson module
 ------------------------------------------------
 
-.. automodule:: color_grid_game.solvers.ford_fulkerson
+.. automodule:: color_grid_game.solvers.solver_ford_fulkerson
    :members:
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.greedy module
+color\_grid\_game.solvers.solver\_greedy module
 ---------------------------------------
 
-.. automodule:: color_grid_game.solvers.greedy
+.. automodule:: color_grid_game.solvers.solver_greedy
    :members:
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.greedy\_upgraded module
+color\_grid\_game.solvers.solver\_greedy\_upgraded module
 -------------------------------------------------
 
-.. automodule:: color_grid_game.solvers.greedy_upgraded
+.. automodule:: color_grid_game.solvers.solver_greedy_upgraded
    :members:
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.solvers.hungarian module
+color\_grid\_game.solvers.solver\_hungarian module
 ------------------------------------------
 
-.. automodule:: color_grid_game.solvers.hungarian
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-color\_grid\_game.solvers.hungarian\_general module
----------------------------------------------------
-
-.. automodule:: color_grid_game.solvers.hungarian_general
+.. automodule:: color_grid_game.solvers.solver_hungarian
    :members:
    :undoc-members:
    :show-inheritance:

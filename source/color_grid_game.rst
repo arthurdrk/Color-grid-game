@@ -28,10 +28,18 @@ color\_grid\_game.main module
    :undoc-members:
    :show-inheritance:
 
-color\_grid\_game.min\_max\_bot module
+color\_grid\_game.mcts\_bot module
 --------------------------------------
 
-.. automodule:: color_grid_game.min_max_bot
+.. automodule:: color_grid_game.mcts_bot
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+color\_grid\_game.minimax\_bot module
+--------------------------------------
+
+.. automodule:: color_grid_game.minimax_bot
    :members:
    :undoc-members:
    :show-inheritance:

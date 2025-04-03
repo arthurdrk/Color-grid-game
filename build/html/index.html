@@ -79,13 +79,12 @@
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.solvers.html">color_grid_game.solvers package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.blossom">color_grid_game.solvers.blossom module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.empty">color_grid_game.solvers.empty module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.ford_fulkerson">color_grid_game.solvers.ford_fulkerson module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.greedy">color_grid_game.solvers.greedy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.greedy_upgraded">color_grid_game.solvers.greedy_upgraded module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.hungarian">color_grid_game.solvers.hungarian module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers.hungarian_general">color_grid_game.solvers.hungarian_general module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-blossom-module">color_grid_game.solvers.solver_blossom module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-empty-module">color_grid_game.solvers.solver_empty module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-ford-fulkerson-module">color_grid_game.solvers.solver_ford_fulkerson module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-greedy-module">color_grid_game.solvers.solver_greedy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-greedy-upgraded-module">color_grid_game.solvers.solver_greedy_upgraded module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#color-grid-game-solvers-solver-hungarian-module">color_grid_game.solvers.solver_hungarian module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.solvers.html#module-color_grid_game.solvers">Module contents</a></li>
 </ul>
 </li>
@@ -95,7 +94,6 @@
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.grid">color_grid_game.grid module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid"><code class="docutils literal notranslate"><span class="pre">Grid</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid.all_pairs"><code class="docutils literal notranslate"><span class="pre">Grid.all_pairs()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid.bipartite_graph"><code class="docutils literal notranslate"><span class="pre">Grid.bipartite_graph()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid.cost"><code class="docutils literal notranslate"><span class="pre">Grid.cost()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid.grid_from_file"><code class="docutils literal notranslate"><span class="pre">Grid.grid_from_file()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid.is_forbidden"><code class="docutils literal notranslate"><span class="pre">Grid.is_forbidden()</span></code></a></li>
@@ -105,19 +103,34 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.main">color_grid_game.main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.min_max_bot">color_grid_game.min_max_bot module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.min_max_bot.Bot"><code class="docutils literal notranslate"><span class="pre">Bot</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.min_max_bot.Bot.move_to_play"><code class="docutils literal notranslate"><span class="pre">Bot.move_to_play()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.main">color_grid_game.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.mcts_bot">color_grid_game.mcts_bot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.mcts_bot.MCTS_Bot"><code class="docutils literal notranslate"><span class="pre">MCTS_Bot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.mcts_bot.MCTS_Bot.epsilon_greedy_from_pairs"><code class="docutils literal notranslate"><span class="pre">MCTS_Bot.epsilon_greedy_from_pairs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.mcts_bot.MCTS_Bot.mcts_move"><code class="docutils literal notranslate"><span class="pre">MCTS_Bot.mcts_move()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.mcts_bot.MCTS_Bot.simulate_from_pair"><code class="docutils literal notranslate"><span class="pre">MCTS_Bot.simulate_from_pair()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.minimax_bot">color_grid_game.minimax_bot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.minimax_bot.Minimax_Bot"><code class="docutils literal notranslate"><span class="pre">Minimax_Bot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.minimax_bot.Minimax_Bot.move_to_play"><code class="docutils literal notranslate"><span class="pre">Minimax_Bot.move_to_play()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.minimax_bot.Minimax_Bot.move_to_play2"><code class="docutils literal notranslate"><span class="pre">Minimax_Bot.move_to_play2()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.run_game">color_grid_game.run_game module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game.create_grid_copy"><code class="docutils literal notranslate"><span class="pre">Game.create_grid_copy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game.main"><code class="docutils literal notranslate"><span class="pre">Game.main()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game.reset_game_state"><code class="docutils literal notranslate"><span class="pre">Game.reset_game_state()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game.show_rules"><code class="docutils literal notranslate"><span class="pre">Game.show_rules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.Game.update_timer_display"><code class="docutils literal notranslate"><span class="pre">Game.update_timer_display()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.GridManager"><code class="docutils literal notranslate"><span class="pre">GridManager</span></code></a><ul>
@@ -135,14 +148,18 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager"><code class="docutils literal notranslate"><span class="pre">UIManager</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.darken_color"><code class="docutils literal notranslate"><span class="pre">UIManager.darken_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.darken_pair_cells"><code class="docutils literal notranslate"><span class="pre">UIManager.darken_pair_cells()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_end_screen"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_end_screen()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_error_message"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_error_message()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_grid"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_grid()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_grid_options"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_grid_options()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_menu_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_menu_button()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_pair_frame"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_pair_frame()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_pair_line"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_pair_line()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_player_choice"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_player_choice()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_restart_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_restart_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_return_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_return_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_rule_choice"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_rule_choice()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_rules"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_rules()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_rules_button"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_rules_button()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.run_game.UIManager.draw_score"><code class="docutils literal notranslate"><span class="pre">UIManager.draw_score()</span></code></a></li>
@@ -158,15 +175,6 @@
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.solver">color_grid_game.solver module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver"><code class="docutils literal notranslate"><span class="pre">Solver</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver.score"><code class="docutils literal notranslate"><span class="pre">Solver.score()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.sp_utils">color_grid_game.sp_utils module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="color_grid_game.html#color_grid_game.sp_utils.SPUtils"><code class="docutils literal notranslate"><span class="pre">SPUtils</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.sp_utils.SPUtils.hungarian_algorithm"><code class="docutils literal notranslate"><span class="pre">SPUtils.hungarian_algorithm()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.sp_utils.SPUtils.matching_dict_to_set"><code class="docutils literal notranslate"><span class="pre">SPUtils.matching_dict_to_set()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="color_grid_game.html#color_grid_game.sp_utils.SPUtils.max_weight_matching"><code class="docutils literal notranslate"><span class="pre">SPUtils.max_weight_matching()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -47,13 +47,12 @@
 <li class="toctree-l2 current"><a class="reference internal" href="color_grid_game.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">color_grid_game.solvers package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.blossom">color_grid_game.solvers.blossom module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.empty">color_grid_game.solvers.empty module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.ford_fulkerson">color_grid_game.solvers.ford_fulkerson module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.greedy">color_grid_game.solvers.greedy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.greedy_upgraded">color_grid_game.solvers.greedy_upgraded module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.hungarian">color_grid_game.solvers.hungarian module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers.hungarian_general">color_grid_game.solvers.hungarian_general module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-blossom-module">color_grid_game.solvers.solver_blossom module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-empty-module">color_grid_game.solvers.solver_empty module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-ford-fulkerson-module">color_grid_game.solvers.solver_ford_fulkerson module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-greedy-module">color_grid_game.solvers.solver_greedy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-greedy-upgraded-module">color_grid_game.solvers.solver_greedy_upgraded module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#color-grid-game-solvers-solver-hungarian-module">color_grid_game.solvers.solver_hungarian module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-color_grid_game.solvers">Module contents</a></li>
 </ul>
 </li>
@@ -62,10 +61,10 @@
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.grid">color_grid_game.grid module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.main">color_grid_game.main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.min_max_bot">color_grid_game.min_max_bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.mcts_bot">color_grid_game.mcts_bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.minimax_bot">color_grid_game.minimax_bot module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.run_game">color_grid_game.run_game module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.solver">color_grid_game.solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game.sp_utils">color_grid_game.sp_utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="color_grid_game.html#module-color_grid_game">Module contents</a></li>
 </ul>
 </li>
@@ -101,18 +100,24 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-color_grid_game.solvers.blossom">
-<span id="color-grid-game-solvers-blossom-module"></span><h2>color_grid_game.solvers.blossom module<a class="headerlink" href="#module-color_grid_game.solvers.blossom" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.blossom.SolverBlossom">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.blossom.</span></span><span class="sig-name descname"><span class="pre">SolverBlossom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.blossom.SolverBlossom" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-blossom-module">
+<h2>color_grid_game.solvers.solver_blossom module<a class="headerlink" href="#color-grid-game-solvers-solver-blossom-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_blossom"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_blossom.Solver_Blossom">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_blossom.</span></span><span class="sig-name descname"><span class="pre">Solver_Blossom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>A solver that uses weighted matching to minimize the score in a grid.
 Adapted to use a NetworkX graph instead of an adjacency dictionary.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.blossom.SolverBlossom.run" title="color_grid_game.solvers.blossom.SolverBlossom.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.matching_dict_to_set" title="color_grid_game.solvers.solver_blossom.Solver_Blossom.matching_dict_to_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matching_dict_to_set</span></code></a>(matching)</p></td>
+<td><p>Converts matching dictionary format to matching set format.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.max_weight_matching" title="color_grid_game.solvers.solver_blossom.Solver_Blossom.max_weight_matching"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_weight_matching</span></code></a>(G[, maxcardinality, weight])</p></td>
+<td><p>Compute a maximum-weighted matching of the graph G.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.run" title="color_grid_game.solvers.solver_blossom.Solver_Blossom.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Builds a NetworkX graph and uses the max_weight_matching algorithm from NetworkX.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
@@ -121,8 +126,64 @@ Adapted to use a NetworkX graph instead of an adjacency dictionary.</p>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.blossom.SolverBlossom.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.blossom.SolverBlossom.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_blossom.Solver_Blossom.matching_dict_to_set">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matching_dict_to_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matching</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.matching_dict_to_set" title="Link to this definition"></a></dt>
+<dd><p>Converts matching dictionary format to matching set format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>matching</strong><span class="classifier">dict</span></dt><dd><p>A dictionary representing the matching where keys are nodes and values are their matched pairs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>set</dt><dd><p>A set of edges representing the matching.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If a self-loop is detected in the matching.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_blossom.Solver_Blossom.max_weight_matching">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_weight_matching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcardinality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'weight'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.max_weight_matching" title="Link to this definition"></a></dt>
+<dd><p>Compute a maximum-weighted matching of the graph G.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>G</strong><span class="classifier">networkx.Graph</span></dt><dd><p>The input graph with edge weights.</p>
+</dd>
+<dt><strong>maxcardinality</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to compute a maximum cardinality matching.</p>
+</dd>
+<dt><strong>weight</strong><span class="classifier">str, optional</span></dt><dd><p>The attribute key for edge weights.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>set</dt><dd><p>A set of edges representing the maximum-weighted matching.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the input graph is not valid or if an error occurs during computation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_blossom.Solver_Blossom.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_blossom.Solver_Blossom.run" title="Link to this definition"></a></dt>
 <dd><p>Builds a NetworkX graph and uses the max_weight_matching algorithm from NetworkX.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -143,17 +204,17 @@ Adapted to use a NetworkX graph instead of an adjacency dictionary.</p>
 </dd></dl>
 
 </section>
-<section id="module-color_grid_game.solvers.empty">
-<span id="color-grid-game-solvers-empty-module"></span><h2>color_grid_game.solvers.empty module<a class="headerlink" href="#module-color_grid_game.solvers.empty" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.empty.SolverEmpty">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.empty.</span></span><span class="sig-name descname"><span class="pre">SolverEmpty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.empty.SolverEmpty" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-empty-module">
+<h2>color_grid_game.solvers.solver_empty module<a class="headerlink" href="#color-grid-game-solvers-solver-empty-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_empty"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_empty.Solver_Empty">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_empty.</span></span><span class="sig-name descname"><span class="pre">Solver_Empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_empty.Solver_Empty" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>A subclass of Solver that does not implement any solving logic.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.empty.SolverEmpty.run" title="color_grid_game.solvers.empty.SolverEmpty.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_empty.Solver_Empty.run" title="color_grid_game.solvers.solver_empty.Solver_Empty.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Placeholder method for running the solver.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
@@ -162,8 +223,8 @@ Adapted to use a NetworkX graph instead of an adjacency dictionary.</p>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.empty.SolverEmpty.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.empty.SolverEmpty.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_empty.Solver_Empty.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_empty.Solver_Empty.run" title="Link to this definition"></a></dt>
 <dd><p>Placeholder method for running the solver. Does nothing.</p>
 <p>This method is intended to be overridden by subclasses that implement
 specific solving algorithms.</p>
@@ -172,36 +233,33 @@ specific solving algorithms.</p>
 </dd></dl>
 
 </section>
-<section id="module-color_grid_game.solvers.ford_fulkerson">
-<span id="color-grid-game-solvers-ford-fulkerson-module"></span><h2>color_grid_game.solvers.ford_fulkerson module<a class="headerlink" href="#module-color_grid_game.solvers.ford_fulkerson" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.ford_fulkerson.</span></span><span class="sig-name descname"><span class="pre">SolverFordFulkerson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-ford-fulkerson-module">
+<h2>color_grid_game.solvers.solver_ford_fulkerson module<a class="headerlink" href="#color-grid-game-solvers-solver-ford-fulkerson-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_ford_fulkerson"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_ford_fulkerson.</span></span><span class="sig-name descname"><span class="pre">Solver_Ford_Fulkerson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>A subclass of Solver that implements a bipartite matching algorithm to find pairs.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.bfs" title="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.bfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bfs</span></code></a>(graph, s, t)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.bfs" title="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.bfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bfs</span></code></a>(graph, s, t)</p></td>
 <td><p>Performs a BFS to find a path from source 's' to sink 't' in the graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.ford_fulkerson" title="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.ford_fulkerson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ford_fulkerson</span></code></a>(graph, even_cells, odd_cells)</p></td>
-<td><p>Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.edmonds_karp" title="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.edmonds_karp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edmonds_karp</span></code></a>(graph, even_cells, odd_cells)</p></td>
+<td><p>Computes the maximum flow (maximum matching) in the bipartite graph using the Edmonds-Karp method.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.reconstruct_path" title="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.reconstruct_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_path</span></code></a>(parents, s, t)</p></td>
-<td><p>Reconstructs the path from 's' to 't' using the parents dictionary.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.run" title="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.run" title="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Runs the bipartite matching algorithm to find pairs of cells.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
 <td><p>Computes the score of the list of pairs in self.pairs.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.bfs">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.bfs" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.bfs">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.bfs" title="Link to this definition"></a></dt>
 <dd><p>Performs a BFS to find a path from source ‘s’ to sink ‘t’ in the graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -216,13 +274,7 @@ specific solving algorithms.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>list of int</dt><dd><p>The path from ‘s’ to ‘t’ if found, otherwise None.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If the graph is empty or if s or t is not in the graph.</p>
+<dt>dict</dt><dd><p>A dictionary of parents for reconstructing the path.</p>
 </dd>
 </dl>
 </dd>
@@ -230,9 +282,9 @@ specific solving algorithms.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.ford_fulkerson">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ford_fulkerson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">even_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odd_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.ford_fulkerson" title="Link to this definition"></a></dt>
-<dd><p>Computes the maximum flow (maximum matching) in the bipartite graph using the Ford-Fulkerson method.</p>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.edmonds_karp">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edmonds_karp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">even_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odd_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.edmonds_karp" title="Link to this definition"></a></dt>
+<dd><p>Computes the maximum flow (maximum matching) in the bipartite graph using the Edmonds-Karp method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -246,59 +298,17 @@ specific solving algorithms.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If the graph is empty or if even_cells or odd_cells is empty.</p>
-</dd>
-</dl>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.reconstruct_path">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reconstruct_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.reconstruct_path" title="Link to this definition"></a></dt>
-<dd><p>Reconstructs the path from ‘s’ to ‘t’ using the parents dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>parents</strong><span class="classifier">dict</span></dt><dd><p>A dictionary where parents[v] is the predecessor of v on the path from ‘s’ to ‘v’.</p>
-</dd>
-<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>The source node.</p>
-</dd>
-<dt><strong>t</strong><span class="classifier">str</span></dt><dd><p>The sink node.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>list of int</dt><dd><p>The reconstructed path from ‘s’ to ‘t’.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If the path cannot be reconstructed.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.ford_fulkerson.SolverFordFulkerson.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.solver_ford_fulkerson.Solver_Ford_Fulkerson.run" title="Link to this definition"></a></dt>
 <dd><p>Runs the bipartite matching algorithm to find pairs of cells.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>list of tuple</dt><dd><p>A list of pairs of cells, each represented as a tuple of tuples.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>ValueError</dt><dd><p>If any cell in pairs is invalid.</p>
 </dd>
 </dl>
 </dd>
@@ -308,17 +318,17 @@ specific solving algorithms.</p>
 </dd></dl>
 
 </section>
-<section id="module-color_grid_game.solvers.greedy">
-<span id="color-grid-game-solvers-greedy-module"></span><h2>color_grid_game.solvers.greedy module<a class="headerlink" href="#module-color_grid_game.solvers.greedy" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.greedy.SolverGreedy">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.greedy.</span></span><span class="sig-name descname"><span class="pre">SolverGreedy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.greedy.SolverGreedy" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-greedy-module">
+<h2>color_grid_game.solvers.solver_greedy module<a class="headerlink" href="#color-grid-game-solvers-solver-greedy-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_greedy"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_greedy.Solver_Greedy">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_greedy.</span></span><span class="sig-name descname"><span class="pre">Solver_Greedy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_greedy.Solver_Greedy" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>A subclass of Solver that implements a greedy algorithm to find pairs.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.greedy.SolverGreedy.run" title="color_grid_game.solvers.greedy.SolverGreedy.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_greedy.Solver_Greedy.run" title="color_grid_game.solvers.solver_greedy.Solver_Greedy.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Runs the greedy algorithm to find pairs of cells.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
@@ -327,8 +337,8 @@ specific solving algorithms.</p>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.greedy.SolverGreedy.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.greedy.SolverGreedy.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_greedy.Solver_Greedy.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.solver_greedy.Solver_Greedy.run" title="Link to this definition"></a></dt>
 <dd><p>Runs the greedy algorithm to find pairs of cells.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -349,17 +359,17 @@ specific solving algorithms.</p>
 </dd></dl>
 
 </section>
-<section id="module-color_grid_game.solvers.greedy_upgraded">
-<span id="color-grid-game-solvers-greedy-upgraded-module"></span><h2>color_grid_game.solvers.greedy_upgraded module<a class="headerlink" href="#module-color_grid_game.solvers.greedy_upgraded" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.greedy_upgraded.</span></span><span class="sig-name descname"><span class="pre">SolverGreedy_upgraded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-greedy-upgraded-module">
+<h2>color_grid_game.solvers.solver_greedy_upgraded module<a class="headerlink" href="#color-grid-game-solvers-solver-greedy-upgraded-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_greedy_upgraded"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_greedy_upgraded.</span></span><span class="sig-name descname"><span class="pre">Solver_Greedy_Upgraded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>Improvement of SolverGreedy that tries all possible starting points and keeps the pairing with the minimum score.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded.run" title="color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded.run" title="color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Runs the greedy algorithm from all possible starting cells and selects the best pairing.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
@@ -368,8 +378,8 @@ specific solving algorithms.</p>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.greedy_upgraded.SolverGreedy_upgraded.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.solver_greedy_upgraded.Solver_Greedy_Upgraded.run" title="Link to this definition"></a></dt>
 <dd><p>Runs the greedy algorithm from all possible starting cells and selects the best pairing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -390,69 +400,52 @@ specific solving algorithms.</p>
 </dd></dl>
 
 </section>
-<section id="module-color_grid_game.solvers.hungarian">
-<span id="color-grid-game-solvers-hungarian-module"></span><h2>color_grid_game.solvers.hungarian module<a class="headerlink" href="#module-color_grid_game.solvers.hungarian" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.hungarian.SolverHungarian">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.hungarian.</span></span><span class="sig-name descname"><span class="pre">SolverHungarian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.hungarian.SolverHungarian" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
-<p>A solver that uses the Hungarian algorithm to find optimal pairs in a grid.</p>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.hungarian.SolverHungarian.run" title="color_grid_game.solvers.hungarian.SolverHungarian.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
-<td><p>Builds a bipartite cost matrix using only cells present in valid pairs.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
-<td><p>Computes the score of the list of pairs in self.pairs.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.hungarian.SolverHungarian.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.hungarian.SolverHungarian.run" title="Link to this definition"></a></dt>
-<dd><p>Builds a bipartite cost matrix using only cells present in valid pairs.
-Applies the Hungarian algorithm to find optimal pairs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>list of tuple</dt><dd><p>A list of pairs of cells, each represented as a tuple of tuples.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>ValueError</dt><dd><p>If the cost matrix is empty or if pairs are invalid.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-color_grid_game.solvers.hungarian_general">
-<span id="color-grid-game-solvers-hungarian-general-module"></span><h2>color_grid_game.solvers.hungarian_general module<a class="headerlink" href="#module-color_grid_game.solvers.hungarian_general" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="color_grid_game.solvers.hungarian_general.SolverHungarian_general">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.hungarian_general.</span></span><span class="sig-name descname"><span class="pre">SolverHungarian_general</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.hungarian_general.SolverHungarian_general" title="Link to this definition"></a></dt>
+<section id="color-grid-game-solvers-solver-hungarian-module">
+<h2>color_grid_game.solvers.solver_hungarian module<a class="headerlink" href="#color-grid-game-solvers-solver-hungarian-module" title="Link to this heading"></a></h2>
+<span class="target" id="module-color_grid_game.solvers.solver_hungarian"></span><dl class="py class">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_hungarian.Solver_Hungarian">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_grid_game.solvers.solver_hungarian.</span></span><span class="sig-name descname"><span class="pre">Solver_Hungarian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="color_grid_game.html#color_grid_game.grid.Grid" title="color_grid_game.grid.Grid"><span class="pre">Grid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original</span> <span class="pre">rules'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_hungarian.Solver_Hungarian" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="color_grid_game.html#color_grid_game.solver.Solver" title="color_grid_game.solver.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code></a></p>
 <p>An alternative implementation of the Hungarian algorithm solver.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.hungarian_general.SolverHungarian_general.run" title="color_grid_game.solvers.hungarian_general.SolverHungarian_general.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_hungarian.Solver_Hungarian.hungarian_algorithm" title="color_grid_game.solvers.solver_hungarian.Solver_Hungarian.hungarian_algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hungarian_algorithm</span></code></a>(cost)</p></td>
+<td><p>Solve the linear sum assignment problem using the Hungarian algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#color_grid_game.solvers.solver_hungarian.Solver_Hungarian.run" title="color_grid_game.solvers.solver_hungarian.Solver_Hungarian.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Builds a bipartite cost matrix using only cells present in valid pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>()</p></td>
 <td><p>Computes the score of the list of pairs in self.pairs.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="color_grid_game.solvers.hungarian_general.SolverHungarian_general.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#color_grid_game.solvers.hungarian_general.SolverHungarian_general.run" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_hungarian.Solver_Hungarian.hungarian_algorithm">
+<span class="sig-name descname"><span class="pre">hungarian_algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_hungarian.Solver_Hungarian.hungarian_algorithm" title="Link to this definition"></a></dt>
+<dd><p>Solve the linear sum assignment problem using the Hungarian algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cost</strong><span class="classifier">np.ndarray</span></dt><dd><p>The cost matrix of the bipartite graph.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>row_ind</strong><span class="classifier">np.ndarray</span></dt><dd><p>An array of row indices giving the optimal assignment.</p>
+</dd>
+<dt><strong>col_ind</strong><span class="classifier">np.ndarray</span></dt><dd><p>An array of corresponding column indices giving the optimal assignment.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_grid_game.solvers.solver_hungarian.Solver_Hungarian.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#color_grid_game.solvers.solver_hungarian.Solver_Hungarian.run" title="Link to this definition"></a></dt>
 <dd><p>Builds a bipartite cost matrix using only cells present in valid pairs.
 Applies the Hungarian algorithm to find optimal pairs.</p>
 <dl class="field-list simple">
