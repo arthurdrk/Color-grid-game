@@ -29,7 +29,7 @@ color\_grid\_game.main module
    :show-inheritance:
 
 color\_grid\_game.mcts\_bot module
---------------------------------------
+----------------------------------
 
 .. automodule:: color_grid_game.mcts_bot
    :members:
