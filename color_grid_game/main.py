@@ -18,26 +18,26 @@ def main():
         print("Solving grid:", file_name)
 
         grid = Grid.grid_from_file(full_file_path, read_values=True)
-        rules = "new rules" if args.rules == 'original' else "new rules"
+        rules = "original rules" if args.rules == 'original' else "new rules"
         solver_blossom = Solver_Blossom(grid, rules)
-        #solver_hungarian = Solver_Greedy_Upgraded(grid, rules)
+        solver_hungarian = Solver_Hungarian(grid, rules)
 
         start_blossom = time.time()
         solver_blossom.run()
         end_blossom = time.time()
 
-        # start_hungarian = time.time()
-        # solver_hungarian.run()
-        # end_hungarian = time.time()
+        start_hungarian = time.time()
+        solver_hungarian.run()
+        end_hungarian = time.time()
 
         blossom_score = solver_blossom.score()
-        #hungarian_score = solver_hungarian.score()
+        hungarian_score = solver_hungarian.score()
 
         time_blossom = end_blossom - start_blossom
-        # time_hungarian = end_hungarian - start_hungarian
+        time_hungarian = end_hungarian - start_hungarian
 
-        print(f"  Solver_Hungarian {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
-        #print(f"  Solver_Greedy_Upgraded {rules.capitalize()} score: {hungarian_score},  Time : {time_hungarian:.4f} seconds\n")
+        print(f"  Solver_Blossom {rules.capitalize()} score: {blossom_score},  Time : {time_blossom:.4f} seconds")
+        print(f"  Solver_Hungarian {rules.capitalize()} score: {hungarian_score},  Time : {time_hungarian:.4f} seconds\n")
 
 if __name__ == '__main__':
     main()
