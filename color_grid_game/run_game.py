@@ -103,7 +103,7 @@ class UIManager:
         self.screen = screen
         self.colors = colors
         self.colors_title = colors_title
-        self.volume_theme = 0.01
+        self.volume_theme = 0.005
         self.volume = 0.02
 
         self.game_theme = pygame.mixer.Sound("./medias/game theme.mp3")
@@ -152,7 +152,7 @@ class UIManager:
         """
         if self.volume == 0:
             self.volume = 0.02
-            self.volume_theme = 0.01
+            self.volume_theme = 0.005
             self.game_theme.set_volume(self.volume_theme)
             self.win_sound.set_volume(self.volume)
             self.lose_sound.set_volume(self.volume)
@@ -562,7 +562,7 @@ class UIManager:
             text = font.render("Player to play" if current_player == 1 else "Stockfish to play", True, color)
         elif game_mode == 'deepblue':
             color = self.colors[5] if current_player == 1 else (148, 0, 211)
-            text = font.render("Player to play" if current_player == 1 else "Deep Blue to play", True, color)
+            text = font.render("Player to play" if current_player == 1 else "DeepBlueto play", True, color)
         elif game_mode == 'botvs':
             bot_name1 = "Deep Blue" if player1_bot_type == 'mcts' else "Stockfish"
             bot_name2 = "Stockfish" if player2_bot_type == 'minimax' else "Deep Blue"
@@ -1183,7 +1183,8 @@ class Game:
             2: (21, 143, 225),
             3: (80, 193, 45),
             4: (0, 0, 0),
-            5: (255, 145, 0)
+            5: (255, 145, 0),
+            6: (148, 0, 211)  # Color for DeepBlue
         }
         self.colors_title = {
             0: (0, 0, 0),
@@ -1222,32 +1223,32 @@ class Game:
         self.player2_bot_type = None
 
     def create_grid_copy(self, grid, player_pairs):
-                grid_copy = Grid(grid.n, grid.m,
-                                [row.copy() for row in grid.color],
-                                [row.copy() for row in grid.value])
-                for pair_list in player_pairs:
-                    for pair in pair_list:
-                        for (i, j) in pair:
-                            grid_copy.color[i][j] = 4
-                return grid_copy
-    
+        grid_copy = Grid(grid.n, grid.m,
+                         [row.copy() for row in grid.color],
+                         [row.copy() for row in grid.value])
+        for pair_list in player_pairs:
+            for pair in pair_list:
+                for (i, j) in pair:
+                    grid_copy.color[i][j] = 4
+        return grid_copy
+
     def update_timer_display(self, grid, solver_manager, cell_size, window_size, top_margin):
         """Met à jour l'affichage du timer pendant le délai des bots."""
-        
+
         self.screen.fill((220, 220, 220))
         new_rules = (self.selected_rules == "new rules")
         self.screen.fill((220, 220, 220))
         new_rules = (self.selected_rules == "new rules")
-        
+
         # Redessiner tous les éléments d'interface
-        self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells, 
-                                self.player_mode, self.player_pairs, top_margin, new_rules)
-        
+        self.ui_manager.draw_grid(grid, solver_manager.solver, cell_size, self.selected_cells,
+                                  self.player_mode, self.player_pairs, top_margin, new_rules)
+
         # Dessiner les boutons
         if self.player_mode == 'botvs':
             self.ui_manager.draw_restart_button(window_size, False, self.player_mode)
         self.ui_manager.draw_menu_button(window_size, False)
-        
+
         # Calcul des temps restants
         remaining_p1 = self.player_initial_times[0] - self.player_time_used[0]
         remaining_p2 = self.player_initial_times[1] - self.player_time_used[1]
@@ -1255,7 +1256,7 @@ class Game:
             remaining_p1 -= (pygame.time.get_ticks() - self.start_times[0]) / 1000.0
         elif self.current_player == 2 and not self.timer_paused:
             remaining_p2 -= (pygame.time.get_ticks() - self.start_times[1]) / 1000.0
-        
+
         # Affichage des scores
         self.ui_manager.draw_score(
             solver_manager.solver,
@@ -1269,9 +1270,9 @@ class Game:
             self.player1_bot_type,
             self.player2_bot_type
         )
-        
+
         pygame.display.flip()
-    
+
     def main(self):
         """
         The main game loop.
@@ -1289,7 +1290,7 @@ class Game:
             scroll_bar_rect = pygame.Rect(window_size[0] - 20, int(scroll_bar_y), 20, scroll_bar_height)
 
             self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect, scroll_bar_height,
-                                            self.grid_manager.grid_files, self.grid_manager.grid_colors, self.pressed_grid_index)
+                                              self.grid_manager.grid_files, self.grid_manager.grid_colors, self.pressed_grid_index)
             pygame.draw.rect(self.screen, (255, 255, 255), (0, 0, window_size[0], 100))
             self.ui_manager.draw_title(window_size)
             self.ui_manager.draw_rules_button(window_size, self.pressed_button == 'rules')
@@ -1341,8 +1342,8 @@ class Game:
 
                         if 0 <= released_index < len(self.grid_manager.grid_files) and released_index == self.pressed_grid_index:
                             self.ui_manager.draw_grid_options(window_size, self.scroll, scroll_bar_rect,
-                                                            scroll_bar_height, self.grid_manager.grid_files,
-                                                            self.grid_manager.grid_colors, self.pressed_grid_index)
+                                                              scroll_bar_height, self.grid_manager.grid_files,
+                                                              self.grid_manager.grid_colors, self.pressed_grid_index)
                             pygame.display.flip()
                             pygame.time.delay(100)
                             self.selected_grid = self.grid_manager.grid_files[self.pressed_grid_index][0]
@@ -1434,7 +1435,6 @@ class Game:
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
-
         if self.player_mode == 'botvs':
             self.starting_bot = None
             while self.starting_bot is None:
@@ -1470,19 +1470,19 @@ class Game:
                 self.screen.fill((255, 255, 255))
                 window_size = self.screen.get_size()
                 font = pygame.font.Font(None, 50)
-                
+
                 # Centrer les boutons horizontalement
                 db_rect = pygame.Rect(window_size[0]//2 - 150, 200, 300, 60)
                 sf_rect = pygame.Rect(window_size[0]//2 - 150, 300, 300, 60)
-                
+
                 color_db = (30, 30, 30) if self.pressed_button == 'db' else (50, 50, 50)
                 color_sf = (30, 30, 30) if self.pressed_button == 'sf' else (50, 50, 50)
-                
+
                 pygame.draw.rect(self.screen, color_db, db_rect)
-                text = font.render("Deep Blue starts", True, (255, 255, 255))
+                text = font.render("DeepBlue starts", True, (255, 255, 255))
                 text_rect = text.get_rect(center=db_rect.center)
                 self.screen.blit(text, text_rect)
-                
+
                 pygame.draw.rect(self.screen, color_sf, sf_rect)
                 text = font.render("Stockfish starts", True, (255, 255, 255))
                 text_rect = text.get_rect(center=sf_rect.center)
@@ -1574,7 +1574,7 @@ class Game:
             else:
                 self.player1_bot_type = 'minimax'
                 self.player2_bot_type = 'mcts'
-                
+
         if self.selected_grid.startswith("grid0"):
             self.player_initial_times = [60.0, 60.0]
         elif self.selected_grid.startswith("grid1"):
@@ -1739,6 +1739,7 @@ class Game:
                                         self.ui_manager.draw_error_message("Invalid pair!", window_size, self.player_mode, cell_size)
                                     self.selected_cells = []
                             self.pressed_button = None
+
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = event.pos
                     if self.pressed_button:
@@ -1789,6 +1790,7 @@ class Game:
                                 return
 
                         self.pressed_button = None
+
                 elif event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                     window_size = (event.w, event.h)
@@ -1955,12 +1957,12 @@ class Game:
                         self.game_over = False
 
                     if self.player_mode == 'botvs':
-                        if self.player_scores[0] > self.player_scores[1]:
-                            self.ui_manager.lose_sound.play()
-                            self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
-                        elif self.player_scores[1] > self.player_scores[0]:
+                        if self.player_scores[0] < self.player_scores[1]:
                             self.ui_manager.win_sound.play()
-                            self.ui_manager.draw_end_screen("Deep Blue Wins!", self.colors[5], window_size)
+                            self.ui_manager.draw_end_screen("Stockfish Wins!", (148, 0, 211), window_size)
+                        elif self.player_scores[1] < self.player_scores[0]:
+                            self.ui_manager.win_sound.play()
+                            self.ui_manager.draw_end_screen("DeepBlue Wins!", self.colors[6], window_size)
                         else:
                             remaining_stockfish = self.player_initial_times[0] - self.player_time_used[0]
                             remaining_deepblue = self.player_initial_times[1] - self.player_time_used[1]
@@ -1969,7 +1971,7 @@ class Game:
                                 self.ui_manager.draw_end_screen("Stockfish Wins (Time)!", (148, 0, 211), window_size)
                             elif remaining_deepblue < remaining_stockfish:
                                 self.ui_manager.win_sound.play()
-                                self.ui_manager.draw_end_screen("Deep Blue Wins (Time)!", self.colors[5], window_size)
+                                self.ui_manager.draw_end_screen("DeepBlue Wins (Time)!", self.colors[6], window_size)
                             else:
                                 self.ui_manager.lose_sound.play()
                                 self.ui_manager.draw_end_screen("It's a Tie!", (0, 255, 255), window_size)
