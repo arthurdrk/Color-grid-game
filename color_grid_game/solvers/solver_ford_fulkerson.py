@@ -125,7 +125,6 @@ class Solver_Ford_Fulkerson(Solver):
                     residual_graph[v].append(u)
                 v = u
 
-        # Build matching more efficiently
         matching = []
         for odd in odd_cells:
             for u in residual_graph.get(odd, []):
