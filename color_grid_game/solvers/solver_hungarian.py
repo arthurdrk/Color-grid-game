@@ -148,31 +148,26 @@ class Solver_Hungarian(Solver):
                     # Track the column with the lowest shortest path cost
                     if (shortest_path_costs[j] < lowest) or (shortest_path_costs[j] == lowest and row_to_col[j] == -1):  # O(1)
                         index = it
-                    lowest = min(lowest, shortest_path_costs[j])
+                        lowest = shortest_path_costs[j]
 
                 # Update min_value to the lowest shortest path cost found
-                min_value = lowest  
+                min_value = lowest
+                  
+                # Select the column with the lowest shortest path cost
+                j = remaining[index]
 
-                # If min_value is infinity, it means no valid path was found
-                if min_value == np.inf:  
-                    sink = -1  
+                # If the selected column is unassigned, it becomes the sink
+                if row_to_col[j] == -1:
+                    sink = j  
+                else:
+                    # Otherwise, move to the row assigned to this column
+                    current_row = row_to_col[j]  
 
-                if sink == -1: 
-                    # Select the column with the lowest shortest path cost
-                    j = remaining[index]
-
-                    # If the selected column is unassigned, it becomes the sink
-                    if row_to_col[j] == -1:
-                        sink = j  
-                    else:
-                        # Otherwise, move to the row assigned to this column
-                        current_row = row_to_col[j]  
-
-                    # Mark the column as visited
-                    visited_columns[j] = True  
-                    num_remaining -= 1  
-                    # Swap the current column with the last remaining column
-                    remaining[index] = remaining[num_remaining] 
+                # Mark the column as visited
+                visited_columns[j] = True  
+                num_remaining -= 1  
+                # Swap the current column with the last remaining column
+                remaining[index] = remaining[num_remaining] 
 
             return sink, min_value, visited_rows, visited_columns, shortest_path_costs 
 
