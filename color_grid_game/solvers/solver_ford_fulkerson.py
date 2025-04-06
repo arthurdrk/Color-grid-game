@@ -87,6 +87,10 @@ class Solver_Ford_Fulkerson(Solver):
         ----------
         graph : dict
             The graph represented as an adjacency list.
+        even_cells : set
+            Set of cells with even sum of coordinates.
+        odd_cells : set
+            Set of cells with odd sum of coordinates.
 
         Returns
         -------
@@ -97,29 +101,35 @@ class Solver_Ford_Fulkerson(Solver):
         if not graph or not even_cells or not odd_cells:
             raise ValueError("Invalid graph or cell sets")
 
+        # Initialize residual graph
         residual_graph = defaultdict(list)
         for u in graph:
-            residual_graph[u] = graph[u][:]
+            residual_graph[u] = graph[u].copy()  # .copy() is more explicit than [:]
 
+        # Find augmenting paths and update flow
         while True:
+            # Find an augmenting path
             parents = cls.bfs(residual_graph, "s", "t")
-            if not parents:
+            if not parents:  # No augmenting path found
                 break
 
-            # Augment the flow along the path found
-            path_flow = float('Inf')
-            s = "t"
-            while s != "s":
-                path_flow = min(path_flow, 1)  # Unit capacity
-                s = parents[s]
-
+            # Augment flow along the path (path_flow is always 1 in this case)
             v = "t"
             while v != "s":
                 u = parents[v]
-                if u in residual_graph and v in residual_graph[u]:
+                # Remove forward edge (used capacity)
+                if v in residual_graph[u]:
                     residual_graph[u].remove(v)
-                if v not in residual_graph or u not in residual_graph[v]:
+                # Add backward edge (possibility to "undo" this choice)
+                if u not in residual_graph[v]:
                     residual_graph[v].append(u)
                 v = u
 
-        return [(u, odd) for odd in odd_cells for u in residual_graph[odd] if u in even_cells]
+        # Build matching more efficiently
+        matching = []
+        for odd in odd_cells:
+            for u in residual_graph.get(odd, []):
+                if u in even_cells:
+                    matching.append((u, odd))
+        
+        return matching
