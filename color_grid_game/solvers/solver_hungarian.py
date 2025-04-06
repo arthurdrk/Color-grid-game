@@ -143,7 +143,7 @@ class Solver_Hungarian(Solver):
                     # Update the shortest path costs and path
                     if r < shortest_path_costs[j]:
                         path[j] = current_row
-                    shortest_path_costs[j] = min(shortest_path_costs[j], r)
+                        shortest_path_costs[j] = r
 
                     # Track the column with the lowest shortest path cost
                     if (shortest_path_costs[j] < lowest) or (shortest_path_costs[j] == lowest and row_to_col[j] == -1):  # O(1)
