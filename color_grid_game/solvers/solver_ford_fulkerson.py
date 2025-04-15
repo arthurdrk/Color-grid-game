@@ -106,13 +106,11 @@ class Solver_Ford_Fulkerson(Solver):
         for u in graph:
             residual_graph[u] = graph[u].copy()  # .copy() is more explicit than [:]
 
+        parents = cls.bfs(residual_graph, "s", "t")
         # Find augmenting paths and update flow
-        while True:
+        while parents:
             # Find an augmenting path
-            parents = cls.bfs(residual_graph, "s", "t")
-            if not parents:  # No augmenting path found
-                break
-
+        
             # Augment flow along the path (path_flow is always 1 in this case)
             v = "t"
             while v != "s":
@@ -124,6 +122,8 @@ class Solver_Ford_Fulkerson(Solver):
                 if u not in residual_graph[v]:
                     residual_graph[v].append(u)
                 v = u
+
+            parents = cls.bfs(residual_graph, "s", "t")
 
         matching = []
         for odd in odd_cells:

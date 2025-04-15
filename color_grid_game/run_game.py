@@ -103,7 +103,7 @@ class UIManager:
         self.screen = screen
         self.colors = colors
         self.colors_title = colors_title
-        self.volume_theme = 0.005
+        self.volume_theme = 0.01
         self.volume = 0.02
 
         self.game_theme = pygame.mixer.Sound("./medias/game theme.mp3")
@@ -152,7 +152,7 @@ class UIManager:
         """
         if self.volume == 0:
             self.volume = 0.02
-            self.volume_theme = 0.005
+            self.volume_theme = 0.01
             self.game_theme.set_volume(self.volume_theme)
             self.win_sound.set_volume(self.volume)
             self.lose_sound.set_volume(self.volume)
